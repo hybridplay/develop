@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="@color/white" 
+    android:focusable="false">
+
+       <ImageView
+           android:id="@+id/icono"
+           android:layout_width="?android:attr/listPreferredItemHeight"
+           android:layout_height="fill_parent"
+           android:layout_alignParentLeft="true"
+           android:layout_alignParentTop="true"
+           android:layout_marginLeft="10dp" 
+           android:layout_marginRight="10dp"
+           android:layout_marginTop="5dp"
+           android:focusable="false" />
+              
+       <TextView
+           android:id="@+id/titulo"
+           android:gravity="bottom|left"
+           android:layout_marginTop="10dp"
+           android:layout_width="fill_parent"
+           android:layout_height="wrap_content"
+           android:layout_alignParentTop="true"
+           android:layout_toRightOf="@id/icono"
+           android:singleLine="true"
+           android:text="Otro Texto"
+           android:textAppearance="?android:attr/textAppearanceLarge"
+           android:focusable="false"/>
+
+       <ImageView
+           android:id="@+id/imgGame"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentRight="true"
+           android:layout_alignParentTop="true"
+           android:src="@drawable/clasic" 
+           android:focusable="false"/>
+
+       <LinearLayout
+           android:layout_width="wrap_content"
+           android:layout_height="match_parent"
+           android:layout_below="@id/titulo"
+           android:layout_toLeftOf="@+id/imgGame"
+           android:layout_toRightOf="@id/icono" 
+           android:focusable="false">
+
+           <ImageView
+               android:id="@+id/triangle"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center_vertical"
+               android:src="@drawable/flechasmall"
+               android:layout_marginRight="3dp"
+               android:focusable="false" />
+
+           <TextView
+               android:id="@+id/subtitulo"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:gravity="center_vertical"
+               android:text="Otro Texto" 
+               android:singleLine="false"
+               android:textAppearance="?android:attr/textAppearanceSmall"
+               android:focusable="false"/>
+
+       </LinearLayout>
+
+</RelativeLayout>

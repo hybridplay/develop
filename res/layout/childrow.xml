@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="79dp"
+    android:background="@android:color/white"
+    android:focusable="false"
+    android:gravity="center|center_horizontal"
+    android:orientation="horizontal"
+    android:paddingLeft="40dp"
+    android:paddingRight="40dp" >
+
+        <ImageView
+            android:id="@+id/iconpark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:contentDescription="@string/hello_world"
+            android:focusable="false"
+            android:src="@drawable/balancin" />
+
+         <ImageView
+             android:id="@+id/iconmove"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_margin="3dp"
+             android:contentDescription="@string/hello_world"
+             android:focusable="false"
+             android:src="@drawable/movsubebaja" />
+         
+           <TextView
+               android:id="@+id/childtext"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:focusable="false"
+               android:gravity="center_vertical"
+               android:singleLine="false"
+               android:text="Otro Texto"
+               android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</LinearLayout>
