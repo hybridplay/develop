@@ -98,6 +98,10 @@ public class ArkaNoidGameThread extends Thread {
 		resetSafe = true;
 		reset();
 	}
+	
+	public void setGameConnecter(boolean connected){
+		gameState.connected = connected;
+	}
 
 	public void setSize(int width, int height) {
 		synchronized (holder) {
@@ -141,7 +145,7 @@ public class ArkaNoidGameThread extends Thread {
 
 	public boolean keyDown(int keyCode, KeyEvent msg) {
 		boolean handled = false;
-		if (gameState.isPaused()) {
+		if (gameState.isPaused() && gameState.connected) {
 			gameGo();
 			handled = true;
 		}
@@ -167,7 +171,7 @@ public class ArkaNoidGameThread extends Thread {
 		
 		switch (action) {
 			case MotionEvent.ACTION_DOWN: {
-				if (gameState.isPaused()) {
+				if (gameState.isPaused() && gameState.connected) {
 					gameGo();
 				}
 				if (gameState.ball.onPaddle){

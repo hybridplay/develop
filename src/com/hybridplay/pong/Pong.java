@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 
 import com.hybridplay.app.R;
 
@@ -25,6 +26,11 @@ public class Pong extends Activity {
         pWith = extras.getString("gameType");
 	}
 	
+	private LinearLayout LinearLayout(View findViewById) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();

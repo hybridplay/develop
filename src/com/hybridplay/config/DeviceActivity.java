@@ -5,24 +5,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import com.hybridplay.app.R;
-
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.hybridplay.app.R;
 
 public class DeviceActivity extends Activity {
 	
@@ -216,6 +212,7 @@ public class DeviceActivity extends Activity {
 		//Log.i(LOGGER_TAG, "Bluetooth connected");
 		m_deviceStatus.setText("Connected");
 		m_thread.sendBlinkCommand();
+		mGraph.connected = true;
 	}
 	
 	private void onBluetoothDisconnected() {

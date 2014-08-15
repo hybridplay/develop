@@ -10,20 +10,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
-import android.hardware.SensorEvent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
-import android.widget.Toast;
 
 import com.hybridplay.app.R;
 
@@ -50,7 +47,7 @@ public class PongView extends View implements OnTouchListener, OnKeyListener {
 	 */
 	private State mCurrentState = State.Running;
 	private State mLastState = State.Stopped;
-	public static enum State { Running, Stopped}
+	public static enum State { Running, Stopped, Connecting}
 
 	/** Flag that marks this view as initialized */
 	private boolean mInitialized = false;

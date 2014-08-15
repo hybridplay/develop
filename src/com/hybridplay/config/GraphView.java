@@ -19,15 +19,22 @@ package com.hybridplay.config;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+
+import com.hybridplay.app.R;
 
 public class GraphView extends View {
 
-	private Bitmap  mBitmap;
+	public Boolean connected = false;
+	private Bitmap  mBitmap, connecting;
+	private Rect 	srcConnecting, dstConnecting;
 	private Paint   mPaint = new Paint();
     private Canvas  mCanvas = new Canvas();
     
@@ -129,6 +136,12 @@ public class GraphView extends View {
     
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    	connecting = BitmapFactory.decodeResource(getResources(), R.drawable.connecting);
+    	srcConnecting = new Rect(0, 0, connecting.getWidth(), connecting.getHeight() );
+    	Log.i("h", "h " + h);
+    	Log.i("w", "w " + w);
+		dstConnecting = new Rect((int) w/2 - connecting.getWidth()/2, 0,(int) w/2 + connecting.getWidth()/2, (int) connecting.getHeight() );
+		
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
         mCanvas.setBitmap(mBitmap);
         mCanvas.drawColor(0xFFFFFFFF);
@@ -142,7 +155,9 @@ public class GraphView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         synchronized (this) {
-            if (mBitmap != null) {
+        	if (!connected) {
+        		canvas.drawBitmap(connecting, srcConnecting, dstConnecting, null);
+        	} else if (mBitmap != null) {
                 if (mLastX >= mWidth) {
                     mLastX = 0;
                     mLastY = 0;

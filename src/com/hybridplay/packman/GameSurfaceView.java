@@ -24,7 +24,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	// the frame period
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
-	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
+	private final static int 	CONNECTING = -1, READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
 	private final static String textOver = "GAME OVER", textCongrats = "You Won"
 								, textNextLevel = "You unlocked next level", textReady = "Ready Go";
 	
@@ -71,6 +71,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private Rect[] gSrcRight = new Rect[2];
 	private Rect[] gDst = new Rect[8];
 	
+	private Bitmap connecting;
+	private Rect srcConnecting, dstConnecting;
+	
 	// draw timing data
 	private long beginTime; // the time when the cycle begun
 	private long timeDiff; // the time it took for the cycle to execute
@@ -93,7 +96,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		this.gameEngine = gameEngine;
 		this.pacmon = gameEngine.pacmon;
-		gameState = READY;
+		gameState = CONNECTING;
 		
 		mContext = context;
 		
@@ -131,6 +134,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
 		yellowy_img = BitmapFactory.decodeResource(getResources(), R.drawable.yellowy_sprite);
 		
+		connecting = BitmapFactory.decodeResource(getResources(), R.drawable.connecting);
+		
 		paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(Color.WHITE);
@@ -153,6 +158,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	private void initSprite(){
+		
+		srcConnecting = new Rect(0, 0, connecting.getWidth(), connecting.getHeight() );
+		dstConnecting = new Rect((int) screenWidth/2 - connecting.getWidth()/2,(int) screenHeight/2-connecting.getHeight()/2,(int) screenWidth/2 + connecting.getWidth()/2,(int) screenHeight/2+ connecting.getHeight()/2 );
+		
+		
 		pSrcUp[0] = new Rect(0, 0, 32, 32);
 		pSrcUp[1] = new Rect(32, 0, 64, 32);
 		pSrcUp[2] = new Rect(64, 0, 96, 32);
@@ -189,6 +199,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		while (isRunning) {
 			canvas = null;
+			if (gameEngine.getGameState() == CONNECTING){
+				updateConnecting(canvas);
+			}
 			if (gameEngine.getGameState() == READY){
 				if (isPlayOn){
 				//	soundEngine.play(4);
@@ -201,6 +214,60 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			if (gameEngine.getGameState() == GAMEOVER) updateGameOver(canvas);
 			if (gameEngine.getGameState() == WON)	   updateWon(canvas);
 			if (gameEngine.getGameState() == DIE)	   updateDie(canvas);
+		}
+	}
+	
+	private void updateConnecting(Canvas canvas){
+		try {
+			canvas = surfaceHolder.lockCanvas();
+			if (canvas == null) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				surfaceHolder = getHolder();
+			} else {
+
+				synchronized (surfaceHolder) {
+					canvas.drawRGB(0, 0, 0);
+					drawMaze(canvas); // draw updated maze
+					drawPacmon(canvas);
+					drawGhost(canvas);
+					drawScore(canvas);
+					
+					int borde = canvas.getWidth()/10;
+					int distancia = canvas.getWidth()/8;
+					
+					int x1, y1, x2, y2;
+
+					x1 = borde; y1 = borde+(distancia/2); //izquierda
+					x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
+					gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
+					
+					x1 = borde+(distancia/2); y1 = borde; //arriba
+					x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
+					gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+					
+					
+					//long time = 5L - timeDiff/1000;
+
+					canvas.drawBitmap(connecting, srcConnecting, dstConnecting, null);
+					
+					try {
+						Thread.sleep(25);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+				}
+			}
+		} finally {
+			// in case of an exception the surface is not left in
+			// an inconsistent state
+			if (canvas != null) {
+				surfaceHolder.unlockCanvasAndPost(canvas);
+			}
 		}
 	}
 	
@@ -242,6 +309,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 					//measure the text then draw it at center
 					sentenceWidth = paint2.measureText(textReady);
+					
 				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
 					canvas.drawText(textReady, drawTextStartingX , screenHeight/2, paint2);
 					

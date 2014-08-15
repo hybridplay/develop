@@ -11,7 +11,7 @@
 	<string name="app_desc">Implementation of the classic game Arkanoid for Android devices</string>
 	<string name="died_text">You Died</string>
 	<string name="won_text">You Won</string>
-	<string name="start_text">Press any key to start</string>
+	<string name="start_text">Touch the screen to start</string>
 	<string name="score_text">Score: </string>
 	<string name="lives_text">Lives left: </string>
 	

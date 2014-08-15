@@ -1,5 +1,7 @@
 package com.hybridplay.puzzlecity;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -33,15 +35,18 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	int movingTextX, movingTextY;   // for ready and gameover screen
 	
 	private GameEngine gameEngine;
-	private Kid thisKid;
-	private float kidSize;
+	private Player player;
+	private Stage stage;
+	private float playerSize, playerSize1;
 	
 	public Bitmap kid_img, plataforma, columpio_fondo, nubes_fondo1, nubes_fondo2, nubes_fondo3;
 	public Bitmap bola_img, bomba_img, boom_img, cactus_img;
 	public Bitmap ficha1, ficha2, ficha3, ficha4, ficha5, ficha6, ficha7, ficha8, ficha9, ficha10;
 	public Bitmap cazamariposas_L, cazamariposas_R;
 	public Bitmap nube1, nube2, nube3, nube4, vuelve;
-	public Bitmap connecting;
+	public Bitmap connecting, playerImg;
+	public Bitmap laberinto_fondo, laberinto_mascara, laberinto_fondo1, laberinto_mascara1;
+
 	//public Bitmap avionBitmap;
 	public Bitmap avion_fondo1, avion_fondo2, avion_fondo3;
 	public Paint paint, paint2, paint3, paint4, paintBT;
@@ -53,6 +58,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	public Objetos obj;
 	public Avion avion;
 	public Fichas fichas;
+	private ArrayList<Fichas> fichasArray;
 	
 	//private Rect avionRect;
 	private Rect srcRect,  srcConnecting, dstConnecting;
@@ -60,7 +66,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	public Rect[] srcKid = new Rect[8];
 	public Rect plataformaRect, nubeRect, pDst;
 	
-	private Rect src, dst;
+	private Rect src, dst, dst1;
 	
 	// draw timing data
 	private long beginTime; // the time when the cycle begun
@@ -70,8 +76,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	private boolean isPlayOn;
 
-	private float screenWidth;
-	private float screenHeight;
+	private int screenWidth;
+	private int screenHeight;
 	private float sentenceWidth, drawTextStartingX;
 
 	public int counterForSprite=0;
@@ -87,7 +93,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		super(context);
 		
 		this.gameEngine = gameEngine;
-		this.thisKid = gameEngine.kid;
+		//this.player = gameEngine.player;
+		//this.stage = gameEngine.stage;
 		
 		mContext = context;
 		
@@ -96,22 +103,52 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		screenWidth = sWidth;
 		screenHeight = sHeight;
 		
-		kidSize = screenWidth / 6.f;  //kid size
+		playerSize = screenWidth / 6.f;  //kid size
+		playerSize1 = screenWidth / 9.f;  //kid size for laberinto
 
 		initBitmap();  // init all Bitmap and its components
 		initSprite();  // init sprite
 		
-		nube = new Nube(context,(int)screenWidth,(int)screenHeight);
-		obj = new Objetos(context,(int)screenWidth,(int)screenHeight);
 		avion = new Avion(context,(int)screenWidth,(int)screenHeight);
-		fichas = new Fichas(context, gameEngine, (int)screenWidth,(int)screenHeight);
+		gameEngine.avion = avion;
+		player = new Player(context, playerImg, (int)screenWidth/2,(int)screenHeight/2, screenWidth,screenHeight, 10, 5, 7);
+		gameEngine.player = player;
+		nube = new Nube(context,(int)screenWidth,(int)screenHeight);
+		gameEngine.nube = nube;
+		obj = new Objetos(context,(int)screenWidth,(int)screenHeight);
+		gameEngine.obj = obj;
+		
+		if (gameEngine.getGameType().equals("Balancin")){
+			stage = new Stage(context, laberinto_fondo, laberinto_mascara, 100, 130, screenWidth, screenHeight);
+			gameEngine.stage = stage;
+		}
+		
+		if (gameEngine.getGameType().equals("Caballito")){
+			stage = new Stage(context, laberinto_fondo1, laberinto_mascara1, 100, 130, screenWidth, screenHeight);
+			gameEngine.stage = stage;
+		}
+
+		   //creamos el array de basura y a�adimos 3 objetos
+		if (gameEngine.getGameType().equals("Caballito")||gameEngine.getGameType().equals("Balancin")){
+			fichasArray = new ArrayList<Fichas>();
+			for (int i = 0; i < 10; i++) {
+				fichasArray.add(new Fichas(context, gameEngine, (int)screenWidth,(int)screenHeight,gameEngine.getGameType()));
+			}
+			gameEngine.fichasArray = fichasArray;
+		}
+		
+		if(gameEngine.getGameType().equals("SubeBaja")){
+			fichas = new Fichas(context, gameEngine, (int)screenWidth,(int)screenHeight,gameEngine.getGameType());
+			gameEngine.fichas = fichas;
+		}
+		
 		
 		xFondo = 0;
 		
-		gameEngine.nube = nube;
-		gameEngine.obj = obj;
-		gameEngine.avion = avion;
-		gameEngine.fichas = fichas;
+		
+		
+		
+		//gameEngine.fichas = fichas;
 		
 		surfaceHolder = getHolder();
 		isRunning = true;
@@ -120,6 +157,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	private void initBitmap(){
 		// KID
+		playerImg = BitmapFactory.decodeResource(getResources(), R.drawable.kidorange);
 		kid_img = BitmapFactory.decodeResource(getResources(), R.drawable.kidorange);
 		plataforma = BitmapFactory.decodeResource(getResources(), R.drawable.plataforma);
 		// OBJECTS
@@ -157,18 +195,22 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		avion_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta1);
 		avion_fondo2 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta2);
 		avion_fondo3 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta3);
+		laberinto_fondo = BitmapFactory.decodeResource(getResources(), R.drawable.laberintofondo);
+		laberinto_mascara = BitmapFactory.decodeResource(getResources(), R.drawable.laberintomascara);
+		laberinto_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodos);
+		laberinto_mascara1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodosmascara);
 		
 		connecting = BitmapFactory.decodeResource(getResources(), R.drawable.connecting);
 		
 		paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(Color.BLACK);
-		paint.setTextSize((int)(kidSize/8));
+		paint.setTextSize((int)(playerSize/8));
 		
 		paint2 = new Paint();
 		paint2.setAntiAlias(true);
 		paint2.setColor(Color.BLACK);
-		paint2.setTextSize(kidSize/4); 
+		paint2.setTextSize(playerSize/4); 
 		
 		paint3 = new Paint();
 		paint3.setAntiAlias(true);
@@ -178,7 +220,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		paint4 = new Paint();
 		paint4.setAntiAlias(true);
 		paint4.setColor(Color.BLACK);
-		paint4.setTextSize(kidSize/2);
+		paint4.setTextSize(playerSize/2);
 		
 		paintBT = new Paint();
 		paintBT.setStyle(Paint.Style.STROKE);
@@ -207,11 +249,18 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			src = new Rect(0,0, nubes_fondo1.getWidth(), nubes_fondo1.getHeight());
 		}else if(gameEngine.getGameType().equals("SubeBaja")){
 			src = new Rect(0,0, avion_fondo1.getWidth(), avion_fondo1.getHeight());
+		}else if(gameEngine.getGameType().equals("Balancin")){
+			src = new Rect(0,0, laberinto_fondo.getWidth(), laberinto_fondo.getHeight());
+			dst1 = new Rect(0,0, laberinto_fondo.getWidth(), laberinto_fondo.getHeight());
+		}else if(gameEngine.getGameType().equals("Caballito")){
+			src = new Rect(0,0, laberinto_fondo1.getWidth(), laberinto_fondo1.getHeight());
+			dst1 = new Rect(0,0, laberinto_fondo1.getWidth(), laberinto_fondo1.getHeight());			
 		}else{
 			src = new Rect(0,0, columpio_fondo.getWidth(), columpio_fondo.getHeight());
 		}
 		
 		dst = new Rect(0, 0, (int)screenWidth, (int)screenHeight);
+		
 		srcConnecting = new Rect(0, 0, connecting.getWidth(), connecting.getHeight() );
 		dstConnecting = new Rect((int) screenWidth/2 - connecting.getWidth()/2,(int) screenHeight/2-connecting.getHeight()/2,(int) screenWidth/2 + connecting.getWidth()/2,(int) screenHeight/2+ connecting.getHeight()/2 );
 		
@@ -250,8 +299,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				synchronized (surfaceHolder) {
 					canvas.drawRGB(20, 30, 75);
 					drawStage(canvas);
-					drawKid(canvas);
-					drawTrash(canvas);
+					drawPlayer(canvas);
+					drawFichas(canvas);
 					drawScore(canvas);
 					drawConnection(canvas);
 
@@ -338,8 +387,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				
 					canvas.drawRGB(20, 30, 75);
 					drawStage(canvas); // draw updated maze
-					drawKid(canvas); // draw Kid
-					drawTrash(canvas);
+					drawPlayer(canvas); // draw Kid
+					drawFichas(canvas);
 					drawScore(canvas); // draw score and lives
 
 					
@@ -426,8 +475,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					isRunning = false;
 					canvas.drawRGB(20, 30, 75);
 					drawStage(canvas);
-					drawKid(canvas);
-					drawTrash(canvas);
+					drawPlayer(canvas);
+					drawFichas(canvas);
 					drawScore(canvas);
 					
 					//para dibujar los disparadores de eventos
@@ -504,7 +553,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	// draw current location of objects
-	private void drawTrash(Canvas canvas) {
+	private void drawFichas(Canvas canvas) {
 		if(gameEngine.getGameType().equals("Columpio")){
 			gameEngine.obj.updateObjeto();
 			gameEngine.obj.drawObjeto(canvas);
@@ -513,17 +562,25 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			gameEngine.nube.drawNube(canvas);
 		}else if(gameEngine.getGameType().equals("SubeBaja")){
 			gameEngine.fichas.drawFichas(canvas);
+		}else if(gameEngine.getGameType().equals("Balancin")||gameEngine.getGameType().equals("Caballito")){
+			
+			for (int i = 0; i < gameEngine.fichasArray.size(); i++) {
+				if (gameEngine.fichasArray.get(i).isAlive()){
+					gameEngine.fichasArray.get(i).drawFichas(canvas);
+				}
+			}
 		}
 	}
 	
 	// draw kid 
-	private void drawKid(Canvas canvas) {
+	private void drawPlayer(Canvas canvas) {
 		srcRect = srcKid[0];
 		
 		if(gameEngine.getGameType().equals("Columpio")){
 			Rect dst;
-			pDst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY()+(int)kidSize,(int)thisKid.getpX()+167,(int)thisKid.getpY()+(int)kidSize+26);
+			pDst = new Rect((int)player.getpX(), (int)player.getpY()+(int)playerSize,(int)player.getpX()+167,(int)player.getpY()+(int)playerSize+26);
 			canvas.drawBitmap(plataforma,plataformaRect,pDst,null);
+		
 
 			// draw raquetas
 			Rect raquetaSrc = new Rect(0,0,114,97);
@@ -533,20 +590,24 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			canvas.drawBitmap(cazamariposas_L,raquetaSrc,raquetaLdst,null);
 			canvas.drawBitmap(cazamariposas_R,raquetaSrc,raquetaRdst,null);
 			
-			dst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY(), (int)thisKid.getpX()+ (int) kidSize, (int)thisKid.getpY() + (int) kidSize);
+			dst = new Rect((int)player.getpX(), (int)player.getpY(), (int)player.getpX()+ (int) playerSize, (int)player.getpY() + (int) playerSize);
 			canvas.drawBitmap(kid_img, srcRect, dst, null);
 		}else if(gameEngine.getGameType().equals("Tobogan")){
 			Rect dst;
-			pDst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY()+(int)kidSize/2,(int)thisKid.getpX()+225,(int)thisKid.getpY() + (int)kidSize/2 + 143);
+			pDst = new Rect((int)player.getpX(), (int)player.getpY()+(int)playerSize/2,(int)player.getpX()+225,(int)player.getpY() + (int)playerSize/2 + 143);
 			canvas.drawBitmap(nube1,nubeRect,pDst,null);
 			
-			dst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY(), (int)thisKid.getpX()+ (int) kidSize, (int)thisKid.getpY() + (int) kidSize);
+			dst = new Rect((int)player.getpX(), (int)player.getpY(), (int)player.getpX()+ (int) playerSize, (int)player.getpY() + (int) playerSize);
 			canvas.drawBitmap(kid_img, srcRect, dst, null);
 		}else if(gameEngine.getGameType().equals("SubeBaja")){
 //			Rect dst;
 //			dst = new Rect((int)avion.getpX(), (int)thisKid.getpY(), (int)thisKid.getpX()+ (int) kidSize, (int)thisKid.getpY() + (int) kidSize);
 //			canvas.drawBitmap(avionBitmap, avionRect, dst, null);
 			avion.drawAvion(canvas);
+		}else if(gameEngine.getGameType().equals("Balancin") || gameEngine.getGameType().equals("Caballito")){
+//			dst = new Rect((int)player.getpX(), (int)player.getpY(), (int)player.getpX()+ (int) playerSize1, (int)player.getpY() + (int) playerSize1);
+//			canvas.drawBitmap(kid_img, srcRect, dst, null);
+			player.draw(canvas);
 		}
 		
 	}
@@ -636,14 +697,17 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					xFondo = 0;
 					nFondoAvioneta ++;
 				}
-				
-				
-				
-				
+			}
+	
+		}else if(gameEngine.getGameType().equals("Balancin")||gameEngine.getGameType().equals("Caballito")){
+						
+			stage.draw(canvas, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed());
+			
+			
 		}else{
-				canvas.drawBitmap(columpio_fondo, src, dst, null);
+			canvas.drawBitmap(columpio_fondo, src, dst, null);
 		}
-	}
+	
 	}
 	
 	public void drawConnection(Canvas canvas){

@@ -4,6 +4,7 @@
 	android:layout_height="fill_parent"
 	android:keepScreenOn="true">
 	
+    
 	<com.hybridplay.pong.PongView
 	 android:id="@+id/pong"
 		android:layout_width="fill_parent"

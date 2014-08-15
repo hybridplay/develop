@@ -205,10 +205,12 @@ public class ArkaNoid extends Activity implements SensorEventListener  {
     
     private void onBluetoothConnected() {
     	Log.i(BLUETOOTH_TAG, "Bluetooth connected");
+    	gameThread.setGameConnecter(true);
 	}
 	
 	private void onBluetoothDisconnected() {
 		Log.i(BLUETOOTH_TAG, "Bluetooth disconnected");
+		gameThread.setGameConnecter(false);
 	}
 	
 	private void onBluetoothRead(byte[] buffer, int len) {
@@ -275,7 +277,7 @@ public class ArkaNoid extends Activity implements SensorEventListener  {
 				gameThread.changedBoth(PADDLE_SPEED, true, false);
 			}
   		}else if(playWith.equals("Columpio")){
-  			// pinza vertical boton hacia abajo - oscilaci—n - eje X
+  			// pinza vertical boton hacia abajo - oscilaciï¿½n - eje X
   			
   		}else if(playWith.equals("SubeBaja")){
   			// pinza horizontal - dos direcciones - eje Z

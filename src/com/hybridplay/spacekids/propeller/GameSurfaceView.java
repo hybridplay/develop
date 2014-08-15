@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.SurfaceHolder;
@@ -127,7 +128,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(Color.WHITE);
-		paint.setTextSize((int)(kidSize/8));
+		paint.setTextSize((int)(kidSize/12));
 		
 		paint2 = new Paint();
 		paint2.setAntiAlias(true);
@@ -493,8 +494,20 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				int gY = garbage.get(i).getY();
 
 				Rect dst = new Rect(gX, gY, gX + (int) trashSize, gY + (int) trashSize);
-
+				
+//				canvas.save();
+//				canvas.translate(gX + trashSize/2, gY+ trashSize/2);
+//				canvas.rotate(degree);
+//				
+//				if (degree <= 360) {
+//					degree += 0.01;
+//				}else{
+//					degree = 0;
+//				}
+								
 				canvas.drawBitmap(trash_img, srcRect, dst, null);
+				//canvas.restore();
+				
 
 			}
 		}

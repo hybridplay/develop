@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 
 import com.hybridplay.app.R;
@@ -14,7 +15,8 @@ import com.hybridplay.app.R;
 public class GameRenderer {
 	
 	private Paint paint = new Paint();
-	private Bitmap imgBackground;
+	private Bitmap imgBackground, connecting;
+	private Rect srcConnecting, dstConnecting;
 	private GameState gameState;
 	public int w;
 	public int h;
@@ -36,6 +38,11 @@ public class GameRenderer {
 		startText = r.getString(R.string.start_text);
 		scoreText = r.getString(R.string.score_text);
 		livesText = r.getString(R.string.lives_text);
+		
+		connecting = BitmapFactory.decodeResource(r, R.drawable.connecting);
+		srcConnecting = new Rect(0, 0, connecting.getWidth(), connecting.getHeight() );
+		dstConnecting = new Rect((int) w/2 - connecting.getWidth()/2,(int) h/2-connecting.getHeight()/2,(int) w/2 + connecting.getWidth()/2,(int) h/2+ connecting.getHeight()/2 );
+		
 	}
 	
 	public void reset() {
@@ -56,17 +63,19 @@ public class GameRenderer {
 		gameState.ball.draw(canv);
 		gameState.paddle.draw(canv);
 		
-		if (gameState.isPaused()) {
-			paint.setTextSize(25);
-			canv.drawText(startText, 40, h/2, paint);
-		}
-		else {
-			paint.setTextSize(12);
-			canv.drawText(gameState.infoText, 10, 14, paint);
-			canv.drawText(scoreText, 90, 14, paint);
-			canv.drawText(gameState.scoreStr, 130, 14, paint);
-			canv.drawText(livesText, 170, 14, paint);
-			canv.drawText(gameState.livesLeftStr, 230, 14, paint);
+		if (!gameState.connected){
+			canv.drawBitmap(connecting, srcConnecting, dstConnecting, null);
+		}else if (gameState.connected && gameState.isPaused()) {
+			paint.setColor(Color.BLACK);
+			paint.setTextSize(48);
+			canv.drawText(startText, 40, h/2, paint);			
+		}else if (gameState.connected){
+			paint.setTextSize(32);
+			canv.drawText(gameState.infoText, 10, 30, paint);
+			canv.drawText(scoreText, 90, 30, paint);
+			canv.drawText(gameState.scoreStr, 190, 30, paint);
+			canv.drawText(livesText, 250, 30, paint);
+			canv.drawText(gameState.livesLeftStr, 390, 30, paint);
 		}
 		
 	}

@@ -7,7 +7,6 @@ import android.app.ExpandableListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -154,6 +153,8 @@ public class GamesExpandable extends ExpandableListActivity {
 		   * Add Data For PuzzleCity
 		   */
 		  child = new ArrayList<String>();
+		  child.add("Balancin");
+		  child.add("Caballito");
 		  child.add("Columpio");
 		  child.add("Tobogan");
 		  child.add("SubeBaja");

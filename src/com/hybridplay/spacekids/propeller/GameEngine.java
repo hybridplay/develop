@@ -77,7 +77,7 @@ public class GameEngine implements Runnable {
 		this.width = width;
 		this.height = height;
 		
-		kid = new Kid(width/2, height/2, 128, 128);  // new kid 256 es el tama�o del sprite que tendra
+		kid = new Kid(width - width/3, height/2, 128, 128);  // new kid 256 es el tama�o del sprite que tendra
 		lives = kid.getpLives();
 		
 		playerScore = 0;

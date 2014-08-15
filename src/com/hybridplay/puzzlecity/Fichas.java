@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -18,19 +19,20 @@ public class Fichas extends SurfaceView{
 
 	public int randomFicha;
 	
-	public float pX, pY;
+	private float pX, pY;
 	public float vX;
 	
 	public int screenW, screenH;
 	private int width, height;
 	
 	public boolean alive;
+	private String gameType;
 	
 	public Fichas(Context context) {
         super(context);
     }
 	
-	public Fichas(Context context, GameEngine gameEngine, int w, int h){
+	public Fichas(Context context, GameEngine gameEngine, int w, int h, String gameType){
 		super(context);
 		this.gameEngine = gameEngine;
 		screenW = w;
@@ -38,15 +40,13 @@ public class Fichas extends SurfaceView{
 		vX = 5;
 		width = 70;
 		height = 80;
-		reloadFicha();
+		this.gameType = gameType;
+		reloadFicha(gameType);
 	}
 	
-	public void reloadFicha(){
+	public void reloadFicha(String gameType){
 		alive = true;
         
-		pX = screenW + 100;
-		pY = (float)(Math.random()*screenH-200);
-		
 		randomFicha = (int)Math.ceil(Math.random()*10);
 
 		switch (randomFicha) {
@@ -81,52 +81,107 @@ public class Fichas extends SurfaceView{
 				ficha = BitmapFactory.decodeResource(getResources(), R.drawable.pieza10);
 				break;
 		}
+		
+		if (gameType.equals("SubeBaja")){
+				pX = screenW + 100;
+				pY = (float)(Math.random()*screenH-200);
+				fichaDstRect = new Rect((int)pX, (int)pY, (int)pX+width, (int)pY+height);
+			} 
+		
+		if(gameType.equals("Balancin")||gameType.equals("Caballito")){
+				pX = (float)(Math.random()*gameEngine.stage.stageImg.getWidth())-gameEngine.stage.getpX();
+				pY = (float)(Math.random()*gameEngine.stage.stageImg.getHeight())-gameEngine.stage.getpY();
+				
+//				if (!onThePath((int) pX, (int) pY, width, height, 10)){ //chequea que este sobre negro
+//					reloadFicha(gameType);
+//					Log.i("log", "ubicada sobre blanco RELOAD");
+//				} else {
+					fichaDstRect = new Rect((int) (gameEngine.stage.getpX() + pX),(int)(gameEngine.stage.getpY()+ pY),(int)(gameEngine.stage.getpX()+pX+width),(int)(gameEngine.stage.getpY()+pY+height));
+//					Log.i("log", "ubicada sobre negro OK");
+//				}
+
+		}
+		
 		fichaSrcRect = new Rect(0,0,width,height);
+		
 	}
 	
 	public void updateFicha(){
-		if(pX > -ficha.getWidth()){
-			pX -= gameEngine.avion.vX;
-			//Log.i("log fichas pX" , "pX: " + pX);
-			checkCollision(fichaSrcRect);
-		}else{
-			reloadFicha();
+		
+		if (gameType.equals("SubeBaja")){
+			
+			if(pX > -ficha.getWidth()){
+				pX -= gameEngine.avion.vX;
+				//Log.i("log fichas pX" , "pX: " + pX);
+				fichaDstRect.set((int)pX,(int)pY,(int)pX+width,(int)pY+height);
+				checkCollision(fichaDstRect);
+			}else{
+				reloadFicha(gameType);
+			}
+		}
+		
+		if (gameType.equals("Balancin")||gameType.equals("Caballito")){
+//			pX = gameEngine.stage.getpX();
+//			pY = gameEngine.stage.getpY();
+			//fichaDstRect.set((int)pX + gameEngine.stage.getpX(),(int)pY + gameEngine.stage.getpY(),(int)pX+width + gameEngine.stage.getpX(),(int)pY+height+gameEngine.stage.getpY());
+			fichaDstRect.set((int)pX ,(int)pY,(int)pX+width,(int)pY+height);
+			checkCollision(fichaDstRect);
 		}
 	}
 	
 	//check if trash touch kid
 	private void checkCollision(Rect rect){
-//		int pX = (int) gameEngine.avion.vX;
-//		int pY = (int) gameEngine.avion.vY;
-//		
-//		int radius = (int) screenW / 4 ; // 190 con pantalla de 800 
-//		Log.i("log","radius: " + radius);
-//		Log.i("log","math: " + Math.abs(pX - gX) + Math.abs(pY - gY));
-//		
-		//int radius = width;
-		//int maxDistance = width;
-		
-		if (gameEngine.avion.dstRect.intersect(fichaDstRect)){
-			//Log.i("log", "colision");
-			reloadFicha();
-			gameEngine.playerScore++;
+		if (gameType.equals("SubeBaja")){
+			if (gameEngine.avion.dstRect.intersect(rect)){
+				//Log.i("log", "colision");
+				reloadFicha(gameType);
+				gameEngine.playerScore++;
+			}
+		}else if (gameType.equals("Balancin")||gameType.equals("Caballito")){
+			if(gameEngine.player.destRect.intersect(rect)){
+				alive = false;
+				//reloadFicha(gameType);
+				gameEngine.playerScore++;
+			}
 		}
-		
-//		if (Math.abs(pX - gX) + Math.abs(pY - gY) < radius) { 
-//			//eatTrash(i);
-//			reloadFicha();
-//			Log.i("log", "colision");
-//		}
-		
-//		if (Math.abs(pX - gX) + Math.abs(pY - gY) > maxDistance){ //si esta muy lejos la reseteamos para que aparezca cerca del ni�o
-//			trash.get(i).setActive(false);
-//		}
-		
 	}
 	
 	public void drawFichas(Canvas canvas){
-		fichaDstRect = new Rect((int)pX,(int)pY,(int)pX+fichaSrcRect.width(),(int)pY+fichaSrcRect.height());
+//		Log.i("log","pX " + pX);
+//		Log.i("log","pY " + pY);
 		canvas.drawBitmap(ficha,fichaSrcRect,fichaDstRect,null);
+	}
+	
+	public Boolean onThePath( int fichaX, int fichaY, int fichaW, int fichaH, int playerSpeed){
+		//poner aqui los limites de pantalla?
+		playerSpeed = 10;
+
+
+		if (gameEngine.stage.stageMask.getPixel(
+					(int) (pX + screenW/2 + fichaW/2 + playerSpeed), (int) (pY+ screenH/2 - fichaH/2 - playerSpeed))== Color.BLACK && //right&top point
+							gameEngine.stage.stageMask.getPixel((int) (pX + screenW/2 + fichaW/2 + playerSpeed), (int) (pY+ screenH/2 + fichaH/2 + playerSpeed))== Color.BLACK //buttom&right
+					){
+				return true;
+			
+		} else if (gameEngine.stage.stageMask.getPixel(
+					(int) (pX + screenW/2 - fichaW/2 - playerSpeed), (int) (pY+ screenH/2 - fichaH/2 - playerSpeed)) == Color.BLACK && //left&top point
+							gameEngine.stage.stageMask.getPixel((int) (pX + screenW/2 - fichaH/2 - playerSpeed), (int) (pY+ screenH/2 + fichaH/2 + playerSpeed))== Color.BLACK //buttom&left
+					){
+				return true;
+			
+		} else if (gameEngine.stage.stageMask.getPixel((int) (pX + screenW/2 - fichaW/2 - playerSpeed), (int) (pY+ screenH/2 - fichaH/2 - playerSpeed)) == Color.BLACK && 	//left&top point){
+				gameEngine.stage.stageMask.getPixel((int) (pX + screenW/2 + fichaW/2 + playerSpeed), (int) (pY+ screenH/2 - fichaH/2 - playerSpeed))== Color.BLACK){ 	//right&top point
+				return true;
+			
+		}else if (gameEngine.stage.stageMask.getPixel((int) (pX + screenW/2 - fichaW/2 - playerSpeed), (int) (pY+ screenH/2 + fichaH/2 + playerSpeed)) == Color.BLACK && 	//buttom&left
+				gameEngine.stage.stageMask.getPixel((int) (pX + screenW/2 + fichaW/2 + playerSpeed), (int) (pY+ screenH/2 + fichaH/2 + playerSpeed))== Color.BLACK){ 					//buttom&right
+				return true;
+			
+		}else{
+			Log.i("log","color Blanco");
+			return false;
+		}
+		
 	}
 	
 	public boolean isAlive(){
@@ -135,6 +190,22 @@ public class Fichas extends SurfaceView{
 	
 	public void kill(){
 		alive = false;
+	}
+	
+	public void setpX(float x){
+		pX = x;
+	}
+	
+	public float getpX(){
+		return pX;
+	}
+	
+	public void setpY(float y){
+		pY = y;
+	}
+	
+	public float getpY(){
+		return pY;
 	}
 
 }

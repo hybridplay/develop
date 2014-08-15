@@ -2,13 +2,10 @@ package com.hybridplay.buildsomething;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.SurfaceView;
-
-import com.hybridplay.app.R;
 
 public class Robot extends SurfaceView{
 	
@@ -20,14 +17,22 @@ public class Robot extends SurfaceView{
 	public boolean hasChangedDir = false;
 	
 	public Bitmap robotImage;
-	public Rect robotRect;
+	public Rect sourceRect;
 	private int pwidth;
 	private int pNormalSpeed = 20;
 	
 	//public boolean hasFicha;
 	
 	public Rect srcRect;
-	public Rect dstRect;
+	public Rect destRect;
+	
+	private int frameNr;        // number of frames in animation
+	private int currentFrame;   // the current frame
+	private long frameTicker;   // the time of the last frame update
+	private int framePeriod;    // milliseconds between each frame (1000/fps)
+	  
+	public int spriteWidth;    // the width of the sprite to calculate the cut out rectangle
+	private int spriteHeight;   // the height of the sprite
 	
 	private float gravedad = .3f;
 	
@@ -46,59 +51,72 @@ public class Robot extends SurfaceView{
         super(context);
     }
 	
-	public Robot(Context context, int w, int h){
+	public Robot(Context context, Bitmap bitmap, int x, int y, int screenWidth, int screenHeight, int fps, int frameCount){
 		super(context);
-		robotImage = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
-		robotW = robotImage.getWidth();
-		rototH = robotImage.getHeight();
-		robotRect = new Rect(0, 0, robotW, rototH);
-		screenW = w;
-		screenH = h;
+		robotImage = bitmap;
+		//robotW = robotImage.getWidth();
+		//rototH = robotImage.getHeight();
+		//sourceRect = new Rect(0, 0, robotW, rototH);
+		screenW = screenWidth;
+		screenH = screenHeight;
+		
+		moveXall = false;
+		currentFrame = 0;
+		frameNr = frameCount;
+		spriteWidth = bitmap.getWidth() / frameCount;
+		spriteHeight = bitmap.getHeight();
+		sourceRect = new Rect(0, 0, spriteWidth, spriteHeight);
+		destRect = new Rect((int)pX, (int) pY, (int) (pX + spriteWidth *1.5), (int) (pY + spriteHeight *1.5));
+		framePeriod = 1000 / fps;
+		frameTicker = 0l;
+		
 		vY = 0;
 		vX = 0;
-		pX = screenW/10;
-		pY = screenH - (int)(rototH*1.5);//screenH - screenH/6;
-		moveXall = false;
+		pX = x;
+		pY = screenH - (int)(spriteHeight*1.5);//screenH - screenH/6;
 	}
 	
 	
 	
-	public void updateAvion(){
-		if(pX > 0 && pX < screenW){
-			
-		}
+	public void updateRobot(long gameTime){
+		if (gameTime > frameTicker + framePeriod) {
+	    	frameTicker = gameTime;
+	    	// increment the frame
+	    	currentFrame++;
+	    	if (currentFrame >= frameNr) {
+	    			currentFrame = 0;
+	    		}
+	    	}
+	    	// define the rectangle to cut out sprite
+	    	this.sourceRect.left = currentFrame * spriteWidth;
+	    	this.sourceRect.right = this.sourceRect.left + spriteWidth;
+	    	
 		
-//		if(pX < screenW/2){
-//			pX += vX;
-//		}else{
-//			moveXall = true;
-//		}
-//		
-		//Log.i("log pY ", "pY: " + pY);
-		
-//		if (pY >= 50){
+//		if (pY >= 50 && pY <= screenH-200){
 //			pY += gravedad + vY; 
 //			if(pY < 50) pY = 50;
-//			Log.i("log vY en > 50 ", "vY: " + vY);
+//			if (pY > screenH-200) pY = screenH-200;
+//			//Log.i("log vY en > 200 ", "vY: " + vY);
 //		}
-		
-		if (pY >= 50 && pY <= screenH-200){
-			pY += gravedad + vY; 
-			if(pY < 50) pY = 50;
-			if (pY > screenH-200) pY = screenH-200;
-			//Log.i("log vY en > 200 ", "vY: " + vY);
-		}
 			
 		
-		if (vX > 0) vX -= .1f; //para que se pare efecto rozamiento
-		if (vY >= -2.5 && vY <= 1) {
-			vY += .2f; //fuerza motor bajar efecto rozamiento
-			if (vY > 1) vY = 1;
-		}
+		//if (vX > 0) vX -= .1f; //para que se pare efecto rozamiento
+		
+//		if (vY >= -2.5 && vY <= 1) {
+//			vY += .2f; //fuerza motor bajar efecto rozamiento
+//			if (vY > 1) vY = 1;
+//		}
 	}
-	public void drawActor(Canvas canvas){
-		dstRect = new Rect((int)pX,(int)pY,(int)(pX+robotRect.width()*1.5),(int)(pY+robotRect.height()*1.5));
-		canvas.drawBitmap(robotImage,robotRect,dstRect,null);
+	public void drawRobot(Canvas canvas){
+		destRect.left = (int) pX;
+		destRect.top = (int) pY;
+		destRect.right = (int)pX+sourceRect.width();
+		destRect.bottom = (int)pY+sourceRect.height();
+		
+		//destRect = new Rect((int)pX,(int)pY,(int)(pX+sourceRect.width()*1.5),(int)(pY+sourceRect.height()*1.5));
+		//destRect = new Rect((int)pX, (int) pY, (int) (pX + spriteWidth *1.5), (int) (pY + spriteHeight *1.5));
+		//Log.i("log","spriteWidth " +spriteWidth );
+		canvas.drawBitmap(robotImage,sourceRect,destRect,null);
 		
 //		if(hasFicha){
 //			fichaDstRect = new Rect((int)pX+(srcRect.width()/2),(int)pY,(int)pX+(srcRect.width()/2)+fichaSrcRect.width(),(int)pY+fichaSrcRect.height());

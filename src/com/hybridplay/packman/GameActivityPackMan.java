@@ -22,11 +22,10 @@ import android.util.Log;
 import android.view.Display;
 
 import com.hybridplay.bluetooth.BluetoothThread;
-import com.hybridplay.bluetooth.MySensor;
 
 public class GameActivityPackMan extends Activity implements SensorEventListener{
 	final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8, CENTER = 0;
-	
+	public Boolean connected = false;
 	private GameSurfaceView gameView;
 	private SensorManager mySensorManager;
 	private Sensor myAccelerometer;
@@ -292,10 +291,10 @@ public class GameActivityPackMan extends Activity implements SensorEventListener
 			}
 			
 		}else if(gameEngine.getGameType().equals("Columpio")){ // ---------- Columpio
-			// pinza vertical boton hacia abajo - oscilaci—n - eje X
+			// pinza vertical boton hacia abajo - oscilaciï¿½n - eje X
 			
 		}else if(gameEngine.getGameType().equals("Rueda")){ // ---------- Rueda
-			// pinza vertical boton hacia abajo - oscilaci—n - eje X
+			// pinza vertical boton hacia abajo - oscilaciï¿½n - eje X
 			
 		}else if(gameEngine.getGameType().equals("SubeBaja")){ // ---------- SubeBaja
 			
@@ -309,6 +308,7 @@ public class GameActivityPackMan extends Activity implements SensorEventListener
 		Log.i(LOGGER_TAG, "Bluetooth connected");
 		//m_deviceStatus.setText("Connected");
 		//m_thread.sendBlinkCommand();
+		gameEngine.setGameState(0); // 0 = ready
 	}
 	
 	private void onBluetoothDisconnected() {

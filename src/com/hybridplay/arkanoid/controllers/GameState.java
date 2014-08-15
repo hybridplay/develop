@@ -18,6 +18,7 @@ public class GameState {
 	}
 	
 	RunningOrPaused runningOrPaused = RunningOrPaused.paused;
+	public Boolean connected = false;
 	private static final Random random = new Random();
 
 	private static final int MAX_LIVES = 5;
@@ -47,7 +48,8 @@ public class GameState {
 		paddle = new SpritePaddle(r.getDrawable(R.drawable.paddle), renderer, ball);
 		bricks = new ArrayList<SpriteBrick>();
 		Drawable brickImg = r.getDrawable(R.drawable.brick);
-		int paddingTop = 20;
+		int paddingTop = 40;
+		//int paddingSides = 60;
 		int paddingSides = 60;
 		int howManyBricks = (renderer.w-paddingSides) / brickImg.getIntrinsicWidth();
 		int brickOffsetX = (renderer.w - (howManyBricks * brickImg.getIntrinsicWidth())) / 2;
@@ -61,6 +63,7 @@ public class GameState {
 		}
 		wonText = r.getString(R.string.won_text);
 		diedText = r.getString(R.string.died_text);
+		
 	}
 	
 	public boolean isRunning() {

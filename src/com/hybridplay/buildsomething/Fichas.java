@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.SurfaceView;
 
 import com.hybridplay.app.R;
@@ -23,7 +22,7 @@ public class Fichas extends SurfaceView{
 	
 	public int screenW, screenH;
 	private int width, height;
-	private int vY;
+	private float vY;
 	public boolean alive;
 	
 	public Fichas(Context context) {
@@ -35,7 +34,7 @@ public class Fichas extends SurfaceView{
 		this.gameEngine = gameEngine;
 		screenW = w;
 		screenH = h;
-		vY = 5;
+		vY = 3f;
 		width = 70;
 		height = 80;
 		reloadFicha();
@@ -82,11 +81,13 @@ public class Fichas extends SurfaceView{
 				break;
 		}
 		fichaSrcRect = new Rect(0,0,ficha.getWidth(),ficha.getHeight());
+		fichaDstRect = new Rect((int)pX,(int)pY,(int)pX+(fichaSrcRect.width() *2),(int)pY+(fichaSrcRect.height()*2));
 	}
 	
 	public void updateFicha(){
 		if(pY < screenH + height){
 			pY += vY;
+			if (vY < 10) vY += .01f; //aumento progresivo de la velocidad hasta un limite
 			//Log.i("log fichas pX" , "pX: " + pX);
 			checkCollision(fichaSrcRect);
 		}else{
@@ -97,16 +98,23 @@ public class Fichas extends SurfaceView{
 	//check if trash touch kid
 	private void checkCollision(Rect rect){
 		
-		if (gameEngine.robot.dstRect.intersect(fichaDstRect)){
+		if (gameEngine.robot.destRect.intersect(fichaDstRect)){
 			//Log.i("log", "colision");
 			reloadFicha();
 			gameEngine.playerScore++;
+			if (gameEngine.playerScore >= 20){
+				gameEngine.gameState = 3; //won = 3
+			}
 		}
 		
 	}
 	
 	public void drawFichas(Canvas canvas){
-		fichaDstRect = new Rect((int)pX,(int)pY,(int)pX+(fichaSrcRect.width() *2),(int)pY+(fichaSrcRect.height()*2));
+		fichaDstRect.left = (int) pX;
+		fichaDstRect.top = (int) pY;
+		fichaDstRect.right = (int)pX+fichaSrcRect.width();
+		fichaDstRect.bottom = (int)pY+fichaSrcRect.height();
+		//fichaDstRect = new Rect((int)pX,(int)pY,(int)pX+(fichaSrcRect.width() *2),(int)pY+(fichaSrcRect.height()*2));
 		canvas.drawBitmap(ficha,fichaSrcRect,fichaDstRect,null);
 	}
 	

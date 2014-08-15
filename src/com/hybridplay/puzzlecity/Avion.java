@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.SurfaceView;
 
 import com.hybridplay.app.R;
@@ -47,6 +46,7 @@ public class Avion extends SurfaceView{
 		pX = screenW/10;
 		pY = screenH - (avionH*2);//screenH - screenH/6;
 		moveXall = false;
+		dstRect = new Rect((int)pX,(int)pY,(int)pX+avionRect.width(),(int)pY+avionRect.height());
 	}
 	
 	
@@ -81,7 +81,7 @@ public class Avion extends SurfaceView{
 		}
 	}
 	public void drawAvion(Canvas canvas){
-		dstRect = new Rect((int)pX,(int)pY,(int)pX+avionRect.width(),(int)pY+avionRect.height());
+		dstRect.set((int)pX,(int)pY,(int)pX+avionRect.width(),(int)pY+avionRect.height());
 		canvas.drawBitmap(avion,avionRect,dstRect,null);
 		
 //		if(hasFicha){

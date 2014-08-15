@@ -2,8 +2,6 @@ package com.hybridplay.emptygame;
 
 import java.util.ArrayList;
 
-import android.util.Log;
-
 import com.hybridplay.bluetooth.MySensor;
 
 

@@ -86,10 +86,10 @@ public class BarView extends View {
         final float ir = mYOffset + valueIR * mScale;
         mSensorIR.update(ir);
         
-        mCanvas = mSensorX.draw(mCanvas, paint, mColorX, 20, 0);
-        mCanvas = mSensorY.draw(mCanvas, paint, mColorY, 70, 0);
-        mCanvas = mSensorZ.draw(mCanvas, paint, mColorZ, 120, 0);
-        mCanvas = mSensorIR.draw(mCanvas, paint, mColorIR, 170, 0);
+        mCanvas = mSensorX.draw(mCanvas, paint, mColorX, 120, 0);
+        mCanvas = mSensorY.draw(mCanvas, paint, mColorY, 170, 0);
+        mCanvas = mSensorZ.draw(mCanvas, paint, mColorZ, 220, 0);
+        mCanvas = mSensorIR.draw(mCanvas, paint, mColorIR, 270, 0);
         
         
 		invalidate();

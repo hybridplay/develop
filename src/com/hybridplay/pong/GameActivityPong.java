@@ -100,9 +100,7 @@ public class GameActivityPong extends Activity implements SensorEventListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
-        
-        
+                
         setContentView(R.layout.pong_view);
         mPongView = (PongView) findViewById(R.id.pong);
         
@@ -303,7 +301,7 @@ public class GameActivityPong extends Activity implements SensorEventListener {
 				mPongView.movePaddle(0);
 			}
   		}else if(playWith.equals("Columpio")){
-  			// pinza vertical boton hacia abajo - oscilaci—n - eje X
+  			// pinza vertical boton hacia abajo - oscilaciï¿½n - eje X
   			
   		}else if(playWith.equals("SubeBaja")){
   			// pinza horizontal - dos direcciones - eje Z

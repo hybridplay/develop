@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.hybridplay.app.R;
+import com.hybridplay.fishing.Player;
 
 public class GameSurfaceView extends SurfaceView implements Runnable {
 	
@@ -33,10 +34,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	int movingTextX, movingTextY;   // for ready and gameover screen
 	
 	private GameEngine gameEngine;
-	private Kid thisKid;
+	//private Kid thisKid;
 	private float kidSize;
 	
-	public Bitmap kid_img, plataforma, columpio_fondo, nubes_fondo1, nubes_fondo2, nubes_fondo3;
+	public Bitmap playerImg, biciImg, columpio_fondo, nubes_fondo1, nubes_fondo2, nubes_fondo3;
 	public Bitmap bola_img, bomba_img, boom_img, cactus_img;
 	public Bitmap ficha1, ficha2, ficha3, ficha4, ficha5, ficha6, ficha7, ficha8, ficha9, ficha10;
 	public Bitmap cazamariposas_L, cazamariposas_R;
@@ -57,7 +58,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private Rect srcRect;
 	public Rect dstRect;
 	public Rect[] srcRobot = new Rect[8];
-	public Rect plataformaRect, nubeRect, pDst;
+	//public Rect plataformaRect, nubeRect, pDst;
+	private Rect biciFinalRect;
 	
 	private Rect src, dst, srcConnecting, dstConnecting;
 	
@@ -69,8 +71,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	private boolean isPlayOn;
 
-	private float screenWidth;
-	private float screenHeight;
+	private int screenWidth;
+	private int screenHeight;
 	private float sentenceWidth, drawTextStartingX;
 
 	public int counterForSprite=0;
@@ -86,7 +88,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		super(context);
 		
 		this.gameEngine = gameEngine;
-		this.thisKid = gameEngine.kid;
+		//this.thisKid = gameEngine.kid;
 		
 		mContext = context;
 		
@@ -102,12 +104,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		nube = new Nube(context,(int)screenWidth,(int)screenHeight);
 		obj = new Objetos(context,(int)screenWidth,(int)screenHeight);
-		robot = new Robot(context,(int)screenWidth,(int)screenHeight);
-		fichas = new Fichas(context, gameEngine, (int)screenWidth,(int)screenHeight);
+		//robot = new Robot(context,(int)screenWidth,(int)screenHeight);
+		robot = new Robot(context, playerImg, (int)screenWidth/10,200, screenWidth,screenHeight, 10, 5);
+		fichas = new Fichas(context, gameEngine, screenWidth,screenHeight);
 		
 		xFondo = 0;
 		
-		gameEngine.nube = nube;
+		//gameEngine.nube = nube;
 		gameEngine.obj = obj;
 		gameEngine.robot = robot;
 		gameEngine.fichas = fichas;
@@ -119,7 +122,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	private void initBitmap(){
 		// KID
-		kid_img = BitmapFactory.decodeResource(getResources(), R.drawable.kidorange);
+		//PLAYER
+		playerImg = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
+		biciImg = BitmapFactory.decodeResource(getResources(), R.drawable.bicifinal);
+				
 //		plataforma = BitmapFactory.decodeResource(getResources(), R.drawable.plataforma);
 //		kid_img = BitmapFactory.decodeResource(getResources(), R.drawable.buzo);
 		// OBJECTS
@@ -129,17 +135,17 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 //		cactus_img = BitmapFactory.decodeResource(getResources(), R.drawable.cactus);
 		//avionBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.avion);
 				
-		// FICHAS
-		ficha1 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza1);
-		ficha2 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza2);
-		ficha3 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza3);
-		ficha4 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza4);
-		ficha5 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza5);
-		ficha6 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza6);
-		ficha7 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza7);
-		ficha8 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza8);
-		ficha9 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza9);
-		ficha10 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza10);
+//		// FICHAS
+//		ficha1 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza1);
+//		ficha2 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza2);
+//		ficha3 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza3);
+//		ficha4 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza4);
+//		ficha5 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza5);
+//		ficha6 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza6);
+//		ficha7 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza7);
+//		ficha8 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza8);
+//		ficha9 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza9);
+//		ficha10 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza10);
 		// RAQUETAS
 //		cazamariposas_L = BitmapFactory.decodeResource(getResources(), R.drawable.cazamariposas_izq);
 //		cazamariposas_R = BitmapFactory.decodeResource(getResources(), R.drawable.cazamariposas_der);
@@ -212,6 +218,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		dst = new Rect(0, 0, (int)screenWidth, (int)screenHeight);
 		
+		biciFinalRect = new Rect(0, 0, biciImg.getWidth(), biciImg.getHeight());
 		srcConnecting = new Rect(0, 0, connecting.getWidth(), connecting.getHeight() );
 		dstConnecting = new Rect((int) screenWidth/2 - connecting.getWidth()/2,(int) screenHeight/2-connecting.getHeight()/2,(int) screenWidth/2 + connecting.getWidth()/2,(int) screenHeight/2+ connecting.getHeight()/2 );
 		
@@ -231,6 +238,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			}
 			if (gameEngine.getGameState() == RUNNING)  updateRunning(canvas);
 			if (gameEngine.getGameState() == GAMEOVER) updateGameOver(canvas);
+			if (gameEngine.getGameState() == WON)		updateWon(canvas);
 		}
 	}
 	
@@ -409,7 +417,60 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		}
 	}
 
+	private void updateWon(Canvas canvas){
+		try {
+			canvas = surfaceHolder.lockCanvas();
+			if (canvas == null) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				surfaceHolder = getHolder();
+			} else {
 
+				synchronized (surfaceHolder) {
+					isRunning = false;
+					canvas.drawRGB(20, 30, 75);
+					drawStage(canvas);
+					drawRobot(canvas);
+					drawTrash(canvas);
+					drawScore(canvas);
+					
+					canvas.drawBitmap(biciImg,biciFinalRect,dstConnecting,null);
+					
+					//measure the text then draw it at center
+					sentenceWidth = paint2.measureText(textReady);
+				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+					canvas.drawText(textCongrats, drawTextStartingX , screenHeight/2, paint2);
+					
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+				}
+			}
+		} finally {
+			// in case of an exception the surface is not left in
+			// an inconsistent state
+			if (canvas != null) {
+				surfaceHolder.unlockCanvasAndPost(canvas);
+			}
+		}
+		
+		try {
+			Thread.sleep(4000);
+			((Activity) mContext).finish(); //terminamos el juego
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 	private void updateGameOver(Canvas canvas){
 		try {
 			canvas = surfaceHolder.lockCanvas();
@@ -518,35 +579,35 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	// draw kid 
 	private void drawRobot(Canvas canvas) {
-		srcRect = srcRobot[0];
+		//srcRect = srcRobot[0];
 		
 		if(gameEngine.getGameType().equals("Columpio")){
-			Rect dst;
-			pDst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY()+(int)kidSize,(int)thisKid.getpX()+167,(int)thisKid.getpY()+(int)kidSize+26);
-			canvas.drawBitmap(plataforma,plataformaRect,pDst,null);
-
-			// draw raquetas
-			Rect raquetaSrc = new Rect(0,0,114,97);
-			Rect raquetaLdst = new Rect((int)gameEngine.minPX,(int)gameEngine.minPYL,(int)gameEngine.minPX+114,(int)gameEngine.minPYL+97);
-			Rect raquetaRdst = new Rect((int)gameEngine.maxPX,(int)gameEngine.minPYR,(int)gameEngine.maxPX+114,(int)gameEngine.minPYR+97);
-
-			canvas.drawBitmap(cazamariposas_L,raquetaSrc,raquetaLdst,null);
-			canvas.drawBitmap(cazamariposas_R,raquetaSrc,raquetaRdst,null);
-			
-			dst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY(), (int)thisKid.getpX()+ (int) kidSize, (int)thisKid.getpY() + (int) kidSize);
-			canvas.drawBitmap(kid_img, srcRect, dst, null);
+//			Rect dst;
+//			pDst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY()+(int)kidSize,(int)thisKid.getpX()+167,(int)thisKid.getpY()+(int)kidSize+26);
+//			canvas.drawBitmap(plataforma,plataformaRect,pDst,null);
+//
+//			// draw raquetas
+//			Rect raquetaSrc = new Rect(0,0,114,97);
+//			Rect raquetaLdst = new Rect((int)gameEngine.minPX,(int)gameEngine.minPYL,(int)gameEngine.minPX+114,(int)gameEngine.minPYL+97);
+//			Rect raquetaRdst = new Rect((int)gameEngine.maxPX,(int)gameEngine.minPYR,(int)gameEngine.maxPX+114,(int)gameEngine.minPYR+97);
+//
+//			canvas.drawBitmap(cazamariposas_L,raquetaSrc,raquetaLdst,null);
+//			canvas.drawBitmap(cazamariposas_R,raquetaSrc,raquetaRdst,null);
+//			
+//			dst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY(), (int)thisKid.getpX()+ (int) kidSize, (int)thisKid.getpY() + (int) kidSize);
+//			canvas.drawBitmap(kid_img, srcRect, dst, null);
 		}else if(gameEngine.getGameType().equals("Tobogan")){
-			Rect dst;
-			pDst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY()+(int)kidSize/2,(int)thisKid.getpX()+225,(int)thisKid.getpY() + (int)kidSize/2 + 143);
-			canvas.drawBitmap(nube1,nubeRect,pDst,null);
-			
-			dst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY(), (int)thisKid.getpX()+ (int) kidSize, (int)thisKid.getpY() + (int) kidSize);
-			canvas.drawBitmap(kid_img, srcRect, dst, null);
+//			Rect dst;
+//			pDst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY()+(int)kidSize/2,(int)thisKid.getpX()+225,(int)thisKid.getpY() + (int)kidSize/2 + 143);
+//			canvas.drawBitmap(nube1,nubeRect,pDst,null);
+//			
+//			dst = new Rect((int)thisKid.getpX(), (int)thisKid.getpY(), (int)thisKid.getpX()+ (int) kidSize, (int)thisKid.getpY() + (int) kidSize);
+//			canvas.drawBitmap(kid_img, srcRect, dst, null);
 		}else if(gameEngine.getGameType().equals("SubeBaja") || gameEngine.getGameType().equals("Balancin") || gameEngine.getGameType().equals("Caballito")){
 //			Rect dst;
 //			dst = new Rect((int)avion.getpX(), (int)thisKid.getpY(), (int)thisKid.getpX()+ (int) kidSize, (int)thisKid.getpY() + (int) kidSize);
 //			canvas.drawBitmap(avionBitmap, avionRect, dst, null);
-			robot.drawActor(canvas);
+			robot.drawRobot(canvas);
 		}
 		
 	}

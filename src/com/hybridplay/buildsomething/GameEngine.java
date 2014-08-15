@@ -1,7 +1,5 @@
 package com.hybridplay.buildsomething;
 
-import android.util.Log;
-
 import com.hybridplay.bluetooth.MySensor;
 
 public class GameEngine implements Runnable {
@@ -95,13 +93,13 @@ public class GameEngine implements Runnable {
 	//update
 	public void update(){
 		updateTimer();
-		updateKid();
+		updateRobot();
 		updateNubes();
 //		updateAvion();
 //		updateFichas();
 	}
 	
-	public void updateKid(){
+	public void updateRobot(){
 		
 		pX = (int)robot.getpX();
 		pY = (int)robot.getpY();
@@ -119,11 +117,13 @@ public class GameEngine implements Runnable {
 				//robot.setDir(RIGHT);
 				//Log.i("log robot.getPwidth()", Integer.toString(robot.robotW));
 				
-				if (pX + robot.robotW < width ) {
+				if (pX + robot.spriteWidth < width ) {
 					
 					pX = pX + robot.getpNormalSpeed();
 					//moveAll = false;
 				}
+				
+				
 			}else if (mSensorZ.isFireMinActive()) { //a la izquierda
 				//robot.setDir(LEFT);
 				if (pX > 0) {
@@ -131,10 +131,12 @@ public class GameEngine implements Runnable {
 				
 				}
 			}
+			
 			// update kid position
 			robot.setpX(pX);
 			robot.setpY(pY);
 			
+			robot.updateRobot(System.currentTimeMillis()); //para animar la imagen
 			//avion.updateAvion();
 			
 			fichas.updateFicha();
@@ -224,6 +226,9 @@ public class GameEngine implements Runnable {
 			playerScore++;   // increase score
 			obj.reloadObjeto();
 		}
+		if (playerScore == 10){
+			gameState = WON;
+		}
 	}
 	
 	//check if kid jump on nube with ficha
@@ -249,6 +254,10 @@ public class GameEngine implements Runnable {
 		toboganSemaphore = true;
 		jumpSemaphore = true;
 		actualTime = System.currentTimeMillis();
+		
+		if (playerScore == 10){
+			gameState = WON;
+		}
 
 	}
 
@@ -270,7 +279,8 @@ public class GameEngine implements Runnable {
 		while (isRunning){
 			if (gameState == READY)    updateReady();
 			if (gameState == RUNNING)  updateRunning();
-			if (gameState == GAMEOVER) updateGameOver();		
+			if (gameState == GAMEOVER) updateGameOver();	
+			if (gameState == WON)		updateWon();
 		}
 	}
 	
@@ -314,6 +324,10 @@ public class GameEngine implements Runnable {
 			} catch (InterruptedException e) {
 			}
 		}
+	}
+	
+	private void updateWon(){
+		pause();
 	}
 	
 	private void updateGameOver(){

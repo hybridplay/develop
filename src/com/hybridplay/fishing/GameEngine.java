@@ -28,11 +28,11 @@ public class GameEngine implements Runnable {
 	public int playerScore;
 	int timer; int timerCount;
 	int lives;
-	Kid kid;
-	Nube nube;
-	Objetos obj;
-	Fishman fishman;
-	Fichas fichas;
+	//Kid kid;
+	//Nube nube;
+	//Objetos obj;
+	public Player player;
+	Objects object;
 	
 	public int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
 	int powerMode;		// for count down of power speed
@@ -67,8 +67,8 @@ public class GameEngine implements Runnable {
 		this.width = width;
 		this.height = height;
 		
-		kid = new Kid(width/2, height/2, 128, 128);  // new kid 256 es el tama�o del sprite que tendra
-		lives = kid.getpLives();
+		//kid = new Kid(width/2, height/2, 128, 128);  // new kid 256 es el tama�o del sprite que tendra
+		//lives = kid.getpLives();
 
 		playerScore = 0;
 		timer = 120; 
@@ -92,52 +92,50 @@ public class GameEngine implements Runnable {
 	//update
 	public void update(){
 		updateTimer();
-		updateFishman();
-		updateNubes();
+		updatePlayer();
+		//updateNubes();
 //		updateAvion();
 //		updateFichas();
 	}
 	
-	public void updateFishman(){
+	public void updatePlayer(){
 		
-		pX = (int)kid.getpX();
-		pY = (int)kid.getpY();
-		int limitW = (int) width / 4;
-		int limitH = (int) height / 4;
+//		pX = (int)kid.getpX();
+//		pY = (int)kid.getpY();
+//		int limitW = (int) width / 4;
+//		int limitH = (int) height / 4;
 		
 		if(getGameType().equals("Balancin")){ // ---------------- Balancin
 			
 			// pinza horizontal - dos direcciones - eje Z
 			
 			if(mSensorZ.isFireMaxActive()){
-				if(fishman.vX < 4) fishman.vX += 1.4f; //se mueve a la derecha
-				if(fishman.vY >= -2.5) {
-					fishman.vY -= 2.5; //se eleva
-					if(fishman.vY < -2.5) fishman.vY = (float) -2.5;
+				if(player.vX < 4f) player.vX += 1.5f; //se mueve a la derecha
+				
+				if(player.vY < 4f) {
+					player.vY += .3f; //se eleva;
 				}
 			}
 			
+			player.updatePlayer(System.currentTimeMillis()); //para animar la imagen
 			
-			fishman.updateFishman();
-			
-			fichas.updateFicha();
+			object.updateObject();
 			
 		}else if(getGameType().equals("Caballito")){ // ---------- Caballito
 			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-					
 			
 			if(mSensorX.isFireMaxActive()){
-				if(fishman.vX < 4) fishman.vX += 1.4f; //se mueve a la derecha
-				if(fishman.vY >= -2.5) {
-					fishman.vY -= 2.5; //se eleva
-					if(fishman.vY < -2.5) fishman.vY = (float) -2.5;
+				if(player.vX < 4f) player.vX += 1.5f; //se mueve a la derecha
+				
+				if(player.vY < 4f) {
+					player.vY += .3f; //se eleva;
 				}
 			}
 			
 			
-			fishman.updateFishman();
+			player.updatePlayer(System.currentTimeMillis());;
 			
-			fichas.updateFicha();
+			object.updateObject();
 								
 		}else if(getGameType().equals("Columpio")){ // ---------- Columpio
 			
@@ -150,16 +148,16 @@ public class GameEngine implements Runnable {
 			// pinza horizontal - dos direcciones - eje Z
 			
 			if(mSensorZ.isFireMaxActive()){
-				if(fishman.vX < 4) fishman.vX += 1.4f; //se mueve a la derecha
-				if(fishman.vY >= -2.5) {
-					fishman.vY -= 2.5; //se eleva
-					if(fishman.vY < -2.5) fishman.vY = (float) -2.5;
+				if(player.vX < 4f) player.vX += 1.5f; //se mueve a la derecha
+				
+				if(player.vY < 4f) {
+					player.vY += .3f; //se eleva;
 				}
 			}
 			
-			fishman.updateFishman();
+			player.updatePlayer(System.currentTimeMillis());
 			
-			fichas.updateFicha();
+			object.updateObject();
 			
 		}else if(getGameType().equals("Tobogan")){ // ---------- Tobogan
 			
@@ -167,28 +165,28 @@ public class GameEngine implements Runnable {
 		
 	}
 	
-	//update trash movements and locations
-	public void updateNubes(){
-		
-		if(getGameType().equals("Columpio")){
-			checkObjetosOnFicha(obj.pX, obj.pY);
-		}else if(getGameType().equals("Tobogan")){
-			checkNubeOnFicha(nube.pX, nube.pY);
-			jump();
-		}
-
-	}
+//	//update trash movements and locations
+//	public void updateNubes(){
+//		
+//		if(getGameType().equals("Columpio")){
+//			checkObjetosOnFicha(obj.pX, obj.pY);
+//		}else if(getGameType().equals("Tobogan")){
+//			checkNubeOnFicha(nube.pX, nube.pY);
+//			jump();
+//		}
+//
+//	}
 	
 	private void jump(){
 		if(toboganJump == true){
-			int pX = (int)kid.getpX();
-			int pY = (int)kid.getpY();
+//			int pX = (int)kid.getpX();
+//			int pY = (int)kid.getpY();
 			
 			pX -= kVX;
 			pY += kVY;
 			
-			kid.setpX(pX);
-	        kid.setpY(pY);
+//			kid.setpX(pX);
+//	        kid.setpY(pY);
 	        
 	        if(pY > this.height + 10){
 	        	//Log.d("PuzzleCity","WE LOSE");
@@ -201,41 +199,41 @@ public class GameEngine implements Runnable {
 		}
 	}
 	
-	//check if kid jump on nube with ficha
-	private void checkObjetosOnFicha(float gX, float gY){
-		int radius = (int) width / 6 ; // 190 con pantalla de 800 
-
-		if (Math.abs(minPX - gX) + Math.abs(minPYL - gY) < radius || Math.abs(maxPX - gX) + Math.abs(minPYR - gY) < radius) { // kid touch ficha
-			playerScore++;   // increase score
-			obj.reloadObjeto();
-		}
-	}
+//	//check if kid jump on nube with ficha
+//	private void checkObjetosOnFicha(float gX, float gY){
+//		int radius = (int) width / 6 ; // 190 con pantalla de 800 
+//
+//		if (Math.abs(minPX - gX) + Math.abs(minPYL - gY) < radius || Math.abs(maxPX - gX) + Math.abs(minPYR - gY) < radius) { // kid touch ficha
+//			playerScore++;   // increase score
+//			obj.reloadObjeto();
+//		}
+//	}
 	
-	//check if kid jump on nube with ficha
-	private void checkNubeOnFicha(float gX, float gY){
-		int pX = (int)kid.getpX();
-		int pY = (int)kid.getpY();
-		int radius = (int) width / 4 ; // 190 con pantalla de 800 
-		
-		if (Math.abs(pX - gX) + Math.abs(pY - gY) < radius) { // kid touch ficha
-			if(nube.hasFicha){
-				eatFicha();
-			}
-		}
-	}
+//	//check if kid jump on nube with ficha
+//	private void checkNubeOnFicha(float gX, float gY){
+////		int pX = (int)kid.getpX();
+////		int pY = (int)kid.getpY();
+//		int radius = (int) width / 4 ; // 190 con pantalla de 800 
+//		
+//		if (Math.abs(pX - gX) + Math.abs(pY - gY) < radius) { // kid touch ficha
+//			if(nube.hasFicha){
+//				eatFicha();
+//			}
+//		}
+//	}
 	
-	// eat ficha ==> score
-	private void eatFicha() {
-		//Log.d("PuzzleCity","WE WIN");
-		nube.reloadNube();
-		toboganJump = false;
-		playerScore++;   // increase score
-		toboganState = tRESTART;
-		toboganSemaphore = true;
-		jumpSemaphore = true;
-		actualTime = System.currentTimeMillis();
-
-	}
+//	// eat ficha ==> score
+//	private void eatFicha() {
+//		//Log.d("PuzzleCity","WE WIN");
+//		nube.reloadNube();
+//		toboganJump = false;
+//		playerScore++;   // increase score
+//		toboganState = tRESTART;
+//		toboganSemaphore = true;
+//		jumpSemaphore = true;
+//		actualTime = System.currentTimeMillis();
+//
+//	}
 
 	// count down timer once per MAX_FPS
 	private void updateTimer(){
@@ -377,13 +375,13 @@ public class GameEngine implements Runnable {
 		this.timer = timer;
 	}
 	
-	public Kid getKid() {
-		return kid;
-	}
-
-	public void setKid(Kid kid) {
-		this.kid = kid;
-	}
+//	public Kid getKid() {
+//		return kid;
+//	}
+//
+//	public void setKid(Kid kid) {
+//		this.kid = kid;
+//	}
 	
 	public String getGameType() {
 		return gameType;

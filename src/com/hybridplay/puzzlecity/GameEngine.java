@@ -1,5 +1,7 @@
 package com.hybridplay.puzzlecity;
 
+import java.util.ArrayList;
+
 import com.hybridplay.bluetooth.MySensor;
 
 public class GameEngine implements Runnable {
@@ -28,11 +30,13 @@ public class GameEngine implements Runnable {
 	public int playerScore;
 	int timer; int timerCount;
 	int lives;
-	Kid kid;
+	public Player player;
+	Stage stage;
 	Nube nube;
 	Objetos obj;
 	Avion avion;
 	Fichas fichas;
+	public ArrayList<Fichas> fichasArray;
 	
 	public int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
 	int powerMode;		// for count down of power speed
@@ -67,8 +71,9 @@ public class GameEngine implements Runnable {
 		this.width = width;
 		this.height = height;
 		
-		kid = new Kid(width/2, height/2, 128, 128);  // new kid 256 es el tama�o del sprite que tendra
-		lives = kid.getpLives();
+		//player = new Player(width/2, height/2);  // new kid 256 es el tama�o del sprite que tendra
+		//stage = new Stage(contex, stageImg, 0, 0);
+		//lives = player.getpLives();
 
 		playerScore = 0;
 		timer = 120; 
@@ -92,110 +97,159 @@ public class GameEngine implements Runnable {
 	//update
 	public void update(){
 		updateTimer();
-		updateKid();
+		updatePlayer();
 		updateNubes();
 //		updateAvion();
 //		updateFichas();
 	}
 	
-	public void updateKid(){
+	public void updatePlayer(){
 		
-		pX = (int)kid.getpX();
-		pY = (int)kid.getpY();
+		pX = (int)player.getpX();
+		pY = (int)player.getpY();
 		int limitW = (int) width / 4;
 		int limitH = (int) height / 4;
 		
 		if(getGameType().equals("Balancin")){ // ---------------- Balancin
 			// pinza horizontal - cuatro direcciones - ejes Z Y
-			if (mSensorY.isFireMinActive()) {
-				kid.setDir(DOWN);
-				if (pY + kid.getPheight() < height - limitH){
-					pY = pY + kid.getpNormalSpeed();
-					moveAll = false;
-				}else{
-					moveAll = true;
+				if (mSensorY.isFireMinActive()) {
+					player.setDir(DOWN);
+					player.setCurrentAnimation(0);
+					if (stage.canMove(DOWN, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+						stage.setpY(stage.getpY()+player.getpNormalSpeed());
+						for (int i = 0; i < fichasArray.size(); i++) {
+							if (fichasArray.get(i).isAlive()){
+								fichasArray.get(i).setpY(fichasArray.get(i).getpY()-player.getpNormalSpeed());
+								//fichas.setpY(fichas.getpY()-player.getpNormalSpeed());
+							}
+						}
+					}
+				} else if (mSensorY.isFireMaxActive()) {
+					player.setDir(UP);
+					player.setCurrentAnimation(1);
+					if (stage.canMove(UP,(int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+						stage.setpY(stage.getpY()-player.getpNormalSpeed());
+						for (int i = 0; i < fichasArray.size(); i++) {
+							if (fichasArray.get(i).isAlive()){
+								fichasArray.get(i).setpY(fichasArray.get(i).getpY()+player.getpNormalSpeed());
+								//fichas.setpY(fichas.getpY()+player.getpNormalSpeed());
+							}
+						}
+					}
 				}
-			}else if (mSensorY.isFireMaxActive()) {
-				kid.setDir(UP);
-				if (pY > limitH) {
-					pY = pY - kid.getpNormalSpeed();
-					moveAll = false;
-				}else{
-					moveAll = true;
+				
+				if (mSensorZ.isFireMaxActive()) {
+					player.setDir(RIGHT);
+					player.setCurrentAnimation(2);
+					if (stage.canMove(RIGHT, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+						stage.setpX(stage.getpX()+player.getpNormalSpeed());
+						for (int i = 0; i < fichasArray.size(); i++) {
+							if (fichasArray.get(i).isAlive()){
+								fichasArray.get(i).setpX(fichasArray.get(i).getpX()-player.getpNormalSpeed());
+								//fichas.setpX(fichas.getpX()-player.getpNormalSpeed());
+							}
+						}
+					}
+				} else if (mSensorZ.isFireMinActive()) {
+					player.setDir(LEFT);
+					player.setCurrentAnimation(3);
+					if (stage.canMove(LEFT, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+						stage.setpX(stage.getpX()-player.getpNormalSpeed());
+						for (int i = 0; i < fichasArray.size(); i++) {
+							if (fichasArray.get(i).isAlive()){
+								fichasArray.get(i).setpX(fichasArray.get(i).getpX()+player.getpNormalSpeed());
+								//fichas.setpX(fichas.getpX()+player.getpNormalSpeed());
+							}
+						}
+					}
+				}
+			
+				if (stage.checkExit()){
+					gameState = WON;
+				}
+				 
+			player.updatePlayer(System.currentTimeMillis());
+			
+			for (int i = 0; i < fichasArray.size(); i++) {
+				if (fichasArray.get(i).isAlive()){
+					fichasArray.get(i).updateFicha();
 				}
 			}
 			
-			if (mSensorZ.isFireMaxActive()) {
-				kid.setDir(RIGHT);
-				if (pX + kid.getPwidth() < width - limitW) {
-					pX = pX + kid.getpNormalSpeed();
-					moveAll = false;
-				}else{
-					//movemos el resto
-					moveAll = true;
-				}
-			}else if (mSensorZ.isFireMinActive()) {
-				kid.setDir(LEFT);
-				if (pX > limitW) {
-					pX = pX - kid.getpNormalSpeed();
-					moveAll = false;
-				}else{
-					moveAll = true;
-				}
-				
-			}
-			// update kid position
-			kid.setpX(pX);
-			kid.setpY(pY);
+			
 		}else if(getGameType().equals("Caballito")){ // ---------- Caballito
+			
 			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
 			if (mSensorY.isFireMinActive()) {
-				kid.setDir(DOWN);
-				if (pY + kid.getPheight() < height - limitH){
-					pY = pY + kid.getpNormalSpeed();
-					moveAll = false;
-				}else{
-					moveAll = true;
+				player.setDir(DOWN);
+				player.setCurrentAnimation(0);
+				if (stage.canMove(DOWN, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+					stage.setpY(stage.getpY()+player.getpNormalSpeed());
+					for (int i = 0; i < fichasArray.size(); i++) {
+						if (fichasArray.get(i).isAlive()){
+							fichasArray.get(i).setpY(fichasArray.get(i).getpY()-player.getpNormalSpeed());
+							//fichas.setpY(fichas.getpY()-player.getpNormalSpeed());
+						}
+					}
 				}
 			}else if (mSensorY.isFireMaxActive()) {
-				kid.setDir(UP);
-				if (pY > limitH) {
-					pY = pY - kid.getpNormalSpeed();
-					moveAll = false;
-				}else{
-					moveAll = true;
+				player.setDir(UP);
+				player.setCurrentAnimation(1);
+				if (stage.canMove(UP,(int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+					stage.setpY(stage.getpY()-player.getpNormalSpeed());
+					for (int i = 0; i < fichasArray.size(); i++) {
+						if (fichasArray.get(i).isAlive()){
+							fichasArray.get(i).setpY(fichasArray.get(i).getpY()+player.getpNormalSpeed());
+							//fichas.setpY(fichas.getpY()+player.getpNormalSpeed());
+						}
+					}
 				}
 			}
 			
 			if (mSensorX.isFireMaxActive()) {
-				kid.setDir(RIGHT);
-				if (pX + kid.getPwidth() < width - limitW) {
-					pX = pX + kid.getpNormalSpeed();
-					moveAll = false;
-				}else{
-					//movemos el resto
-					moveAll = true;
+				player.setDir(RIGHT);
+				player.setCurrentAnimation(2);
+				if (stage.canMove(RIGHT, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+					stage.setpX(stage.getpX()+player.getpNormalSpeed());
+					for (int i = 0; i < fichasArray.size(); i++) {
+						if (fichasArray.get(i).isAlive()){
+							fichasArray.get(i).setpX(fichasArray.get(i).getpX()-player.getpNormalSpeed());
+							//fichas.setpX(fichas.getpX()-player.getpNormalSpeed());
+						}
+					}
 				}
 			}else if (mSensorX.isFireMinActive()) {
-				kid.setDir(LEFT);
-				if (pX > limitW) {
-					pX = pX - kid.getpNormalSpeed();
-					moveAll = false;
-				}else{
-					moveAll = true;
-				}
-				
+				player.setDir(LEFT);
+				player.setCurrentAnimation(3);
+				if (stage.canMove(LEFT, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+					stage.setpX(stage.getpX()-player.getpNormalSpeed());
+					for (int i = 0; i < fichasArray.size(); i++) {
+						if (fichasArray.get(i).isAlive()){
+							fichasArray.get(i).setpX(fichasArray.get(i).getpX()+player.getpNormalSpeed());
+							//fichas.setpX(fichas.getpX()+player.getpNormalSpeed());
+						}
+					}
+				}				
 			}
-			// update kid position
-			kid.setpX(pX);
-			kid.setpY(pY);
+		
+			if (stage.checkExit()){
+				gameState = WON;
+			}
+				 
+			player.updatePlayer(System.currentTimeMillis());
+			
+			for (int i = 0; i < fichasArray.size(); i++) {
+				if (fichasArray.get(i).isAlive()){
+					fichasArray.get(i).updateFicha();
+				}
+			}
 			
 		}else if(getGameType().equals("Columpio")){ // ---------- Columpio
 			// pinza vertical boton hacia abajo - oscilaci�n - eje X
 			mSensorX.addValueList(mSensorX.getActualValue());
 			
-			if(kid.hasChangedDir){
-				kid.hasChangedDir = false;
+			if(player.hasChangedDir){
+				player.hasChangedDir = false;
 				updateRaquetas = true;
 			}
 	
@@ -203,27 +257,27 @@ public class GameEngine implements Runnable {
 	        
 	        float rawPos = (float)(Math.PI * (1.0-(mSensorX.getMediumValue()/mSensorX.getMaxValue())) );
 	        
-	        kid.setAngle(rawPos);
+	        player.setAngle(rawPos);
 	
 	        // update kid position
-	        kid.setpX(this.width/2 - 60 - (float)Math.cos(Math.PI *kid.getAngle())*220);
-	        kid.setpY(this.height - 150 - (float)Math.abs(Math.cos(Math.PI *kid.getAngle()))*220);
+	        player.setpX(this.width/2 - 60 - (float)Math.cos(Math.PI *player.getAngle())*220);
+	        player.setpY(this.height - 150 - (float)Math.abs(Math.cos(Math.PI *player.getAngle()))*220);
 	        
-	        float flag = (float)Math.cos(Math.PI *kid.getAngle());
+	        float flag = (float)Math.cos(Math.PI *player.getAngle());
 	        // TODO - Corregir el if para el correcto posicionamiento de las raquetas
 	        if(flag < 0.0f){
-				kid.setDir(RIGHT);
+				player.setDir(RIGHT);
 			}else{
-				kid.setDir(LEFT);
+				player.setDir(LEFT);
 			}
 	        
 	        if(updateRaquetas){
-	        	if(kid.getDir() == LEFT){
-	        		minPX = kid.getpX();
-	        		minPYL = kid.getpY();
-	        	}else if(kid.getDir() == RIGHT){
-	        		maxPX = kid.getpX();
-	        		minPYR = kid.getpY();
+	        	if(player.getDir() == LEFT){
+	        		minPX = player.getpX();
+	        		minPYL = player.getpY();
+	        	}else if(player.getDir() == RIGHT){
+	        		maxPX = player.getpX();
+	        		minPYR = player.getpY();
 	        	}
 	        	updateRaquetas = false;
 	        }
@@ -247,41 +301,6 @@ public class GameEngine implements Runnable {
 			
 			fichas.updateFicha();
 			
-			
-//			if (mSensorZ.isFireMaxActive()) {
-//				kid.setDir(RIGHT);
-//				if (pX + kid.getPwidth() < width - limitW) {
-//					pX = pX + kid.getpNormalSpeed();
-//					moveAll = false;
-//					if (pY > limitH) {
-//						pY = pY - kid.getpNormalSpeed();
-//					}
-//				}else{
-//					if (pY + kid.getPheight() < height - limitH){
-//						pY = pY + kid.getpNormalSpeed();
-//					}
-//					//movemos el resto
-//					moveAll = true;
-//				}
-//			}else if (mSensorZ.isFireMinActive()) {
-//				kid.setDir(LEFT);
-//				if (pX > limitW) {
-//					pX = pX - kid.getpNormalSpeed();
-//					moveAll = false;
-//					if (pY > limitH) {
-//						pY = pY - kid.getpNormalSpeed();
-//					}
-//				}else{
-//					if (pY + kid.getPheight() < height - limitH){
-//						pY = pY + kid.getpNormalSpeed();
-//					}
-//					moveAll = true;
-//				}
-//				
-//			}
-			// update kid position
-			//kid.setpX(pX);
-			//kid.setpY(pY);
 		}else if(getGameType().equals("Tobogan")){ // ---------- Tobogan
 			// we use here only IR sensor
 			int limit = 300;
@@ -291,16 +310,16 @@ public class GameEngine implements Runnable {
 			if(mSensorIR.getActualValue() < limit && toboganSemaphore && toboganState == tRESTART){
 				toboganSemaphore = false;
 				toboganState = tOPEN;
-				kid.setpX(this.width - 400);
-		        kid.setpY(0);
+				player.setpX(this.width - 400);
+		        player.setpY(0);
 			}else if(toboganState == tOPEN && mSensorIR.getActualValue() > limit && !toboganSemaphore){
 				actualTime = System.currentTimeMillis();
 				toboganState = tWAIT;
 				toboganSemaphore = true;
 				jumpSemaphore = true;
 				// ni�o sentado a la espera de poder saltar
-				kid.setpX(this.width - 400);
-		        kid.setpY(0);
+				player.setpX(this.width - 400);
+		        player.setpY(0);
 			}
 			
 			if(toboganState == tWAIT && myTime > waitTime){
@@ -338,14 +357,14 @@ public class GameEngine implements Runnable {
 	
 	private void jump(){
 		if(toboganJump == true){
-			int pX = (int)kid.getpX();
-			int pY = (int)kid.getpY();
+			int pX = (int)player.getpX();
+			int pY = (int)player.getpY();
 			
 			pX -= kVX;
 			pY += kVY;
 			
-			kid.setpX(pX);
-	        kid.setpY(pY);
+			player.setpX(pX);
+	        player.setpY(pY);
 	        
 	        if(pY > this.height + 10){
 	        	//Log.d("PuzzleCity","WE LOSE");
@@ -370,8 +389,8 @@ public class GameEngine implements Runnable {
 	
 	//check if kid jump on nube with ficha
 	private void checkNubeOnFicha(float gX, float gY){
-		int pX = (int)kid.getpX();
-		int pY = (int)kid.getpY();
+		int pX = (int)player.getpX();
+		int pY = (int)player.getpY();
 		int radius = (int) width / 4 ; // 190 con pantalla de 800 
 		
 		if (Math.abs(pX - gX) + Math.abs(pY - gY) < radius) { // kid touch ficha
@@ -518,14 +537,6 @@ public class GameEngine implements Runnable {
 		this.playerScore = playerScore;
 	}
 
-	public int getLives() {
-		return lives;
-	}
-
-	public void setLives(int lives) {
-		this.lives = lives;
-	}
-
 	public int getTimer() {
 		return timer;
 	}
@@ -534,12 +545,12 @@ public class GameEngine implements Runnable {
 		this.timer = timer;
 	}
 	
-	public Kid getKid() {
-		return kid;
+	public Player getPlayer() {
+		return player;
 	}
 
-	public void setKid(Kid kid) {
-		this.kid = kid;
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 	
 	public String getGameType() {

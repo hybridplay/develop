@@ -3,7 +3,6 @@ package com.hybridplay.packman;
 import java.util.ArrayList;
 
 import com.hybridplay.bluetooth.MySensor;
-import com.hybridplay.spacekids.propeller.Stage;
 
 
 
@@ -23,7 +22,7 @@ public class GameEngine implements Runnable {
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	static final int RD = 9, LD = 10, RU = 5, LU = 6, RDU = 13, LDU = 14, RLD = 11, RLU = 7, RLUD = 15;
 	
-	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
+	private final static int 	CONNECTING = -1, READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
 	
 	// the game type (Balancin,Caballito,Columpio,Rueda,SubeBaja,Tobogan)
 	private String gameType;
@@ -88,7 +87,7 @@ public class GameEngine implements Runnable {
 		playerScore = 0;
 		timer = 120;
 		timerCount = 0;
-		gameState = 0;
+		gameState = -1;
 		
 		
         // create sensors for hybriplay
@@ -448,6 +447,7 @@ public class GameEngine implements Runnable {
 	
 	// loop through ready if gameState is READY
 	private void updateReady(){
+
 		beginTime = System.currentTimeMillis();
 
 		readyCountDown = 1L - timeDiff/1000;		
@@ -570,6 +570,10 @@ public class GameEngine implements Runnable {
 	
 	public int getGameState(){
 		return gameState;
+	}
+	
+	public void setGameState(int gameState ){
+		this.gameState = gameState;
 	}
 
 	public long getReadyCountDown(){
