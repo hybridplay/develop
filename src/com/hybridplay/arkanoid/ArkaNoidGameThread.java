@@ -19,7 +19,6 @@ public class ArkaNoidGameThread extends Thread {
 	private boolean resetSafe;
 
 	private long nextRender;
-	private final double PADDLE_SPEED = 4.0;
 	public final int RENDER_EVERY_MS = 30;
 	private final int SLEEP_FOR_MS = 10;
 
@@ -58,8 +57,8 @@ public class ArkaNoidGameThread extends Thread {
 					else if (gameState.isPaused()) reset();
 					if (canv != null){
 						renderer.render(canv);
-						gameState.ball.updateTrails();
-						gameState.paddle.updateTrails();
+						//gameState.ball.updateTrails();
+						//gameState.paddle.updateTrails();
 						nextRender = now + RENDER_EVERY_MS;
 					}
 				}

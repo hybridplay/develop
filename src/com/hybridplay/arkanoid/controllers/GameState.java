@@ -18,7 +18,7 @@ public class GameState {
 	}
 	
 	RunningOrPaused runningOrPaused = RunningOrPaused.paused;
-	public Boolean connected = false;
+	public Boolean connected = true;
 	private static final Random random = new Random();
 
 	private static final int MAX_LIVES = 5;

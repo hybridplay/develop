@@ -314,21 +314,21 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						// pinza horizontal - cuatro direcciones - ejes Z Y
 						x1 = borde; y1 = borde+(distancia/2); //izquierda
 						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
+						//gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
 
 						x1 = borde+(distancia/2); y1 = borde; //arriba
 						x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-						gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+						//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 
 					}else if(gameEngine.getGameType().equals("Caballito")){ // ---------- Caballito
 						// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
 						x1 = borde; y1 = borde+(distancia/2); //izquierda
 						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
+						//gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
 
 						x1 = borde+(distancia/2); y1 = borde; //arriba
 						x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-						gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+						//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 
 					}else if(gameEngine.getGameType().equals("Columpio")){ // ---------- Columpio
 						// pinza vertical boton hacia abajo - oscilaci�n
@@ -340,7 +340,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						// pinza horizontal - dos direcciones - eje Z
 						x1 = borde; y1 = borde+(distancia/2); //izquierda
 						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
+						//gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
 
 					}else if(gameEngine.getGameType().equals("Tobogan")){ // ---------- Tobogan
 						// we use here only IR sensor
@@ -401,21 +401,21 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						// pinza horizontal - cuatro direcciones - ejes Z Y
 						x1 = borde; y1 = borde+(distancia/2); //izquierda
 						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
+						//gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
 						
 						x1 = borde+(distancia/2); y1 = borde; //arriba
 						x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-						gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+						//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 						
 					}else if(gameEngine.getGameType().equals("Caballito")){ // ---------- Caballito
 						// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
 						x1 = borde; y1 = borde+(distancia/2); //izquierda
 						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
+						//gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
 						
 						x1 = borde+(distancia/2); y1 = borde; //arriba
 						x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-						gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+						//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 						
 					}else if(gameEngine.getGameType().equals("Columpio")){ // ---------- Columpio
 						// pinza vertical boton hacia abajo - oscilaci�n
@@ -427,7 +427,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						// pinza horizontal - dos direcciones - eje Z
 						x1 = borde; y1 = borde+(distancia/2); //izquierda
 						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
+						//gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
 						
 					}else if(gameEngine.getGameType().equals("Tobogan")){ // ---------- Tobogan
 						// we use here only IR sensor
@@ -489,21 +489,21 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						// pinza horizontal - cuatro direcciones - ejes Z Y
 						x1 = borde; y1 = borde+(distancia/2); //izquierda
 						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
+						//gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
 						
 						x1 = borde+(distancia/2); y1 = borde; //arriba
 						x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-						gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+						//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 						
 					}else if(gameEngine.getGameType().equals("Caballito")){ // ---------- Caballito
 						// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
 						x1 = borde; y1 = borde+(distancia/2); //izquierda
 						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
+						//gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
 						
 						x1 = borde+(distancia/2); y1 = borde; //arriba
 						x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-						gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+						//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 						
 					}else if(gameEngine.getGameType().equals("Columpio")){ // ---------- Columpio
 						// pinza vertical boton hacia abajo - oscilaci�n - eje X
@@ -515,7 +515,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						// pinza horizontal - dos direcciones - eje Z
 						x1 = borde; y1 = borde+(distancia/2); //izquierda
 						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
+						//gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
 						
 					}else if(gameEngine.getGameType().equals("Tobogan")){ // ---------- Tobogan
 						// we use here only IR sensor

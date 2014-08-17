@@ -1,7 +1,5 @@
 package com.hybridplay.fishing;
 
-import com.hybridplay.bluetooth.MySensor;
-
 public class GameEngine implements Runnable {
 	
 	private final static int    MAX_FPS = 50;
@@ -10,6 +8,11 @@ public class GameEngine implements Runnable {
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8, CENTER = 0;
 	public final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;//, CONNECTING = 5;
+	
+	// SENSOR DATA
+	float angleX, angleY, angleZ;
+	int distanceIR;
+	boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
 	
 	// the game type (Balancin,Caballito,Columpio,Rueda,SubeBaja,Tobogan)
 	private String gameType;
@@ -55,7 +58,6 @@ public class GameEngine implements Runnable {
 	public long readyCountDown; //si que se usan
 	
 	// hybridPlay sensor
-	private MySensor mSensorX, mSensorY, mSensorZ, mSensorIR;
 	public float minPX=10000, maxPX=0, minPYL=10000, minPYR=10000;
 	public boolean updateRaquetas = true;
 	
@@ -76,17 +78,24 @@ public class GameEngine implements Runnable {
 		gameState = READY;
 		toboganState = tRESTART;
 		toboganSemaphore = true;
-		
-        // create sensors for hybriplay
-        mSensorX = new MySensor("x");
-        mSensorY = new MySensor("y");
-        mSensorZ = new MySensor("z");
-        mSensorIR = new MySensor("IR");
         
         isRunning = true;
 		mThread = new Thread(this);
 		mThread.start();
 		
+	}
+	
+	public void updateSensorData(float aX,float aY,float aZ, int dIR, boolean tXL, boolean tXR, boolean tYL, boolean tYR, boolean tZL, boolean tZR){
+		angleX = aX;
+		angleY = aY;
+		angleZ = aZ;
+		distanceIR = dIR;
+		triggerXL = tXL;
+		triggerXR = tXR;
+		triggerYL = tYL;
+		triggerYR = tYR;
+		triggerZL = tZL;
+		triggerZR = tZR;
 	}
 	
 	//update
@@ -109,7 +118,7 @@ public class GameEngine implements Runnable {
 			
 			// pinza horizontal - dos direcciones - eje Z
 			
-			if(mSensorZ.isFireMaxActive()){
+			if(triggerZR){
 				if(player.vX < 4f) player.vX += 1.5f; //se mueve a la derecha
 				
 				if(player.vY < 4f) {
@@ -124,7 +133,7 @@ public class GameEngine implements Runnable {
 		}else if(getGameType().equals("Caballito")){ // ---------- Caballito
 			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
 			
-			if(mSensorX.isFireMaxActive()){
+			if(triggerXR){
 				if(player.vX < 4f) player.vX += 1.5f; //se mueve a la derecha
 				
 				if(player.vY < 4f) {
@@ -147,7 +156,7 @@ public class GameEngine implements Runnable {
 		}else if(getGameType().equals("SubeBaja")){ // ---------- SubeBaja
 			// pinza horizontal - dos direcciones - eje Z
 			
-			if(mSensorZ.isFireMaxActive()){
+			if(triggerZR){
 				if(player.vX < 4f) player.vX += 1.5f; //se mueve a la derecha
 				
 				if(player.vY < 4f) {
@@ -309,38 +318,6 @@ public class GameEngine implements Runnable {
 	
 	public void resume() {
 		isRunning = true;
-	}
-
-	public MySensor getmSensorX() {
-		return mSensorX;
-	}
-
-	public void setmSensorX(MySensor mSensorX) {
-		this.mSensorX = mSensorX;
-	}
-
-	public MySensor getmSensorY() {
-		return mSensorY;
-	}
-
-	public void setmSensorY(MySensor mSensorY) {
-		this.mSensorY = mSensorY;
-	}
-
-	public MySensor getmSensorZ() {
-		return mSensorZ;
-	}
-
-	public void setmSensorZ(MySensor mSensorZ) {
-		this.mSensorZ = mSensorZ;
-	}
-
-	public MySensor getmSensorIR() {
-		return mSensorIR;
-	}
-
-	public void setmSensorIR(MySensor mSensorIR) {
-		this.mSensorIR = mSensorIR;
 	}
 
 	public int getGameState() {
