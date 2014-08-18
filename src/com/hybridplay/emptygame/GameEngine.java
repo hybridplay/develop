@@ -2,10 +2,6 @@ package com.hybridplay.emptygame;
 
 import java.util.ArrayList;
 
-import com.hybridplay.bluetooth.MySensor;
-
-
-
 // direction notes: 1 = up, 2 = down, 3 = right, 4 = left
 /*
  * GameEngine class is the controller of the game. GameEngine oversees updates 
@@ -20,6 +16,11 @@ public class GameEngine implements Runnable {
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8, CENTER = 0;
 	public final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;//, CONNECTING = 5;
+	
+	// SENSOR DATA
+	float angleX, angleY, angleZ;
+	int distanceIR;
+	boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
 	
 	// the game type (Balancin,Caballito,Columpio,Rueda,SubeBaja,Tobogan)
 	private String gameType;
@@ -64,9 +65,6 @@ public class GameEngine implements Runnable {
 	
 	public long readyCountDown; //si que se usan
 	
-	//hybridPlay sensor
-	private MySensor mSensorX, mSensorY, mSensorZ, mSensorIR;
-	
 	int screenWidth, screenHeight;
 	
 	//Constructor create players, trash and stage
@@ -84,12 +82,6 @@ public class GameEngine implements Runnable {
 		gameState = READY;
 		toboganState = tRESTART;
 		
-        // create sensors for hybriplay
-        mSensorX = new MySensor("x");
-        mSensorY = new MySensor("y");
-        mSensorZ = new MySensor("z");
-        mSensorIR = new MySensor("IR");
-		
         //creamos el array de basura y a�adimos 3 objetos
         gameElements = new ArrayList<GameElements>();
 		gameElements.add(new GameElements(2, width, -height));
@@ -103,6 +95,19 @@ public class GameEngine implements Runnable {
 		mThread = new Thread(this);
 		mThread.start();
 		
+	}
+	
+	public void updateSensorData(float aX,float aY,float aZ, int dIR, boolean tXL, boolean tXR, boolean tYL, boolean tYR, boolean tZL, boolean tZR){
+		angleX = aX;
+		angleY = aY;
+		angleZ = aZ;
+		distanceIR = dIR;
+		triggerXL = tXL;
+		triggerXR = tXR;
+		triggerYL = tYL;
+		triggerYR = tYR;
+		triggerZL = tZL;
+		triggerZR = tZR;
 	}
 	
 	//update
@@ -122,7 +127,7 @@ public class GameEngine implements Runnable {
 		
 		if(getGameType().equals("Balancin")){ // ---------------- Balancin
 			// pinza horizontal - cuatro direcciones - ejes Z Y
-			if (mSensorY.isFireMinActive()) {
+			if (triggerYL) {
 				player.setDir(DOWN);
 				if (pY + player.getPheight() < screenHeight - limitH){
 					pY = pY + player.getpNormalSpeed();
@@ -130,7 +135,7 @@ public class GameEngine implements Runnable {
 				}else{
 					moveAll = true;
 				}
-			}else if (mSensorY.isFireMaxActive()) {
+			}else if (triggerYR) {
 				player.setDir(UP);
 				if (pY > limitH) {
 					pY = pY - player.getpNormalSpeed();
@@ -140,7 +145,7 @@ public class GameEngine implements Runnable {
 				}
 			}
 			
-			if (mSensorZ.isFireMaxActive()) {
+			if (triggerZR) {
 				player.setDir(RIGHT);
 				if (pX + player.getPwidth() < screenWidth - limitW) {
 					pX = pX + player.getpNormalSpeed();
@@ -149,7 +154,7 @@ public class GameEngine implements Runnable {
 					//movemos el resto
 					moveAll = true;
 				}
-			}else if (mSensorZ.isFireMinActive()) {
+			}else if (triggerZL) {
 				player.setDir(LEFT);
 				if (pX > limitW) {
 					pX = pX - player.getpNormalSpeed();
@@ -165,7 +170,7 @@ public class GameEngine implements Runnable {
 			
 		}else if(getGameType().equals("Caballito")){ // ---------- Caballito
 			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-			if (mSensorY.isFireMinActive()) {
+			if (triggerYL) {
 				player.setDir(DOWN);
 				if (pY + player.getPheight() < screenHeight - limitH){
 					pY = pY + player.getpNormalSpeed();
@@ -173,7 +178,7 @@ public class GameEngine implements Runnable {
 				}else{
 					moveAll = true;
 				}
-			}else if (mSensorY.isFireMaxActive()) {
+			}else if (triggerYR) {
 				player.setDir(UP);
 				if (pY > limitH) {
 					pY = pY - player.getpNormalSpeed();
@@ -183,7 +188,7 @@ public class GameEngine implements Runnable {
 				}
 			}
 			
-			if (mSensorX.isFireMaxActive()) {
+			if (triggerXR) {
 				player.setDir(RIGHT);
 				if (pX + player.getPwidth() < screenWidth - limitW) {
 					pX = pX + player.getpNormalSpeed();
@@ -192,7 +197,7 @@ public class GameEngine implements Runnable {
 					//movemos el resto
 					moveAll = true;
 				}
-			}else if (mSensorX.isFireMinActive()) {
+			}else if (triggerXL) {
 				player.setDir(LEFT);
 				if (pX > limitW) {
 					pX = pX - player.getpNormalSpeed();
@@ -208,18 +213,7 @@ public class GameEngine implements Runnable {
 			
 		}else if(getGameType().equals("Columpio")){ // ---------- Columpio
 			// pinza vertical boton hacia abajo - oscilaci�n - eje X
-			mSensorX.addValueList(mSensorX.getActualValue());            
-            
-			if (mSensorX.getMediumValue() < mSensorX.getOldMediumValue()){
-				player.setDir(RIGHT);
-			}else{
-				player.setDir(LEFT);
-			}
-	
-			mSensorX.setOldMediumValue(mSensorX.getMediumValue());
-	      
-			            
-	        player.setAngle((float) (Math.PI * mSensorX.getMediumValue() / 650));
+	        player.setAngle(angleX);
 	
 	        // update kid position
 			player.setpX((int) (300 + Math.cos(player.getAngle())*500));
@@ -227,18 +221,7 @@ public class GameEngine implements Runnable {
 			
 		}else if(getGameType().equals("Rueda")){ // ---------- Rueda
 			// pinza vertical boton hacia abajo - oscilaci�n - eje X
-			mSensorX.addValueList(mSensorX.getActualValue());            
-            
-			if (mSensorX.getMediumValue() < mSensorX.getOldMediumValue()){
-				player.setDir(RIGHT);
-			}else{
-				player.setDir(LEFT);
-			}
-	
-			mSensorX.setOldMediumValue(mSensorX.getMediumValue());
-	      
-			            
-	        player.setAngle((float) (Math.PI * mSensorX.getMediumValue() / 650));
+	        player.setAngle(angleX);
 	
 	        // update kid position
 			player.setpX((int) (300 + Math.cos(player.getAngle())*500));
@@ -247,7 +230,7 @@ public class GameEngine implements Runnable {
 		}else if(getGameType().equals("SubeBaja")){ // ---------- SubeBaja
 			// pinza horizontal - dos direcciones - eje Z
 			
-			if (mSensorZ.isFireMaxActive()) {
+			if (triggerZR) {
 				player.setDir(RIGHT);
 				if (pX + player.getPwidth() < screenWidth - limitW) {
 					pX = pX + player.getpNormalSpeed();
@@ -262,7 +245,7 @@ public class GameEngine implements Runnable {
 					//movemos el resto
 					moveAll = true;
 				}
-			}else if (mSensorZ.isFireMinActive()) {
+			}else if (triggerZL) {
 				player.setDir(LEFT);
 				if (pX > limitW) {
 					pX = pX - player.getpNormalSpeed();
@@ -289,11 +272,11 @@ public class GameEngine implements Runnable {
 			myTime = System.currentTimeMillis() - actualTime;
 			
 			
-			if(toboganState == tRESTART && toboganSemaphore && mSensorIR.getActualValue() < 512){
+			if(toboganState == tRESTART && toboganSemaphore && distanceIR == 0){
 				toboganSemaphore = false;
 				toboganState = tOPEN;
 				//Log.d("Game Tobogan","EMPTY"); // posici�n vacia esperando al user
-			}else if(mSensorIR.getActualValue() > 512 && !toboganSemaphore){
+			}else if(distanceIR != 0 && !toboganSemaphore){
 				actualTime = System.currentTimeMillis();
 				toboganState = tWAIT;
 				toboganSemaphore = true;
@@ -307,14 +290,14 @@ public class GameEngine implements Runnable {
 					//Log.d("Game Tobogan","JUMP!");
 					jumpSemaphore = false;
 				}
-			}else if(toboganState == tWAIT && myTime < waitTime && mSensorIR.getActualValue() < 512){
+			}else if(toboganState == tWAIT && myTime < waitTime && distanceIR == 0){
 				//Log.d("Game Tobogan","RESET!"); //the user has jump before the time so we reset the system
 				toboganState = tRESTART;
 				toboganSemaphore = true;
 				jumpSemaphore = true;
 			}
 			
-			if(toboganState == tJUMP && mSensorIR.getActualValue() < 512){ // cuando el ni�o salta
+			if(toboganState == tJUMP && distanceIR == 0){ // cuando el ni�o salta
 				// launch jump function
 				//Log.d("Game Tobogan","El ni�o ha saltado!");
 				toboganState = tRESTART;
@@ -480,38 +463,6 @@ public class GameEngine implements Runnable {
 	
 	public void resume() {
 		isRunning = true;
-	}
-
-	public MySensor getmSensorX() {
-		return mSensorX;
-	}
-
-	public void setmSensorX(MySensor mSensorX) {
-		this.mSensorX = mSensorX;
-	}
-
-	public MySensor getmSensorY() {
-		return mSensorY;
-	}
-
-	public void setmSensorY(MySensor mSensorY) {
-		this.mSensorY = mSensorY;
-	}
-
-	public MySensor getmSensorZ() {
-		return mSensorZ;
-	}
-
-	public void setmSensorZ(MySensor mSensorZ) {
-		this.mSensorZ = mSensorZ;
-	}
-
-	public MySensor getmSensorIR() {
-		return mSensorIR;
-	}
-
-	public void setmSensorIR(MySensor mSensorIR) {
-		this.mSensorIR = mSensorIR;
 	}
 
 	public int getGameState() {

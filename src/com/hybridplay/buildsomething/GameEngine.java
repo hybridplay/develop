@@ -1,7 +1,5 @@
 package com.hybridplay.buildsomething;
 
-import com.hybridplay.bluetooth.MySensor;
-
 public class GameEngine implements Runnable {
 	
 	private final static int    MAX_FPS = 50;
@@ -10,6 +8,11 @@ public class GameEngine implements Runnable {
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8, CENTER = 0;
 	public final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;//, CONNECTING = 5;
+	
+	// SENSOR DATA
+	float angleX, angleY, angleZ;
+	int distanceIR;
+	boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
 	
 	// the game type (Balancin,Caballito,Columpio,Rueda,SubeBaja,Tobogan)
 	private String gameType;
@@ -54,8 +57,6 @@ public class GameEngine implements Runnable {
 	public int framesSkipped; // number of frames being skipped si que se usan
 	public long readyCountDown; //si que se usan
 	
-	// hybridPlay sensor
-	private MySensor mSensorX, mSensorY, mSensorZ, mSensorIR;
 	public float minPX=10000, maxPX=0, minPYL=10000, minPYR=10000;
 	public boolean updateRaquetas = true;
 	
@@ -77,17 +78,24 @@ public class GameEngine implements Runnable {
 		gameState = READY;
 		toboganState = tRESTART;
 		toboganSemaphore = true;
-		
-        // create sensors for hybriplay
-        mSensorX = new MySensor("x");
-        mSensorY = new MySensor("y");
-        mSensorZ = new MySensor("z");
-        mSensorIR = new MySensor("IR");
         
         isRunning = true;
 		mThread = new Thread(this);
 		mThread.start();
 		
+	}
+	
+	public void updateSensorData(float aX,float aY,float aZ, int dIR, boolean tXL, boolean tXR, boolean tYL, boolean tYR, boolean tZL, boolean tZR){
+		angleX = aX;
+		angleY = aY;
+		angleZ = aZ;
+		distanceIR = dIR;
+		triggerXL = tXL;
+		triggerXR = tXR;
+		triggerYL = tYL;
+		triggerYR = tYR;
+		triggerZL = tZL;
+		triggerZR = tZR;
 	}
 	
 	//update
@@ -113,7 +121,7 @@ public class GameEngine implements Runnable {
 		}else if(getGameType().equals("SubeBaja") || getGameType().equals("Balancin") || getGameType().equals("Caballito")){ // ---------- SubeBaja
 			// pinza horizontal - dos direcciones - eje Z
 			
-			if (mSensorZ.isFireMaxActive()) { //a la derecha
+			if (triggerZR) { //a la derecha
 				//robot.setDir(RIGHT);
 				//Log.i("log robot.getPwidth()", Integer.toString(robot.robotW));
 				
@@ -124,7 +132,7 @@ public class GameEngine implements Runnable {
 				}
 				
 				
-			}else if (mSensorZ.isFireMinActive()) { //a la izquierda
+			}else if (triggerZL) { //a la izquierda
 				//robot.setDir(LEFT);
 				if (pX > 0) {
 					pX = pX - robot.getpNormalSpeed();
@@ -148,17 +156,17 @@ public class GameEngine implements Runnable {
 			// system timeline update
 			myTime = System.currentTimeMillis() - actualTime;
 			
-			if(mSensorIR.getActualValue() < 512 && toboganSemaphore && toboganState == tRESTART){
+			if(distanceIR == 0 && toboganSemaphore && toboganState == tRESTART){
 				toboganSemaphore = false;
 				toboganState = tOPEN;
 				kid.setpX(this.width - 400);
 		        kid.setpY(0);
-			}else if(toboganState == tOPEN && mSensorIR.getActualValue() > 512 && !toboganSemaphore){
+			}else if(toboganState == tOPEN && distanceIR != 0 && !toboganSemaphore){
 				actualTime = System.currentTimeMillis();
 				toboganState = tWAIT;
 				toboganSemaphore = true;
 				jumpSemaphore = true;
-				// niï¿½o sentado a la espera de poder saltar
+				// ni–o sentado a la espera de poder saltar
 				kid.setpX(this.width - 400);
 		        kid.setpY(0);
 			}
@@ -169,14 +177,14 @@ public class GameEngine implements Runnable {
 					//Log.d("Game Tobogan","JUMP!");
 					jumpSemaphore = false;
 				}
-			}else if(toboganState == tWAIT && myTime < waitTime && mSensorIR.getActualValue() < 512){
+			}else if(toboganState == tWAIT && myTime < waitTime && distanceIR == 0){
 				//Log.d("Game Tobogan","RESET!");
 				toboganState = tRESTART;
 				toboganSemaphore = true;
 				jumpSemaphore = true;
 			}
 			
-			if(toboganState == tJUMP && mSensorIR.getActualValue() < 512){ // cuando el niï¿½o salta
+			if(toboganState == tJUMP && distanceIR == 0){ // cuando el niï¿½o salta
 				// launch jump function
 				toboganJump = true;
 			}
@@ -340,38 +348,6 @@ public class GameEngine implements Runnable {
 	
 	public void resume() {
 		isRunning = true;
-	}
-
-	public MySensor getmSensorX() {
-		return mSensorX;
-	}
-
-	public void setmSensorX(MySensor mSensorX) {
-		this.mSensorX = mSensorX;
-	}
-
-	public MySensor getmSensorY() {
-		return mSensorY;
-	}
-
-	public void setmSensorY(MySensor mSensorY) {
-		this.mSensorY = mSensorY;
-	}
-
-	public MySensor getmSensorZ() {
-		return mSensorZ;
-	}
-
-	public void setmSensorZ(MySensor mSensorZ) {
-		this.mSensorZ = mSensorZ;
-	}
-
-	public MySensor getmSensorIR() {
-		return mSensorIR;
-	}
-
-	public void setmSensorIR(MySensor mSensorIR) {
-		this.mSensorIR = mSensorIR;
 	}
 
 	public int getGameState() {

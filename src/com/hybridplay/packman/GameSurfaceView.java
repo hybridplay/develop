@@ -243,11 +243,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 					x1 = borde; y1 = borde+(distancia/2); //izquierda
 					x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-					gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
+					//gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
 					
 					x1 = borde+(distancia/2); y1 = borde; //arriba
 					x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-					gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+					//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 					
 					
 					//long time = 5L - timeDiff/1000;
@@ -298,11 +298,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 					x1 = borde; y1 = borde+(distancia/2); //izquierda
 					x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-					gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
+					//gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
 					
 					x1 = borde+(distancia/2); y1 = borde; //arriba
 					x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-					gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+					//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 					
 					
 					//long time = 5L - timeDiff/1000;
@@ -361,11 +361,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 					x1 = borde; y1 = borde+(distancia/2); //izquierda
 					x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-					gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
+					//gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
 					
 					x1 = borde+(distancia/2); y1 = borde; //arriba
 					x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-					gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+					//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 					
 					
 					
@@ -420,11 +420,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 					x1 = borde; y1 = borde+(distancia/2); //izquierda
 					x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-					gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
+					//gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
 					
 					x1 = borde+(distancia/2); y1 = borde; //arriba
 					x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-					gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
+					//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
 					
 					try {
 						Thread.sleep(25);

@@ -2,10 +2,6 @@ package com.hybridplay.packman;
 
 import java.util.ArrayList;
 
-import com.hybridplay.bluetooth.MySensor;
-
-
-
 // direction notes: 1 = up, 2 = down, 3 = right, 4 = left
 /*
  * GameEngine class is the controller of the game. GameEngine oversees updates 
@@ -23,6 +19,12 @@ public class GameEngine implements Runnable {
 	static final int RD = 9, LD = 10, RU = 5, LU = 6, RDU = 13, LDU = 14, RLD = 11, RLU = 7, RLUD = 15;
 	
 	private final static int 	CONNECTING = -1, READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
+	
+	// SENSOR DATA
+	float angleX, angleY, angleZ;
+	int distanceIR;
+	boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
+	boolean isCHXL, isCHXR, isCHYL, isCHYR, isCHZL, isCHZR;
 	
 	// the game type (Balancin,Caballito,Columpio,Rueda,SubeBaja,Tobogan)
 	private String gameType;
@@ -68,7 +70,6 @@ public class GameEngine implements Runnable {
 	private long readyCountDown;
 	
 	//hybridPlay sensor
-	private MySensor mSensorX, mSensorY, mSensorZ, mSensorIR;
 	private SoundEngine soundEngine;
 	
 	//Constructor create players, ghosts and Maze
@@ -88,13 +89,6 @@ public class GameEngine implements Runnable {
 		timer = 120;
 		timerCount = 0;
 		gameState = -1;
-		
-		
-        // create sensors for hybriplay
-        mSensorX = new MySensor("x");
-        mSensorY = new MySensor("y");
-        mSensorZ = new MySensor("z");
-        mSensorIR = new MySensor("IR");
 		
         // maze stuff
         maze = new Maze();
@@ -116,6 +110,50 @@ public class GameEngine implements Runnable {
         mThread = new Thread(this);
         mThread.start();
 		
+	}
+	
+	public void updateSensorData(float aX,float aY,float aZ, int dIR, boolean tXL, boolean tXR, boolean tYL, boolean tYR, boolean tZL, boolean tZR){
+		if(triggerXL != tXL){
+			isCHXL = true;
+		}else{
+			isCHXL = false;
+		}
+		if(triggerXR != tXR){
+			isCHXR = true;
+		}else{
+			isCHXR = false;
+		}
+		if(triggerYL != tYL){
+			isCHYL = true;
+		}else{
+			isCHYL = false;
+		}
+		if(triggerYR != tYR){
+			isCHYR = true;
+		}else{
+			isCHYR = false;
+		}
+		if(triggerZL != tZL){
+			isCHZL = true;
+		}else{
+			isCHZL = false;
+		}
+		if(triggerZR != tZR){
+			isCHZR = true;
+		}else{
+			isCHZR = false;
+		}
+		
+		angleX = aX;
+		angleY = aY;
+		angleZ = aZ;
+		distanceIR = dIR;
+		triggerXL = tXL;
+		triggerXR = tXR;
+		triggerYL = tYL;
+		triggerYR = tYR;
+		triggerZL = tZL;
+		triggerZR = tZR;
 	}
 	
 	//update
@@ -578,38 +616,6 @@ public class GameEngine implements Runnable {
 
 	public long getReadyCountDown(){
 		return readyCountDown;
-	}
-
-	public MySensor getmSensorX() {
-		return mSensorX;
-	}
-
-	public void setmSensorX(MySensor mSensorX) {
-		this.mSensorX = mSensorX;
-	}
-
-	public MySensor getmSensorY() {
-		return mSensorY;
-	}
-
-	public void setmSensorY(MySensor mSensorY) {
-		this.mSensorY = mSensorY;
-	}
-
-	public MySensor getmSensorZ() {
-		return mSensorZ;
-	}
-
-	public void setmSensorZ(MySensor mSensorZ) {
-		this.mSensorZ = mSensorZ;
-	}
-
-	public MySensor getmSensorIR() {
-		return mSensorIR;
-	}
-
-	public void setmSensorIR(MySensor mSensorIR) {
-		this.mSensorIR = mSensorIR;
 	}
 	
 	public String getGameType() {

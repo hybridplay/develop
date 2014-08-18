@@ -1,51 +1,28 @@
-/*
-  Copyright (c) 2009 Bonifaz Kaufmann. 
-  
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 package com.hybridplay.config;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
-import com.hybridplay.app.R;
-
 public class GraphView extends View {
-
-	public Boolean connected = false;
-	private Bitmap  mBitmap, connecting;
-	private Rect 	srcConnecting, dstConnecting;
+	private Bitmap  mBitmap;
 	private Paint   mPaint = new Paint();
     private Canvas  mCanvas = new Canvas();
     
 	private float   mSpeed = 1.0f;
-	private float   mLastX, mLastY, mLastZ, mLastIR;
-    private float   mScale;
-    private float   mLastValueX,mLastValueY,mLastValueZ, mLastValueIR;
-    private float   mYOffset;
-    private int     mColorX, mColorY, mColorZ, mColorIR;
-    private float   mWidth;
-    private float   maxValue = 1024f; //1024 originalmente
+	private float   mScale;
+	private float   mYOffset;
+	private float   mWidth;
+    private float   maxValue = 1024f;
+    
+	public float   mLastX, mLastY, mLastZ;
+    public float   mLastValueX,mLastValueY,mLastValueZ;
+    public int     mColorX, mColorY, mColorZ;
+    
     
     public GraphView(Context context) {
         super(context);
@@ -61,11 +38,10 @@ public class GraphView extends View {
     	mColorX = Color.RED;
     	mColorY = Color.BLUE;
     	mColorZ = Color.GREEN;
-    	mColorIR = Color.BLACK;
         mPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
     }
     
-    public void addDataPoint(float valueX, float valueY, float valueZ, float valBat, float valIR){
+    public void addDataPoint(int valueX, int valueY, int valueZ, int valBat, int valIR){
         final Paint paint = mPaint;
         
         //Log.d("log mYOffset",Float.toString(mYOffset));
@@ -83,7 +59,7 @@ public class GraphView extends View {
         mLastX += mSpeed;
        
         paint.setTextSize(16); 
-        mCanvas.drawText("Value X", 10, 20, paint); 
+        mCanvas.drawText("Value X: ", 10, 20, paint); 
 
         
         //DIBUJAMOS LA Y
@@ -95,7 +71,7 @@ public class GraphView extends View {
         mLastValueY = y;
         mLastY += mSpeed;
         
-        mCanvas.drawText("Value Y", 10, 40, paint); 
+        mCanvas.drawText("Value Y: ", 10, 40, paint); 
         
         //DIBUJAMOS LA Z
         float newZ = mLastZ + mSpeed;
@@ -106,20 +82,7 @@ public class GraphView extends View {
         mLastValueZ = z;
         mLastZ += mSpeed;
 
-        mCanvas.drawText("Value Z", 10, 60, paint); 
-        
-        //DIBUJAMOS IR
-//        float newIR = mLastIR + mSpeed;
-//        final float ir = mYOffset + valIR * mScale;
-//        
-//        paint.setColor(mColorIR);
-//        mCanvas.drawLine(mLastIR, mLastValueIR, newIR, ir, paint);
-//        mLastValueIR = ir;
-//        mLastIR += mSpeed;
-//
-//        mCanvas.drawText("Value IR", 10, 80, paint);      
-        
-        //DIBUJAMOS BAT
+        mCanvas.drawText("Value Z: ", 10, 60, paint); 
         
 		invalidate();
     }
@@ -136,12 +99,6 @@ public class GraphView extends View {
     
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-    	connecting = BitmapFactory.decodeResource(getResources(), R.drawable.connecting);
-    	srcConnecting = new Rect(0, 0, connecting.getWidth(), connecting.getHeight() );
-    	Log.i("h", "h " + h);
-    	Log.i("w", "w " + w);
-		dstConnecting = new Rect((int) w/2 - connecting.getWidth()/2, 0,(int) w/2 + connecting.getWidth()/2, (int) connecting.getHeight() );
-		
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
         mCanvas.setBitmap(mBitmap);
         mCanvas.drawColor(0xFFFFFFFF);
@@ -155,14 +112,11 @@ public class GraphView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         synchronized (this) {
-        	if (!connected) {
-        		canvas.drawBitmap(connecting, srcConnecting, dstConnecting, null);
-        	} else if (mBitmap != null) {
+            if (mBitmap != null) {
                 if (mLastX >= mWidth) {
                     mLastX = 0;
                     mLastY = 0;
                     mLastZ = 0;
-                    mLastIR = 0;
                     final Canvas cavas = mCanvas;
                     cavas.drawColor(0xFFFFFFFF);
                     mPaint.setColor(0xFF777777);

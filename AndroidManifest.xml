@@ -6,24 +6,29 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="19" />
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.BROADCAST"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        
         <activity
             android:name="com.hybridplay.app.HybridPlay"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity><activity android:name=".Games" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
+        </activity>
+        
+        <service android:enabled="true" android:name="com.hybridplay.bluetooth.BluetoothService"></service>
+        
+        <activity android:name=".Games" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
         
         <activity android:name="com.hybridplay.packman.GameActivityPackMan" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="portrait"></activity>
         <activity android:name="com.hybridplay.arkanoid.ArkaNoid" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
@@ -34,9 +39,12 @@
         <activity android:name="com.hybridplay.puzzlecity.GameActivityPuzzleCity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
         <activity android:name="GamesExpandable" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
         <activity android:name="com.hybridplay.buildsomething.BuildSomethingActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
-        <activity android:name="com.hybridplay.config.ConnectActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        <activity android:name="com.hybridplay.config.ConfigActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
         <activity android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:name="com.hybridplay.config.DeviceActivity"></activity>
         <activity android:name="com.hybridplay.fishing.GameActivityFishing" android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        
+        
+        
     </application>
 
 </manifest>
