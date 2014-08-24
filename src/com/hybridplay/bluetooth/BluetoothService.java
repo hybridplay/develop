@@ -49,8 +49,28 @@ public class BluetoothService extends Service {
     }
 	
 	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		return START_NOT_STICKY;
+	}
+	
+	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
+	}
+	
+	@Override
+    public boolean onUnbind(Intent intent) {
+        // All clients have unbound with unbindService()
+        return false;
+    }
+	
+	@Override
+	public void onDestroy() {
+		
+	}
+	
+	public void stopBluetoothService(){
+		stopSelf();
 	}
 	
 	@SuppressLint("HandlerLeak")
