@@ -14,6 +14,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -31,6 +32,7 @@ public class GamesExpandable extends ExpandableListActivity {
 	Intent BTintent;
 	BluetoothService mService;
 	SensorThread thread;
+	Runnable mRunnable;
 	Handler handler = new Handler();
 	boolean mBound = false;
 	// ---------------------------------------------- BLUETOOTH SERVICE BLOCK
@@ -114,6 +116,21 @@ public class GamesExpandable extends ExpandableListActivity {
 	protected void onStart() {
 		super.onStart();
 		bindBluetoothService(); // BLUETOOTH SERVICE
+	}
+	
+	@Override
+	public void onBackPressed() {
+		/*if (thread != null) {
+		    thread.interrupt();
+		}
+		handler.removeCallbacks(mRunnable);*/
+		GamesExpandable.this.finish();
+	}
+	
+	@Override
+	public void onDestroy() {
+		unbindBluetoothService();
+		super.onDestroy();
 	}
 
 	public void setGroupData() {	  
@@ -303,7 +320,6 @@ public class GamesExpandable extends ExpandableListActivity {
 		// Unbind from the service
 		if (mBound) {
 			unbindService(mConnection);
-			stopService(BTintent);
 			mBound = false;
 		}
 		boolean retry = true;
@@ -313,6 +329,7 @@ public class GamesExpandable extends ExpandableListActivity {
 				retry = false;
 			} catch (InterruptedException e) {
 				// try again shutting down the thread
+				Log.d("EXCEPTION",e.getMessage());
 			}
 		}
 	}
@@ -332,7 +349,7 @@ public class GamesExpandable extends ExpandableListActivity {
 			thread.setRunning(true);
 			thread.start();
 
-			handler.post(new Runnable(){
+			handler.post(mRunnable = new Runnable(){
 				@Override
 				public void run() {
 					// update

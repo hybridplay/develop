@@ -53,39 +53,39 @@ public class Sensor {
     
     public void update(int x,int vx){
     	// MANUAL SENSOR VALUES CORRECTION
-    	if(vx <= maxStable && vx >= minStable){
-    		realValue = vx;
-			normActualValue = (vx-minStable)/(maxStable-minStable)*1.0f;
+    	if(type == 0){
+    		if(vx <= maxStable && vx >= minStable){
+    			realValue = vx;
+    			normActualValue = (vx-minStable)/(maxStable-minStable)*1.0f;
 
-			actualValue = x;
-			maxValue = Math.max(actualValue, maxValue);
-			minValue = Math.min(actualValue, minValue);
-			centerValue = (maxValue+minValue)/2;
-			
-			if(normActualValue > (normCenterDelta+0.5)){
-				triggerMin = false;
-				triggerMax = true;
-			}else if(normActualValue < (0.5-normCenterDelta)){
-				triggerMin = true;
-				triggerMax = false;
+    			actualValue = x;
+    			maxValue = Math.max(actualValue, maxValue);
+    			minValue = Math.min(actualValue, minValue);
+    			centerValue = (maxValue+minValue)/2;
+
+    			if(normActualValue > (normCenterDelta+0.5)){
+    				triggerMin = false;
+    				triggerMax = true;
+    			}else if(normActualValue < (0.5-normCenterDelta)){
+    				triggerMin = true;
+    				triggerMax = false;
+    			}else{
+    				triggerMin = false;
+    				triggerMax = false;
+    			}
+    		}
+    	}else{ // IR
+    		if(vx <= maxStable && vx >= minStable){
+    			distanceIR = getDistanceCM(Math.abs(Math.round(normActualValue*254)));
 			}else{
-				triggerMin = false;
-				triggerMax = false;
-			}
-			
-			if(type == 1){
-				distanceIR = getDistanceCM(Math.round(normActualValue*254));
-			}
-		}else{
-			if(type == 1){
 				distanceIR = 0;
 			}
-		}
+    	}
     	
     }
     
-    public void logData(){
-    	Log.d("Testing Sensor",""+distanceIR);
+    public void logData(int v){
+    	Log.d("Testing Sensor",Math.abs(v)+" : "+distanceIR);
     }
     
     public Canvas draw(Canvas mCanvas, Paint paint, int mColor, int xDrawing, int yDrawing) {

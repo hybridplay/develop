@@ -31,7 +31,7 @@ public class GameActivityPong extends Activity{
 	Sensor mSensorX = new Sensor("x",280,380,0);
 	Sensor mSensorY = new Sensor("y",280,380,0);
 	Sensor mSensorZ = new Sensor("z",280,380,0);
-	Sensor mSensorIR = new Sensor("IR",20,512,1);
+	Sensor mSensorIR = new Sensor("IR",200,512,1);
 	float angleX, angleY, angleZ;
 	int distanceIR;
 	boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;

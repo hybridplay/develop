@@ -2,6 +2,8 @@ package com.hybridplay.puzzlecity;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 public class GameEngine implements Runnable {
 	
 	private final static int    MAX_FPS = 50;
@@ -254,15 +256,27 @@ public class GameEngine implements Runnable {
 			}
 			
 		}else if(getGameType().equals("Columpio")){ // ---------- Columpio
-			// pinza vertical boton hacia abajo - oscilaci�n - eje X
-	        player.setAngle(angleX);
-	
-	        // update kid position
-	        player.setpX(this.width/2 - 60 - (float)Math.cos(player.getAngle())*220);
-	        player.setpY(this.height - 150 - (float)Math.abs(Math.cos(player.getAngle()))*220);
+			// pinza vertical boton hacia abajo - oscilacion - eje X
+	        float tempMedia = 0;
+	        boolean goingRight = false;
+	        for(int i=0;i<100;i++){
+	        	tempMedia += angleX;
+	        }
+	        tempMedia /= 100;
 	        
-	        float flag = (float)Math.cos(Math.PI *player.getAngle());
-	        // TODO - Corregir el if para el correcto posicionamiento de las raquetas
+	        if(angleX > tempMedia){
+	        	goingRight = false;
+	        }else{
+	        	goingRight = true;
+	        }
+	        
+	        // update kid position
+	        player.setAngle((float)Math.toRadians(angleX));
+	        player.setpX(this.width/2 - 50 - (float)Math.sin(player.getAngle())*200);
+	        player.setpY(this.height - 390 + (float)Math.cos(player.getAngle())*210);
+	        
+	        float flag = (float)Math.sin(player.getAngle());
+	        
 	        if(flag < 0.0f){
 				player.setDir(RIGHT);
 			}else{
@@ -279,9 +293,20 @@ public class GameEngine implements Runnable {
 	        	}
 	        	updateRaquetas = false;
 	        }
+	        
+	        for(int i=0;i<100;i++){
+	        	tempMedia += angleX;
+	        }
+	        tempMedia /= 100;
+	        
+	        if(angleX > tempMedia && goingRight){
+	        	updateRaquetas = true;
+	        }else if(angleX < tempMedia && !goingRight){
+	        	updateRaquetas = true;
+	        }
 			
 		}else if(getGameType().equals("Rueda")){ // ---------- Rueda
-			// pinza vertical boton hacia abajo - oscilaci�n - eje X
+			// pinza vertical boton hacia abajo - oscilacion - eje X
 			
 			
 		}else if(getGameType().equals("SubeBaja")){ // ---------- SubeBaja

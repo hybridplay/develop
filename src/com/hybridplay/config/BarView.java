@@ -42,7 +42,7 @@ public class BarView extends View {
         mSensorX = new Sensor("x",280,380,0);
         mSensorY = new Sensor("y",280,380,0);
         mSensorZ = new Sensor("z",280,380,0);
-        mSensorIR = new Sensor("IR",20,512,1);
+        mSensorIR = new Sensor("IR",200,512,1);
     }
     
     public void drawBar(int valueX, int valueY, int valueZ, int valueIR){
