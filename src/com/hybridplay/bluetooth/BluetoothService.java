@@ -158,13 +158,22 @@ public class BluetoothService extends Service {
 	
 	
 	private void onBluetoothRead(byte[] buffer, int len) {
+		String inputStr = new String(buffer, 0, len);
+		String [] data = inputStr.split(",");
 		if(len >= 11){ // 11 bytes from Arduino (1 HEADER, 2 ACCX, 2 ACCY, 2 ACCZ, 2 BATTERY, 2 IR)
 			if(buffer[0] == HEADER){
 				accX = readArduinoBinary(buffer[1],buffer[2]);
 				accY = readArduinoBinary(buffer[3],buffer[4]);
 				accZ = readArduinoBinary(buffer[5],buffer[6]);
 				bat = readArduinoBinary(buffer[7],buffer[8]);
-				IR = readArduinoBinary(buffer[9],buffer[10]);
+				//IR	= readArduinoBinary(buffer[9],buffer[10]);
+				try{
+					if(Integer.parseInt(data[1]) > 200){
+						IR = Integer.parseInt(data[1]);
+					}
+				}catch(Exception e){
+					Log.d("log error",e.toString());
+				}
 			}
 		}
 
