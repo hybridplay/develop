@@ -75,13 +75,16 @@ public class Sensor {
     			}
     		}
     	}else{ // IR
+    		realValue = vx;
+    		normActualValue = (vx-minStable)/(maxStable-minStable)*1.0f;
     		if(vx <= maxStable && vx >= minStable){
     			distanceIR = getDistanceCM(Math.abs(Math.round(normActualValue*254)));
 			}else{
 				distanceIR = 0;
 			}
+    		
+    		logData(realValue);
     	}
-    	
     }
     
     public void logData(int v){
