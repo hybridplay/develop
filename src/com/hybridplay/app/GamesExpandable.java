@@ -129,7 +129,8 @@ public class GamesExpandable extends ExpandableListActivity {
 	
 	@Override
 	public void onDestroy() {
-		unbindBluetoothService();
+		unbindBluetoothService(); // BLUETOOTH SERVICE
+		mService.killBluetoothService();
 		super.onDestroy();
 	}
 
