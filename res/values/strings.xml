@@ -35,5 +35,24 @@
 	<string name="doyouwant">Do you want to quit?</string>
 	<string name="quit">Quit</string>
 	<string name="resume">Resume</string>
+	
+	<!-- TRON -->
+	<string name="helloTron">Hello World, glTron!</string>
+    <string name="app_name_TRON">GL TRON</string>
+    <string name="preferences_title_TRON">Preferences</string>
+    
+    <!-- SPACEINVADERS -->
+    <string name="hello_SPACEINVADERS">Hello World, SpaceInvadersActivity!</string>
+    <string name="app_name_SPACEINVADERS">Space Invaders</string>
+    <string name="menu_prefs_SPACEINVADERS">Preferences</string>
+    <string name="menu_restart_SPACEINVADERS">Restart</string>
+    <string name="menu_credits_SPACEINVADERS">Credits</string>
+    <string name="menu_author_SPACEINVADERS">More by this Author</string>
+    <string-array name="colour_schemes">
+        <item>Default</item>
+        <item>Classic</item>
+        <item>Psychadelic</item>
+        <item>Red-volution</item>
+    </string-array>
 
 </resources>

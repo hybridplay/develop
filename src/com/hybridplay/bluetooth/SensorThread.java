@@ -24,12 +24,17 @@ private static final String TAG = SensorThread.class.getSimpleName();
 	public void run() {
 		Log.d(TAG, "Starting Sensor loop");
 		while (running) {
-			// update sensor readings
-			aX = service.getAccX();
-			aY = service.getAccY();
-			aZ = service.getAccZ();
-			bat = service.getBattery();
-			IR = service.getIR();
+			try{
+				// update sensor readings
+				aX = service.getAccX();
+				aY = service.getAccY();
+				aZ = service.getAccZ();
+				bat = service.getBattery();
+				IR = service.getIR();
+				Thread.sleep(80); // set time here to refresh (80 ms => 12 FPS)
+			}catch(InterruptedException e){
+				
+			}
 		}
 	}
 	
