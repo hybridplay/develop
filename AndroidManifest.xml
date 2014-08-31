@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hybridplay.app"
+    android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="0.1" >
+    android:versionName="0.2" >
 
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
+    
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.BROADCAST"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+	<uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
+    
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -26,24 +32,46 @@
             </intent-filter>
         </activity>
         
+        <!-- BLUETOOTH SENSOR SERVICE -->
         <service android:enabled="true" android:name="com.hybridplay.bluetooth.BluetoothService"></service>
+        <!-- SENSOR CONFIG -->
+        <activity android:name="com.hybridplay.config.ConfigActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
         
+        <!-- GAMES EXPANDABLE ACTIVITY -->
+        <activity android:name="GamesExpandable" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
         <activity android:name=".Games" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
         
+        <!-- SPACEKIDS - HYBRIDPLAY -->
+        <activity android:name="com.hybridplay.spacekids.propeller.GameActivitySpaceKidsPropeller" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
+        
+        <!-- PUZZLECITY - HYBRIDPLAY -->
+        <activity android:name="com.hybridplay.puzzlecity.GameActivityPuzzleCity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
+        
+        <!-- BUILDSOMETHING - HYBRIDPLAY -->
+        <activity android:name="com.hybridplay.buildsomething.BuildSomethingActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
+        
+        <!-- FISHING - HYBRIDPLAY -->
+        <activity android:name="com.hybridplay.fishing.GameActivityFishing" android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        
+        <!-- PACKMAN - CLASSICS -->
         <activity android:name="com.hybridplay.packman.GameActivityPackMan" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="portrait"></activity>
+        
+        <!-- ARKANOID - CLASSICS -->
         <activity android:name="com.hybridplay.arkanoid.ArkaNoid" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        
+        <!-- PONG - CLASSICS -->
         <activity android:name="com.hybridplay.pong.Pong" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
         <activity android:name="com.hybridplay.pong.GameActivityPong" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="portrait"></activity>
         <activity android:name="com.hybridplay.pong.PongPreferencesActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="portrait"></activity>
-        <activity android:name="com.hybridplay.spacekids.propeller.GameActivitySpaceKidsPropeller" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
-        <activity android:name="com.hybridplay.puzzlecity.GameActivityPuzzleCity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
-        <activity android:name="GamesExpandable" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
-        <activity android:name="com.hybridplay.buildsomething.BuildSomethingActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
-        <activity android:name="com.hybridplay.config.ConfigActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
-        <activity android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:name="com.hybridplay.config.DeviceActivity"></activity>
-        <activity android:name="com.hybridplay.fishing.GameActivityFishing" android:screenOrientation="landscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
         
+        <!-- TRON - CLASSICS -->
+        <activity android:name="com.hybridplay.glTron.glTron" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="landscape"></activity>
+        <activity android:name="com.hybridplay.glTron.Preferences" android:label="@string/preferences_title_TRON"></activity>
         
+        <!-- SPACEINVADERS - CLASSICS -->
+        <activity android:name="com.hybridplay.spaceinvaders.SpaceInvadersActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        <activity android:name="com.hybridplay.spaceinvaders.InvaderPreferenceActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        <activity android:name="com.hybridplay.spaceinvaders.CreditsActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
         
     </application>
 

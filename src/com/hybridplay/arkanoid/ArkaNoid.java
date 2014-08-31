@@ -25,7 +25,7 @@ public class ArkaNoid extends Activity{
 	private ArkaNoidGameThread gameThread;
 	private TiltListener tiltListener;
 	
-	// HYBRIDPLAY SENSOR
+	// ----------------------------------------- HYBRIDPLAY SENSOR
 	SensorReceiver mReceiver;
 	Handler handler = new Handler();
 	
@@ -36,6 +36,8 @@ public class ArkaNoid extends Activity{
     float angleX, angleY, angleZ;
     int distanceIR;
     boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
+    boolean semaphoreR = true, semaphoreL = true;
+ // ----------------------------------------- HYBRIDPLAY SENSOR
 
 	String playWith;
 	private final double PADDLE_SPEED = 2.0;
@@ -97,12 +99,20 @@ public class ArkaNoid extends Activity{
     		    	}else if (triggerZL) { // LEFT
     		    		gameThread.changedBoth(PADDLE_SPEED, true, false);
     		    	}
+    		    	
+    		    	if(!triggerZR && !triggerZL){
+    		    		gameThread.changedBoth(PADDLE_SPEED, false, false);
+    		    	}
     		    }else if(playWith.equals("Caballito")){
     		    	// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
     		    	if (triggerXR) { // RIGHT
     		    		gameThread.changedBoth(PADDLE_SPEED, false, true);
     		    	}else if (triggerXL) { // LEFT
     		    		gameThread.changedBoth(PADDLE_SPEED, true, false);
+    		    	}
+    		    	
+    		    	if(!triggerXR && !triggerXL){
+    		    		gameThread.changedBoth(PADDLE_SPEED, false, false);
     		    	}
     		    }else if(playWith.equals("Columpio")){
     		    	// pinza vertical boton hacia abajo - oscilaci�n - eje X
@@ -113,6 +123,10 @@ public class ArkaNoid extends Activity{
     		    		gameThread.changedBoth(PADDLE_SPEED, false, true);
     		    	}else if (triggerZL) { // LEFT
     		    		gameThread.changedBoth(PADDLE_SPEED, true, false);
+    		    	}
+    		    	
+    		    	if(!triggerZR && !triggerZL){
+    		    		gameThread.changedBoth(PADDLE_SPEED, false, false);
     		    	}
     		    }else if(playWith.equals("Tobogan")){
     		    	// we use here only IR sensor

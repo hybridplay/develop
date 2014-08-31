@@ -1,6 +1,10 @@
 package com.hybridplay.app;
 
+import java.util.List;
+
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -80,23 +84,27 @@ public class HybridPlay extends FragmentActivity {
 		// Enable Bluetooth
 		BluetoothAdapter adapterBT = BluetoothAdapter.getDefaultAdapter();
 		if (adapterBT != null) {
-			//Log.i(LOGGER_TAG, "Found Bluetooth adapter");
 			if (!adapterBT.isEnabled()) {
-				//Log.i(LOGGER_TAG, "Bluetooth disabled, launch enable intent");
 				Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
 			}
 		}
 	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		clearMemory(getBaseContext());
+	}
 
 	@Override
 	public void onBackPressed() {
-
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.doyouwant).setCancelable(false)
 		.setPositiveButton(R.string.quit, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				finish();
+			public void onClick(DialogInterface dialog, int which) {	
+				clearMemory(getBaseContext());
+				//finish();
 			}
 		})
 		.setNegativeButton(R.string.resume, new DialogInterface.OnClickListener() {
@@ -106,8 +114,30 @@ public class HybridPlay extends FragmentActivity {
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
-
+		super.onBackPressed();
 	}
+	
+	public static void killThisPackageIfRunning(final Context context, String packageName){
+	    ActivityManager activityManager = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+	    activityManager.killBackgroundProcesses(packageName);
+	}
+	
+	public static void clearMemory(Context context) {
+        ActivityManager activityManger = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> list = activityManger.getRunningAppProcesses();
+        if (list != null)
+            for (int i = 0; i < list.size(); i++) {
+                ActivityManager.RunningAppProcessInfo apinfo = list.get(i);
+
+                String[] pkgList = apinfo.pkgList;
+
+                if (apinfo.importance > ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE ) {
+                    for (int j = 0; j < pkgList.length; j++) {
+                        activityManger.killBackgroundProcesses(pkgList[j]);
+                    }
+                }
+            }
+    }
 
 	public void lanzarGameList(){
 		Intent i = new Intent(this, GamesExpandable.class);

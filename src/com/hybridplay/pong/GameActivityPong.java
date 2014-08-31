@@ -108,6 +108,10 @@ public class GameActivityPong extends Activity{
         			}else if (triggerZL) { // LEFT
         				mPongView.movePaddle(0);
         			}
+          			
+          			if(!triggerZR && !triggerZL){
+          				mPongView.movePaddle(2);
+    		    	}
           		}else if(playWith.equals("Caballito")){
           			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
           			if (triggerXR) { // RIGHT
@@ -115,6 +119,11 @@ public class GameActivityPong extends Activity{
         			}else if (triggerXL) { // LEFT
         				mPongView.movePaddle(0);
         			}
+          			
+          			if(!triggerXR && !triggerXL){
+          				mPongView.movePaddle(2);
+    		    	}
+          			
           		}else if(playWith.equals("Columpio")){
           			// pinza vertical boton hacia abajo - oscilaci�n - eje X
 
@@ -125,6 +134,10 @@ public class GameActivityPong extends Activity{
         			}else if (triggerZL) { // LEFT
         				mPongView.movePaddle(0);
         			}
+          			
+          			if(!triggerZR && !triggerZL){
+          				mPongView.movePaddle(2);
+    		    	}
           		}else if(playWith.equals("Tobogan")){
           			// we use here only IR sensor
 

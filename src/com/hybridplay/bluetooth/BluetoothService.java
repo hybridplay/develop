@@ -263,6 +263,7 @@ public class BluetoothService extends Service {
 		private void disconnect() {
 			try {
 				m_socket.close();
+				m_handler.obtainMessage(BLUETOOTH_DISCONNECTED).sendToTarget();
 			} catch (IOException e) {
 				Log.d(BLUETOOTH_SERVICE_TAG, String.format("Caught IOException e: %s", e.toString()));
 			}

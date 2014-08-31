@@ -85,7 +85,7 @@ public class Sensor {
 				}
     		}
     		
-    		logData(distanceIR);
+    		//logData(distanceIR);
     	}
     }
     

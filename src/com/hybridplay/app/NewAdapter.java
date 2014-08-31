@@ -188,7 +188,17 @@ public class NewAdapter extends BaseExpandableListAdapter{
 			  	  imgGame.setImageResource(R.drawable.madekids);
 	          //textView1.setText("Classic Arcanoid adapted to Hybrid Play");
 	          break;
-	      case 7:
+	      case 7: // SpaceInvaders
+		  	  imageIcono.setImageResource(R.drawable.iconoconfig);
+		  	  imgGame.setImageResource(R.drawable.clasic);
+	          //textView1.setText("Classic Arcanoid adapted to Hybrid Play");
+	          break;
+	      case 8: // Tron
+		  	  imageIcono.setImageResource(R.drawable.iconoconfig);
+		  	  imgGame.setImageResource(R.drawable.clasic);
+	          //textView1.setText("Classic Arcanoid adapted to Hybrid Play");
+	          break;
+	      case 9: // Config
 		  	  imageIcono.setImageResource(R.drawable.iconoconfig);
 		  	  imgGame.setImageResource(R.drawable.configbig);
 	          //textView1.setText("Classic Arcanoid adapted to Hybrid Play");

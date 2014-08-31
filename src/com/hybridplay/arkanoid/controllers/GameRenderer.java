@@ -15,7 +15,7 @@ import com.hybridplay.app.R;
 public class GameRenderer {
 	
 	private Paint paint = new Paint();
-	private Bitmap imgBackground, connecting;
+	private Bitmap connecting;
 	private Rect srcConnecting, dstConnecting;
 	private GameState gameState;
 	public int w;
@@ -31,7 +31,6 @@ public class GameRenderer {
 		paint.setAntiAlias(true);
 		paint.setStrokeWidth(1);
 		paint.setColor(Color.WHITE);
-		imgBackground = BitmapFactory.decodeResource(r, R.drawable.texture);
 		DisplayMetrics disp = r.getDisplayMetrics();
 		this.w = disp.widthPixels;
 		this.h = disp.heightPixels;
@@ -51,7 +50,7 @@ public class GameRenderer {
 
 	public void render(Canvas canv) {
 
-		canv.drawBitmap(imgBackground, 0, 0, null);
+		canv.drawColor(Color.BLACK);
 		paint.setColor(Color.RED);
 		paint.setAlpha(128);
 		canv.drawRect(0, h-55, w, h, paint);
@@ -66,8 +65,8 @@ public class GameRenderer {
 		if (!gameState.connected){
 			canv.drawBitmap(connecting, srcConnecting, dstConnecting, null);
 		}else if (gameState.connected && gameState.isPaused()) {
-			paint.setColor(Color.BLACK);
-			paint.setTextSize(48);
+			paint.setColor(Color.WHITE);
+			paint.setTextSize(34);
 			canv.drawText(startText, 40, h/2, paint);			
 		}else if (gameState.connected){
 			paint.setTextSize(32);
@@ -83,7 +82,6 @@ public class GameRenderer {
 	public void setSize(int width, int height) {
 		this.w = width;
 		this.h = height;
-		imgBackground = Bitmap.createScaledBitmap(imgBackground, w, h, true);
 	}
 
 }

@@ -39,7 +39,7 @@ public class PongView extends View implements OnTouchListener, OnKeyListener {
 	public static final int
 		STARTING_LIVES = 1,
 		PLAYER_PADDLE_SPEED = 10,
-		PADDLE_SENSOR_STEP = 18;
+		PADDLE_SENSOR_STEP = 10;
 	
 	/**
 	 * This is mostly deprecated but kept around if the need
@@ -478,10 +478,12 @@ public class PongView extends View implements OnTouchListener, OnKeyListener {
     		if(mBlue.destination > 0){
     			mBlue.destination -= PADDLE_SENSOR_STEP;
     		}
-    	}else{
+    	}else if(dir == 1){
     		if(mBlue.destination < mdW){
     			mBlue.destination += PADDLE_SENSOR_STEP;
     		}
+    	}else{
+    		// Stop
     	}
     	//Log.d("Paddle position: ",Integer.toString(mBlue.destination));
     }

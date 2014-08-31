@@ -35,6 +35,7 @@ public class GamesExpandable extends ExpandableListActivity {
 	Runnable mRunnable;
 	Handler handler = new Handler();
 	boolean mBound = false;
+	int fakeAX, fakeAY, fakeAZ, fakeIR;
 	// ---------------------------------------------- BLUETOOTH SERVICE BLOCK
 
 	@Override
@@ -103,6 +104,10 @@ public class GamesExpandable extends ExpandableListActivity {
 				}else if (groupPosition == 6){
 					startFising(childPosition);
 				}else if (groupPosition == 7){
+					startSpaceInvaders(childPosition);
+				}else if (groupPosition == 8){
+					startTron(childPosition);
+				}else if (groupPosition == 9){
 					startConfig(childPosition);
 				}
 				return true;
@@ -120,18 +125,19 @@ public class GamesExpandable extends ExpandableListActivity {
 	
 	@Override
 	public void onBackPressed() {
-		/*if (thread != null) {
+		if (thread != null) {
 		    thread.interrupt();
 		}
-		handler.removeCallbacks(mRunnable);*/
-		GamesExpandable.this.finish();
+		handler.removeCallbacks(mRunnable);
+		unbindBluetoothService(); // BLUETOOTH SERVICE
+		finish();
 	}
 	
 	@Override
 	public void onDestroy() {
 		unbindBluetoothService(); // BLUETOOTH SERVICE
-		mService.killBluetoothService();
 		super.onDestroy();
+		
 	}
 
 	public void setGroupData() {	  
@@ -142,6 +148,8 @@ public class GamesExpandable extends ExpandableListActivity {
 		groupItem.add("Arkanoid");
 		groupItem.add("Building Something");
 		groupItem.add("Fishing");
+		groupItem.add("SpaceInvaders");
+		groupItem.add("Tron");
 		groupItem.add("Config");
 	}
 
@@ -153,6 +161,8 @@ public class GamesExpandable extends ExpandableListActivity {
 		groupItemDescription.add("Classic Arkanoid adapted to Hybrid Play");
 		groupItemDescription.add("Collect the pieces to build objects");
 		groupItemDescription.add("Collect pearls");
+		groupItemDescription.add("Classic SpaceInvaders adapted to Hybrid Play");
+		groupItemDescription.add("Classic Tron adapted to Hybrid Play");
 		groupItemDescription.add("Sensor data visualization");
 	}
 
@@ -198,7 +208,7 @@ public class GamesExpandable extends ExpandableListActivity {
 		childItem.add(child);
 
 		/**
-		 * Add Data For Arcanoid
+		 * Add Data For Arkanoid
 		 */
 		child = new ArrayList<String>();
 		child.add("Balancin");
@@ -224,6 +234,25 @@ public class GamesExpandable extends ExpandableListActivity {
 		child.add("Balancin");
 		child.add("Caballito");
 		child.add("SubeBaja");
+
+		childItem.add(child);
+		
+		/**
+		 * Add Data For SpaceInvaders
+		 */
+		child = new ArrayList<String>();
+		child.add("Balancin");
+		child.add("Caballito");
+		child.add("SubeBaja");
+
+		childItem.add(child);
+		
+		/**
+		 * Add Data For Tron
+		 */
+		child = new ArrayList<String>();
+		child.add("Balancin");
+		child.add("Caballito");
 
 		childItem.add(child);
 
@@ -301,12 +330,30 @@ public class GamesExpandable extends ExpandableListActivity {
 		sGame.putExtra("gameType", tempChild.get(position));
 		startActivityForResult(sGame, 0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void startSpaceInvaders(int position){
+		Intent sGame = new Intent(this, com.hybridplay.spaceinvaders.SpaceInvadersActivity.class);
+		ArrayList<String> tempChild = new ArrayList<String>();
+		tempChild = (ArrayList<String>) childItem.get(7);
+		sGame.putExtra("gameType", tempChild.get(position));
+		startActivityForResult(sGame, 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void startTron(int position){
+		Intent sGame = new Intent(this, com.hybridplay.glTron.glTron.class);
+		ArrayList<String> tempChild = new ArrayList<String>();
+		tempChild = (ArrayList<String>) childItem.get(8);
+		sGame.putExtra("gameType", tempChild.get(position));
+		startActivityForResult(sGame, 0);
+	}
 
 	@SuppressWarnings("unchecked")
 	public void startConfig(int position){
 		Intent sGame = new Intent(this, com.hybridplay.config.ConfigActivity.class);
 		ArrayList<String> tempChild = new ArrayList<String>();
-		tempChild = (ArrayList<String>) childItem.get(7);
+		tempChild = (ArrayList<String>) childItem.get(9);
 		sGame.putExtra("gameType", tempChild.get(position));
 		startActivityForResult(sGame, 0);
 	}
@@ -318,6 +365,7 @@ public class GamesExpandable extends ExpandableListActivity {
 	}
 
 	public void unbindBluetoothService(){
+		thread.setRunning(false);
 		// Unbind from the service
 		if (mBound) {
 			unbindService(mConnection);
@@ -359,12 +407,19 @@ public class GamesExpandable extends ExpandableListActivity {
 						if(!mService.getBluetoothConnected()){
 							mService.initBluetoothService();
 						}
-						// update sensor readings (send broadcast)
-						broadcastIntent(thread.getX(),thread.getY(),thread.getZ(),thread.getIR(),mService.getDeviceName(),mService.getDeviceStatus());
+						// update sensor readings (send broadcast if values have changed)
+						if(fakeAX != thread.getX() || fakeAY != thread.getY() || fakeAZ != thread.getZ() || fakeIR != thread.getIR()){
+							broadcastIntent(thread.getX(),thread.getY(),thread.getZ(),thread.getIR(),mService.getDeviceName(),mService.getDeviceStatus());
+						}
+						
+						fakeAX = thread.getX();
+						fakeAY = thread.getY();
+						fakeAZ = thread.getZ();
+						fakeIR = thread.getIR();
 					}
-					handler.postDelayed(this,40); // set time here to refresh (40 ms => 12 FPS)
+					handler.postDelayed(this,80); // set time here to refresh (80 ms => 12 FPS)
 				}
-			});            
+			});         
 		}
 
 		@Override
