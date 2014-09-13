@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.hybridplay.bluetooth.BluetoothService;
 import com.hybridplay.bluetooth.SensorThread;
 import com.hybridplay.bluetooth.BluetoothService.LocalBinder;
-
 import android.app.ExpandableListActivity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,13 +35,15 @@ public class GamesExpandable extends ExpandableListActivity {
 	Handler handler = new Handler();
 	boolean mBound = false;
 	int fakeAX, fakeAY, fakeAZ, fakeIR;
+	boolean sensorConnected = false;
 	// ---------------------------------------------- BLUETOOTH SERVICE BLOCK
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.gameslist);
+		findViewById(R.id.gamesListFrameLayout).setVisibility(View.INVISIBLE);
 
 		ExpandableListView expandbleLis = getExpandableListView();
 		//expandbleLis.setDividerHeight(2);
@@ -55,9 +56,7 @@ public class GamesExpandable extends ExpandableListActivity {
 
 		NewAdapter mNewAdapter = new NewAdapter(groupItem, groupItemDescription, childItem);
 		mNewAdapter
-		.setInflater(
-				(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE),
-				this);
+		.setInflater((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE),this);
 		//getExpandableListView().setAdapter(mNewAdapter);
 		expandbleLis.setAdapter(mNewAdapter);
 		// expandbleLis.setOnChildClickListener(this);
@@ -406,7 +405,14 @@ public class GamesExpandable extends ExpandableListActivity {
 						// check if bluetooth is connected
 						if(!mService.getBluetoothConnected()){
 							mService.initBluetoothService();
+							sensorConnected = false;
 						}
+						
+						if(mService.getIsSensorConnected()){
+							findViewById(R.id.loadingLayout).setVisibility(View.INVISIBLE);
+							findViewById(R.id.gamesListFrameLayout).setVisibility(View.VISIBLE);
+						}
+						
 						// update sensor readings (send broadcast if values have changed)
 						if(fakeAX != thread.getX() || fakeAY != thread.getY() || fakeAZ != thread.getZ() || fakeIR != thread.getIR()){
 							broadcastIntent(thread.getX(),thread.getY(),thread.getZ(),thread.getIR(),mService.getDeviceName(),mService.getDeviceStatus());

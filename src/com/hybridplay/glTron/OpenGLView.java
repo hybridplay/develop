@@ -57,11 +57,12 @@ public class OpenGLView extends GLSurfaceView {
 	
 	public boolean onTouchEvent(final MotionEvent event) {
 
-		if(event.getAction() == MotionEvent.ACTION_DOWN) {
-			_x = event.getX();
-			_y = event.getY();
-			_renderer.onTouch(_x, _y);
-			
+		if(_renderer.Game.boInitialState){
+			if(event.getAction() == MotionEvent.ACTION_DOWN) {
+				_x = event.getX();
+				_y = event.getY();
+				_renderer.onTouch(_x, _y);
+			}
 		}
 		
 		return true;

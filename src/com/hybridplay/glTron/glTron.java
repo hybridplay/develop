@@ -32,12 +32,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
 public class glTron extends Activity {
     /** Called when the activity is first created. */
 	private OpenGLView _View;
+	private CanvasView _CView;
 	
 	private Boolean _FocusChangeFalseSeen = false;
 	private Boolean _Resume = false;
@@ -72,8 +74,7 @@ public class glTron extends Activity {
 	    super.onCreate(savedInstanceState);
 	    
 	    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	    
         _View = new OpenGLView(this, width, height);
         setContentView(_View);
@@ -81,6 +82,10 @@ public class glTron extends Activity {
         // get the game type (affect different sensor readings)
         Bundle extras = getIntent().getExtras();
         playWith = extras.getString("gameType");
+        
+        _CView = new CanvasView(this,playWith);
+        //ViewGroup.LayoutParams mOverlayViewParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        //addContentView(_CView, mOverlayViewParams );
         
         handler.post(new Runnable(){
         	@Override
@@ -147,6 +152,8 @@ public class glTron extends Activity {
           			// we use here only IR sensor
 
           		}
+    		    
+    		    //_CView.updateSensor(triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR);
     		    
     		    handler.postDelayed(this,40); // set time here to refresh (40 ms => 12 FPS)
         	}

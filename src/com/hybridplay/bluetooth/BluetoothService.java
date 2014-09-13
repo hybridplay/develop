@@ -27,12 +27,14 @@ public class BluetoothService extends Service {
 	static final int BLUETOOTH_RECEIVED = 3;
 	
 	char HEADER = 'H';
+	char FOOTER = 'F';
 	
 	ArrayList<BluetoothDevice> m_devices;
 	
 	Handler m_handler;
 	DeviceThread m_thread;
 	boolean bluetoothConnected = false;
+	boolean isSensorConnected = false;
 	
 	String m_deviceName;
 	String m_deviceStatus;
@@ -149,29 +151,34 @@ public class BluetoothService extends Service {
 	private void onBluetoothConnected() {
 		Log.i(BLUETOOTH_SERVICE_TAG, "Bluetooth connected");
 		m_deviceStatus = "Connected";
+		isSensorConnected = true;
 	}
 	
 	private void onBluetoothDisconnected() {
 		Log.i(BLUETOOTH_SERVICE_TAG, "Bluetooth disconnected");
 		m_deviceStatus = "Disconnected";
+		isSensorConnected = false;
+		
+		// re-try
+		initBluetoothService();
 	}
 	
 	
 	private void onBluetoothRead(byte[] buffer, int len) {
-		if(len >= 11){ // 11 bytes from Arduino (1 HEADER, 2 ACCX, 2 ACCY, 2 ACCZ, 2 BATTERY, 2 IR)
-			if(buffer[0] == HEADER){
-				String inputStr = new String(buffer, 0, len);
-				String [] data = inputStr.split(",");
+		if(len >= 12){ // 12 bytes from Arduino (1 HEADER, 2 ACCX, 2 ACCY, 2 ACCZ, 2 IR, 2 BATTERY,1 FOOTER)
+			if(buffer[0] == HEADER && buffer[11] == FOOTER){
+				//String inputStr = new String(buffer, 0, len);
+				//String [] data = inputStr.split(",");
 				accX = readArduinoBinary(buffer[1],buffer[2]);
 				accY = readArduinoBinary(buffer[3],buffer[4]);
 				accZ = readArduinoBinary(buffer[5],buffer[6]);
-				bat = readArduinoBinary(buffer[7],buffer[8]);
-				//IR	= readArduinoBinary(buffer[9],buffer[10]);
-				try{
+				IR	= readArduinoBinary(buffer[7],buffer[8]);
+				bat = readArduinoBinary(buffer[9],buffer[10]);
+				/*try{
 					IR = Integer.parseInt(data[1]);
 				}catch(Exception e){
 					//Log.d("log error",e.toString());
-				}
+				}*/
 			}
 		}
 
@@ -226,6 +233,10 @@ public class BluetoothService extends Service {
 	
 	public boolean getBluetoothConnected(){
 		return bluetoothConnected;
+	}
+	
+	public boolean getIsSensorConnected(){
+		return isSensorConnected;
 	}
     
 	/* Custom Threaded Class for Bluetooth Device*/

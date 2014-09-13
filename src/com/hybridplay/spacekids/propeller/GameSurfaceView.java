@@ -83,6 +83,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	public int counterForSprite=0;
 	
+	//////////////////////////////////SENSOR REFERENCE
+	public Bitmap sUP_ON, sDOWN_ON, sLEFT_ON, sRIGHT_ON;
+	public Bitmap sUP_OFF, sDOWN_OFF, sLEFT_OFF, sRIGHT_OFF;
+	public Rect srcRect_UP, srcRect_DOWN, srcRect_LEFT, srcRect_RIGHT;
+	public Rect dstRect_UP, dstRect_DOWN, dstRect_LEFT, dstRect_RIGHT;
+	//////////////////////////////////SENSOR REFERENCE
+	
 	public GameSurfaceView(Context context) {
         super(context);
     }
@@ -114,7 +121,34 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		setKeepScreenOn(true);
 	}
 	
+	private void initSensorGraphics(){
+		sUP_ON = BitmapFactory.decodeResource(getResources(), R.drawable.arriba_on);
+		sUP_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.arriba_off);
+		
+		sDOWN_ON = BitmapFactory.decodeResource(getResources(), R.drawable.abajo_on);
+		sDOWN_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.abajo_off);
+		
+		sLEFT_ON = BitmapFactory.decodeResource(getResources(), R.drawable.derecha_on);
+		sLEFT_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.derecha_off);
+		
+		sRIGHT_ON = BitmapFactory.decodeResource(getResources(), R.drawable.izquierda_on);
+		sRIGHT_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.izquierda_off);
+		
+		srcRect_UP = new Rect(0,0,sUP_ON.getWidth(),sUP_ON.getHeight());
+		srcRect_DOWN = new Rect(0,0,sDOWN_ON.getWidth(),sDOWN_ON.getHeight());
+		srcRect_RIGHT = new Rect(0,0,sLEFT_ON.getWidth(),sLEFT_ON.getHeight());
+		srcRect_LEFT = new Rect(0,0,sRIGHT_ON.getWidth(),sRIGHT_ON.getHeight());
+		
+		dstRect_UP = new Rect(60,20,60+sUP_ON.getWidth(),20+sUP_ON.getHeight());
+		dstRect_DOWN = new Rect(60,106,60+sDOWN_ON.getWidth(),106+sDOWN_ON.getHeight());
+		dstRect_RIGHT = new Rect(30,50,30+sLEFT_ON.getWidth(),50+sLEFT_ON.getHeight());
+		dstRect_LEFT = new Rect(118,50,118+sRIGHT_ON.getWidth(),50+sRIGHT_ON.getHeight());
+	}
+	
 	private void initBitmap(){
+		// SENSOR
+		initSensorGraphics();
+		
 		trash_img = BitmapFactory.decodeResource(getResources(), R.drawable.trash);
 		kid_img = BitmapFactory.decodeResource(getResources(), R.drawable.kid1);
 		starts_img = BitmapFactory.decodeResource(getResources(), R.drawable.stars_background);
@@ -231,6 +265,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawTrash(canvas);
 					drawScore(canvas);
 					drawConnection(canvas);
+					drawSensor(canvas);
 					
 					//para dibujar los disparadores de eventos
 					int borde = canvas.getWidth()/10;
@@ -318,7 +353,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawKid(canvas); // draw Kid
 					drawTrash(canvas);
 					drawScore(canvas); // draw score and lives
-
+					drawSensor(canvas);
 					
 					int borde = canvas.getWidth()/10;
 					int distancia = canvas.getWidth()/8;
@@ -406,6 +441,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawKid(canvas);
 					drawTrash(canvas);
 					drawScore(canvas);
+					drawSensor(canvas);
 					
 					//para dibujar los disparadores de eventos
 					int borde = canvas.getWidth()/10;
@@ -645,6 +681,88 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	public void drawConnection(Canvas canvas){
 		canvas.drawBitmap(connecting, srcConnecting, dstConnecting, null);
 	}
+	
+	private void drawSensor(Canvas canvas){
+		if(gameEngine.getGameType().equals("Columpio")){
+			// pinza vertical boton hacia abajo - oscilacion - eje Z
+			if(gameEngine.triggerZR){ // LEFT
+				canvas.drawBitmap(sLEFT_ON, srcRect_LEFT, dstRect_LEFT, null);
+			}else{
+				canvas.drawBitmap(sLEFT_OFF, srcRect_LEFT, dstRect_LEFT, null);
+			}
+			
+			if(gameEngine.triggerZL){ // RIGHT
+				canvas.drawBitmap(sRIGHT_ON, srcRect_RIGHT, dstRect_RIGHT, null);
+			}else{
+				canvas.drawBitmap(sRIGHT_OFF, srcRect_RIGHT, dstRect_RIGHT, null);
+			}
+		}else if(gameEngine.getGameType().equals("Tobogan")){
+			// we use here only IR sensor
+			
+		}else if(gameEngine.getGameType().equals("SubeBaja")){
+			// pinza horizontal - dos direcciones - eje Z
+			if(gameEngine.triggerZR){ // UP
+				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
+			}else{
+				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
+			}
+			
+			if(gameEngine.triggerZL){ // DOWN
+				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
+			}else{
+				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);
+			}
+		}else if(gameEngine.getGameType().equals("Balancin")){
+			// pinza horizontal - cuatro direcciones - ejes Z Y
+			if(gameEngine.triggerYR){ // UP
+				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
+			}else{
+				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
+			}
+			
+			if(gameEngine.triggerYL){ // DOWN
+				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
+			}else{
+				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);
+			}
+			
+			if(gameEngine.triggerZR){ // LEFT
+				canvas.drawBitmap(sLEFT_ON, srcRect_LEFT, dstRect_LEFT, null);
+			}else{
+				canvas.drawBitmap(sLEFT_OFF, srcRect_LEFT, dstRect_LEFT, null);
+			}
+			if(gameEngine.triggerZL){ // RIGHT
+				canvas.drawBitmap(sRIGHT_ON, srcRect_RIGHT, dstRect_RIGHT, null);
+			}else{
+				canvas.drawBitmap(sRIGHT_OFF, srcRect_RIGHT, dstRect_RIGHT, null);
+			}
+		}else if(gameEngine.getGameType().equals("Caballito")){
+			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
+			if(gameEngine.triggerYR){ // UP
+				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
+			}else{
+				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
+			}
+			
+			if(gameEngine.triggerYL){ // DOWN
+				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
+			}else{
+				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);
+			}
+			
+			if(gameEngine.triggerXR){ // LEFT
+				canvas.drawBitmap(sLEFT_ON, srcRect_LEFT, dstRect_LEFT, null);
+			}else{
+				canvas.drawBitmap(sLEFT_OFF, srcRect_LEFT, dstRect_LEFT, null);
+			}
+			if(gameEngine.triggerXL){ // RIGHT
+				canvas.drawBitmap(sRIGHT_ON, srcRect_RIGHT, dstRect_RIGHT, null);
+			}else{
+				canvas.drawBitmap(sRIGHT_OFF, srcRect_RIGHT, dstRect_RIGHT, null);
+			}
+		}
+	}
+	
 }
 
 

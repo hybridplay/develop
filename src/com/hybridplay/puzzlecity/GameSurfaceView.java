@@ -44,7 +44,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	public Bitmap ficha1, ficha2, ficha3, ficha4, ficha5, ficha6, ficha7, ficha8, ficha9, ficha10;
 	public Bitmap cazamariposas_L, cazamariposas_R;
 	public Bitmap nube1, nube2, nube3, nube4, vuelve;
-	public Bitmap connecting, playerImg;
+	//public Bitmap connecting;
 	public Bitmap laberinto_fondo, laberinto_mascara, laberinto_fondo1, laberinto_mascara1;
 
 	//public Bitmap avionBitmap;
@@ -60,8 +60,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	public Fichas fichas;
 	private ArrayList<Fichas> fichasArray;
 	
-	//private Rect avionRect;
-	private Rect srcRect,  srcConnecting, dstConnecting;
+	//private Rect srcConnecting, dstConnecting;
+	public Rect srcRect;
 	public Rect dstRect;
 	public Rect[] srcKid = new Rect[8];
 	public Rect plataformaRect, nubeRect, pDst;
@@ -83,6 +83,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	public int counterForSprite=0;
 	
 	public int nFondoAvioneta =0;
+	
+	//////////////////////////////////SENSOR REFERENCE
+	public Bitmap sUP_ON, sDOWN_ON, sLEFT_ON, sRIGHT_ON;
+	public Bitmap sUP_OFF, sDOWN_OFF, sLEFT_OFF, sRIGHT_OFF;
+	public Rect srcRect_UP, srcRect_DOWN, srcRect_LEFT, srcRect_RIGHT;
+	public Rect dstRect_UP, dstRect_DOWN, dstRect_LEFT, dstRect_RIGHT;
+	//////////////////////////////////SENSOR REFERENCE
 	
 	public GameSurfaceView(Context context) {
         super(context);
@@ -111,7 +118,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		avion = new Avion(context,(int)screenWidth,(int)screenHeight);
 		gameEngine.avion = avion;
-		player = new Player(context, playerImg, (int)screenWidth/2,(int)screenHeight/2, screenWidth,screenHeight, 10, 5, 7);
+		player = new Player(context, kid_img, (int)screenWidth/2,(int)screenHeight/2, screenWidth,screenHeight, 10, 5, 7);
 		gameEngine.player = player;
 		nube = new Nube(context,(int)screenWidth,(int)screenHeight);
 		gameEngine.nube = nube;
@@ -129,7 +136,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		}
 
 		   //creamos el array de basura y a�adimos 3 objetos
-		if (gameEngine.getGameType().equals("Caballito")||gameEngine.getGameType().equals("Balancin")){
+		if (gameEngine.getGameType().equals("Caballito") || gameEngine.getGameType().equals("Balancin")){
 			fichasArray = new ArrayList<Fichas>();
 			for (int i = 0; i < 10; i++) {
 				fichasArray.add(new Fichas(context, gameEngine, (int)screenWidth,(int)screenHeight,gameEngine.getGameType()));
@@ -145,9 +152,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		xFondo = 0;
 		
-		
-		
-		
 		//gameEngine.fichas = fichas;
 		
 		surfaceHolder = getHolder();
@@ -155,17 +159,43 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		setKeepScreenOn(true);
 	}
 	
+	private void initSensorGraphics(){
+		sUP_ON = BitmapFactory.decodeResource(getResources(), R.drawable.arriba_on);
+		sUP_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.arriba_off);
+		
+		sDOWN_ON = BitmapFactory.decodeResource(getResources(), R.drawable.abajo_on);
+		sDOWN_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.abajo_off);
+		
+		sLEFT_ON = BitmapFactory.decodeResource(getResources(), R.drawable.derecha_on);
+		sLEFT_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.derecha_off);
+		
+		sRIGHT_ON = BitmapFactory.decodeResource(getResources(), R.drawable.izquierda_on);
+		sRIGHT_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.izquierda_off);
+		
+		srcRect_UP = new Rect(0,0,sUP_ON.getWidth(),sUP_ON.getHeight());
+		srcRect_DOWN = new Rect(0,0,sDOWN_ON.getWidth(),sDOWN_ON.getHeight());
+		srcRect_RIGHT = new Rect(0,0,sLEFT_ON.getWidth(),sLEFT_ON.getHeight());
+		srcRect_LEFT = new Rect(0,0,sRIGHT_ON.getWidth(),sRIGHT_ON.getHeight());
+		
+		dstRect_UP = new Rect(60,20,60+sUP_ON.getWidth(),20+sUP_ON.getHeight());
+		dstRect_DOWN = new Rect(60,106,60+sDOWN_ON.getWidth(),106+sDOWN_ON.getHeight());
+		dstRect_RIGHT = new Rect(30,50,30+sLEFT_ON.getWidth(),50+sLEFT_ON.getHeight());
+		dstRect_LEFT = new Rect(118,50,118+sRIGHT_ON.getWidth(),50+sRIGHT_ON.getHeight());
+	}
+	
 	private void initBitmap(){
+		// SENSOR
+		initSensorGraphics();
 		// KID
-		playerImg = BitmapFactory.decodeResource(getResources(), R.drawable.kidorange);
 		kid_img = BitmapFactory.decodeResource(getResources(), R.drawable.kidorange);
-		plataforma = BitmapFactory.decodeResource(getResources(), R.drawable.plataforma);
+		
 		// OBJECTS
 		bola_img = BitmapFactory.decodeResource(getResources(), R.drawable.bola);
 		bomba_img = BitmapFactory.decodeResource(getResources(), R.drawable.bomba);
 		boom_img = BitmapFactory.decodeResource(getResources(), R.drawable.boom);
 		cactus_img = BitmapFactory.decodeResource(getResources(), R.drawable.cactus);
-		//avionBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.avion);
+		
+		vuelve = BitmapFactory.decodeResource(getResources(), R.drawable.vuelveinicio);
 				
 		// FICHAS
 		ficha1 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza1);
@@ -178,29 +208,40 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		ficha8 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza8);
 		ficha9 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza9);
 		ficha10 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza10);
-		// RAQUETAS
-		cazamariposas_L = BitmapFactory.decodeResource(getResources(), R.drawable.cazamariposas_izq);
-		cazamariposas_R = BitmapFactory.decodeResource(getResources(), R.drawable.cazamariposas_der);
-		// NUBES
-		nube1 = BitmapFactory.decodeResource(getResources(), R.drawable.nube1);
-		nube2 = BitmapFactory.decodeResource(getResources(), R.drawable.nube2);
-		nube3 = BitmapFactory.decodeResource(getResources(), R.drawable.nube3);
-		nube4 = BitmapFactory.decodeResource(getResources(), R.drawable.nube4);
-		vuelve = BitmapFactory.decodeResource(getResources(), R.drawable.vuelveinicio);
-		// FONDOS
-		columpio_fondo = BitmapFactory.decodeResource(getResources(), R.drawable.fondocolumpiocactus);
-		nubes_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.fondo1);
-		nubes_fondo2 = BitmapFactory.decodeResource(getResources(), R.drawable.fondo2);
-		nubes_fondo3 = BitmapFactory.decodeResource(getResources(), R.drawable.fondo3);
-		avion_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta1);
-		avion_fondo2 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta2);
-		avion_fondo3 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta3);
-		laberinto_fondo = BitmapFactory.decodeResource(getResources(), R.drawable.laberintofondo);
-		laberinto_mascara = BitmapFactory.decodeResource(getResources(), R.drawable.laberintomascara);
-		laberinto_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodos);
-		laberinto_mascara1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodosmascara);
 		
-		connecting = BitmapFactory.decodeResource(getResources(), R.drawable.connecting);
+		if(gameEngine.getGameType().equals("Columpio")){
+			plataforma = BitmapFactory.decodeResource(getResources(), R.drawable.plataforma);
+			columpio_fondo = BitmapFactory.decodeResource(getResources(), R.drawable.fondocolumpiocactus);
+			// RAQUETAS
+			cazamariposas_L = BitmapFactory.decodeResource(getResources(), R.drawable.cazamariposas_izq);
+			cazamariposas_R = BitmapFactory.decodeResource(getResources(), R.drawable.cazamariposas_der);
+		}
+		
+		if(gameEngine.getGameType().equals("Tobogan")){
+			nubes_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.fondo1);
+			nubes_fondo2 = BitmapFactory.decodeResource(getResources(), R.drawable.fondo2);
+			nubes_fondo3 = BitmapFactory.decodeResource(getResources(), R.drawable.fondo3);
+			// NUBES
+			nube1 = BitmapFactory.decodeResource(getResources(), R.drawable.nube1);
+			nube2 = BitmapFactory.decodeResource(getResources(), R.drawable.nube2);
+			nube3 = BitmapFactory.decodeResource(getResources(), R.drawable.nube3);
+			nube4 = BitmapFactory.decodeResource(getResources(), R.drawable.nube4);
+		}
+		
+		if(gameEngine.getGameType().equals("SubeBaja")){
+			avion_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta1);
+			avion_fondo2 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta2);
+			avion_fondo3 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta3);
+		}
+		
+		if(gameEngine.getGameType().equals("Balancin") || gameEngine.getGameType().equals("Caballito")){
+			laberinto_fondo = BitmapFactory.decodeResource(getResources(), R.drawable.laberintofondo);
+			laberinto_mascara = BitmapFactory.decodeResource(getResources(), R.drawable.laberintomascara);
+			laberinto_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodos);
+			laberinto_mascara1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodosmascara);
+		}
+		
+		//connecting = BitmapFactory.decodeResource(getResources(), R.drawable.connecting);
 		
 		paint = new Paint();
 		paint.setAntiAlias(true);
@@ -229,7 +270,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	private void initSprite(){
-		
 		srcKid[0] = new Rect(0, 0, 128, 128);
 		srcKid[1] = new Rect(0, 128, 128, 256);
 		srcKid[2] = new Rect(0, 256, 128, 384);
@@ -241,7 +281,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		plataformaRect = new Rect(0,0,167,26);
 		nubeRect = new Rect(0,0,225,143);
-		//avionRect = new Rect(0, 0, 192, 156);
 		
 		if(gameEngine.getGameType().equals("Columpio") || gameEngine.getGameType().equals("Rueda")){ // oscila cactus
 			src = new Rect(0,0, columpio_fondo.getWidth(), columpio_fondo.getHeight());
@@ -261,8 +300,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		dst = new Rect(0, 0, (int)screenWidth, (int)screenHeight);
 		
-		srcConnecting = new Rect(0, 0, connecting.getWidth(), connecting.getHeight() );
-		dstConnecting = new Rect((int) screenWidth/2 - connecting.getWidth()/2,(int) screenHeight/2-connecting.getHeight()/2,(int) screenWidth/2 + connecting.getWidth()/2,(int) screenHeight/2+ connecting.getHeight()/2 );
+		//srcConnecting = new Rect(0, 0, connecting.getWidth(), connecting.getHeight() );
+		//dstConnecting = new Rect((int) screenWidth/2 - connecting.getWidth()/2,(int) screenHeight/2-connecting.getHeight()/2,(int) screenWidth/2 + connecting.getWidth()/2,(int) screenHeight/2+ connecting.getHeight()/2 );
 		
 	}
 
@@ -280,6 +319,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			}
 			if (gameEngine.getGameState() == RUNNING)  updateRunning(canvas);
 			if (gameEngine.getGameState() == GAMEOVER) updateGameOver(canvas);
+			if (gameEngine.getGameState() == WON) updateGameWon(canvas);
 		}
 	}
 	
@@ -295,17 +335,17 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				}
 				surfaceHolder = getHolder();
 			} else {
-
 				synchronized (surfaceHolder) {
-					canvas.drawRGB(20, 30, 75);
+					canvas.drawRGB(255,255,255);
 					drawStage(canvas);
 					drawPlayer(canvas);
 					drawFichas(canvas);
 					drawScore(canvas);
 					drawConnection(canvas);
+					drawSensor(canvas);
 
 					//para dibujar los disparadores de eventos
-					int borde = canvas.getWidth()/10;
+					/*int borde = canvas.getWidth()/10;
 					int distancia = canvas.getWidth()/8;
 
 					int x1, y1, x2, y2;
@@ -344,7 +384,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 					}else if(gameEngine.getGameType().equals("Tobogan")){ // ---------- Tobogan
 						// we use here only IR sensor
-					}
+					}*/
 
 					//measure the text then draw it at center
 //					sentenceWidth = paint2.measureText(textReady);
@@ -385,14 +425,14 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					beginTime = System.currentTimeMillis();
 					framesSkipped = 0; // resetting the frames skipped
 				
-					canvas.drawRGB(20, 30, 75);
+					canvas.drawRGB(255,255,255);
 					drawStage(canvas); // draw updated maze
 					drawPlayer(canvas); // draw Kid
 					drawFichas(canvas);
 					drawScore(canvas); // draw score and lives
-
+					drawSensor(canvas);
 					
-					int borde = canvas.getWidth()/10;
+					/*int borde = canvas.getWidth()/10;
 					int distancia = canvas.getWidth()/8;
 					
 					int x1, y1, x2, y2;
@@ -431,7 +471,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						
 					}else if(gameEngine.getGameType().equals("Tobogan")){ // ---------- Tobogan
 						// we use here only IR sensor
-					}
+					}*/
 					
 					// calculate how long did the cycle take
 					timeDiff = System.currentTimeMillis() - beginTime;
@@ -473,58 +513,69 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 				synchronized (surfaceHolder) {
 					isRunning = false;
-					canvas.drawRGB(20, 30, 75);
+					canvas.drawRGB(255,255,255);
 					drawStage(canvas);
 					drawPlayer(canvas);
 					drawFichas(canvas);
 					drawScore(canvas);
-					
-					//para dibujar los disparadores de eventos
-					int borde = canvas.getWidth()/10;
-					int distancia = canvas.getWidth()/8;
-					
-					int x1, y1, x2, y2;
-
-					if(gameEngine.getGameType().equals("Balancin")){ // ---------------- Balancin
-						// pinza horizontal - cuatro direcciones - ejes Z Y
-						x1 = borde; y1 = borde+(distancia/2); //izquierda
-						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						//gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
-						
-						x1 = borde+(distancia/2); y1 = borde; //arriba
-						x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-						//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
-						
-					}else if(gameEngine.getGameType().equals("Caballito")){ // ---------- Caballito
-						// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-						x1 = borde; y1 = borde+(distancia/2); //izquierda
-						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						//gameEngine.getmSensorX().draw(canvas, paintBT, x2, y2, x1, y1);
-						
-						x1 = borde+(distancia/2); y1 = borde; //arriba
-						x2 = borde+(distancia/2); y2 = borde+distancia; //abajo
-						//gameEngine.getmSensorY().draw(canvas, paintBT, x1, y1, x2, y2);
-						
-					}else if(gameEngine.getGameType().equals("Columpio")){ // ---------- Columpio
-						// pinza vertical boton hacia abajo - oscilaci�n - eje X
-						
-					}else if(gameEngine.getGameType().equals("Rueda")){ // ---------- Rueda
-						// pinza vertical boton hacia abajo - oscilaci�n - eje X
-						
-					}else if(gameEngine.getGameType().equals("SubeBaja")){ // ---------- SubeBaja
-						// pinza horizontal - dos direcciones - eje Z
-						x1 = borde; y1 = borde+(distancia/2); //izquierda
-						x2 = borde+distancia; y2 = borde+(distancia/2); //derecha
-						//gameEngine.getmSensorZ().draw(canvas, paintBT, x2, y2, x1, y1);
-						
-					}else if(gameEngine.getGameType().equals("Tobogan")){ // ---------- Tobogan
-						// we use here only IR sensor
-					}
+					drawSensor(canvas);
 					
 					//measure the text then draw it at center
 					sentenceWidth = paint2.measureText(textReady);
 				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
 					canvas.drawText(textOver, drawTextStartingX , screenHeight/2, paint2);
+					
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+				}
+			}
+		} finally {
+			// in case of an exception the surface is not left in
+			// an inconsistent state
+			if (canvas != null) {
+				surfaceHolder.unlockCanvasAndPost(canvas);
+			}
+		}
+		
+		try {
+			Thread.sleep(4000);
+			((Activity) mContext).finish(); //terminamos el juego
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void updateGameWon(Canvas canvas){
+		try {
+			canvas = surfaceHolder.lockCanvas();
+			if (canvas == null) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				surfaceHolder = getHolder();
+			} else {
+
+				synchronized (surfaceHolder) {
+					isRunning = false;
+					canvas.drawRGB(255,255,255);
+					drawStage(canvas);
+					drawPlayer(canvas);
+					drawFichas(canvas);
+					drawScore(canvas);
+					drawSensor(canvas);
+					
+					//measure the text then draw it at center
+					sentenceWidth = paint2.measureText(textReady);
+				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+					canvas.drawText(textCongrats, drawTextStartingX , screenHeight/2, paint2);
 					
 					try {
 						Thread.sleep(50);
@@ -711,6 +762,87 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	public void drawConnection(Canvas canvas){
-		canvas.drawBitmap(connecting, srcConnecting, dstConnecting, null);
+		//canvas.drawBitmap(connecting, srcConnecting, dstConnecting, null);
+	}
+	
+	private void drawSensor(Canvas canvas){
+		if(gameEngine.getGameType().equals("Columpio")){
+			// pinza vertical boton hacia abajo - oscilacion - eje Z
+			if(gameEngine.triggerZR){ // LEFT
+				canvas.drawBitmap(sLEFT_ON, srcRect_LEFT, dstRect_LEFT, null);
+			}else{
+				canvas.drawBitmap(sLEFT_OFF, srcRect_LEFT, dstRect_LEFT, null);
+			}
+			
+			if(gameEngine.triggerZL){ // RIGHT
+				canvas.drawBitmap(sRIGHT_ON, srcRect_RIGHT, dstRect_RIGHT, null);
+			}else{
+				canvas.drawBitmap(sRIGHT_OFF, srcRect_RIGHT, dstRect_RIGHT, null);
+			}
+		}else if(gameEngine.getGameType().equals("Tobogan")){
+			// we use here only IR sensor
+			
+		}else if(gameEngine.getGameType().equals("SubeBaja")){
+			// pinza horizontal - dos direcciones - eje Z
+			if(gameEngine.triggerZR){ // UP
+				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
+			}else{
+				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
+			}
+			
+			if(gameEngine.triggerZL){ // DOWN
+				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
+			}else{
+				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);
+			}
+		}else if(gameEngine.getGameType().equals("Balancin")){
+			// pinza horizontal - cuatro direcciones - ejes Z Y
+			if(gameEngine.triggerYR){ // UP
+				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
+			}else{
+				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
+			}
+			
+			if(gameEngine.triggerYL){ // DOWN
+				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
+			}else{
+				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);
+			}
+			
+			if(gameEngine.triggerZR){ // LEFT
+				canvas.drawBitmap(sLEFT_ON, srcRect_LEFT, dstRect_LEFT, null);
+			}else{
+				canvas.drawBitmap(sLEFT_OFF, srcRect_LEFT, dstRect_LEFT, null);
+			}
+			if(gameEngine.triggerZL){ // RIGHT
+				canvas.drawBitmap(sRIGHT_ON, srcRect_RIGHT, dstRect_RIGHT, null);
+			}else{
+				canvas.drawBitmap(sRIGHT_OFF, srcRect_RIGHT, dstRect_RIGHT, null);
+			}
+		}else if(gameEngine.getGameType().equals("Caballito")){
+			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
+			if(gameEngine.triggerYR){ // UP
+				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
+			}else{
+				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
+			}
+			
+			if(gameEngine.triggerYL){ // DOWN
+				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
+			}else{
+				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);
+			}
+			
+			if(gameEngine.triggerXR){ // LEFT
+				canvas.drawBitmap(sLEFT_ON, srcRect_LEFT, dstRect_LEFT, null);
+			}else{
+				canvas.drawBitmap(sLEFT_OFF, srcRect_LEFT, dstRect_LEFT, null);
+			}
+			if(gameEngine.triggerXL){ // RIGHT
+				canvas.drawBitmap(sRIGHT_ON, srcRect_RIGHT, dstRect_RIGHT, null);
+			}else{
+				canvas.drawBitmap(sRIGHT_OFF, srcRect_RIGHT, dstRect_RIGHT, null);
+			}
+		}
 	}
 }

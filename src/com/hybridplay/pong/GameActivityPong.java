@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.hybridplay.app.R;
 import com.hybridplay.app.SensorReceiver;
@@ -35,6 +36,8 @@ public class GameActivityPong extends Activity{
 	float angleX, angleY, angleZ;
 	int distanceIR;
 	boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
+	
+	ImageView sUP, sDOWN, sLEFT, sRIGHT;
 	// ----------------------------------------- HYBRIDPLAY SENSOR
 	
 	public String playWith;
@@ -59,6 +62,12 @@ public class GameActivityPong extends Activity{
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 
         setContentView(R.layout.pong_view);
+        
+        sUP = (ImageView)findViewById(R.id.imageView2);
+        sDOWN = (ImageView)findViewById(R.id.imageView3);
+        sLEFT = (ImageView)findViewById(R.id.imageView1);
+        sRIGHT = (ImageView)findViewById(R.id.imageView4);
+        
         mPongView = (PongView) findViewById(R.id.pong);
         
         Intent i = getIntent();
@@ -143,10 +152,93 @@ public class GameActivityPong extends Activity{
 
           		}
     		    
+    		    updateGraphicSensor();
+    		    
     		    handler.postDelayed(this,40); // set time here to refresh (40 ms => 12 FPS)
         	}
         });
     }
+    
+    public void updateGraphicSensor(){
+		if(playWith.equals("Columpio")){
+			// pinza vertical boton hacia abajo - oscilacion - eje Z
+			if(triggerZL){ // LEFT
+				sLEFT.setImageResource(R.drawable.izquierda_on);
+			}else{
+				sLEFT.setImageResource(R.drawable.izquierda_off);
+			}
+			
+			if(triggerZR){ // RIGHT
+				sRIGHT.setImageResource(R.drawable.derecha_on);
+			}else{
+				sRIGHT.setImageResource(R.drawable.derecha_off);
+			}
+		}else if(playWith.equals("Tobogan")){
+			// we use here only IR sensor
+			
+		}else if(playWith.equals("SubeBaja")){
+			// pinza horizontal - dos direcciones - eje Z
+			if(triggerZR){ // UP
+				sUP.setImageResource(R.drawable.arriba_on);
+			}else{
+				sUP.setImageResource(R.drawable.arriba_off);
+			}
+			
+			if(triggerZL){ // DOWN
+				sDOWN.setImageResource(R.drawable.abajo_on);
+			}else{
+				sDOWN.setImageResource(R.drawable.abajo_off);
+			}
+		}else if(playWith.equals("Balancin")){
+			// pinza horizontal - cuatro direcciones - ejes Z Y
+			if(triggerYR){ // UP
+				sUP.setImageResource(R.drawable.arriba_on);
+			}else{
+				sUP.setImageResource(R.drawable.arriba_off);
+			}
+			
+			if(triggerYL){ // DOWN
+				sDOWN.setImageResource(R.drawable.abajo_on);
+			}else{
+				sDOWN.setImageResource(R.drawable.abajo_off);
+			}
+			
+			if(triggerZL){ // LEFT
+				sLEFT.setImageResource(R.drawable.izquierda_on);
+			}else{
+				sLEFT.setImageResource(R.drawable.izquierda_off);
+			}
+			if(triggerZR){ // RIGHT
+				sRIGHT.setImageResource(R.drawable.derecha_on);
+			}else{
+				sRIGHT.setImageResource(R.drawable.derecha_off);
+			}
+		}else if(playWith.equals("Caballito")){
+			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
+			if(triggerYR){ // UP
+				sUP.setImageResource(R.drawable.arriba_on);
+			}else{
+				sUP.setImageResource(R.drawable.arriba_off);
+			}
+			
+			if(triggerYL){ // DOWN
+				sDOWN.setImageResource(R.drawable.abajo_on);
+			}else{
+				sDOWN.setImageResource(R.drawable.abajo_off);
+			}
+			
+			if(triggerXL){ // LEFT
+				sLEFT.setImageResource(R.drawable.izquierda_on);
+			}else{
+				sLEFT.setImageResource(R.drawable.izquierda_off);
+			}
+			if(triggerXR){ // RIGHT
+				sRIGHT.setImageResource(R.drawable.derecha_on);
+			}else{
+				sRIGHT.setImageResource(R.drawable.derecha_off);
+			}
+		}
+	}
     
     @Override
     protected void onStart() {

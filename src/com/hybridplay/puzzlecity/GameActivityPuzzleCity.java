@@ -48,6 +48,7 @@ public class GameActivityPuzzleCity extends Activity {
         gameEngine.setGameType(playWith);
         
         gameView = new GameSurfaceView(this, gameEngine, width, height);
+        
         setContentView(gameView);
         
         handler.post(new Runnable(){
@@ -125,7 +126,6 @@ public class GameActivityPuzzleCity extends Activity {
 		        
 		super.finish();
 	}
-
 
 	@Override
 	public void onBackPressed() {

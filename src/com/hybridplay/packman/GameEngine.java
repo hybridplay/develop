@@ -86,7 +86,7 @@ public class GameEngine implements Runnable {
 		pPowerSpeed = pacmon.getpPowerSpeed();
 		
 		playerScore = 0;
-		timer = 120;
+		timer = 360;
 		timerCount = 0;
 		gameState = -1;
 		

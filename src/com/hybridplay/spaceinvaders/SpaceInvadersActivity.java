@@ -34,6 +34,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -134,12 +135,14 @@ public class SpaceInvadersActivity extends Activity{
     		    triggerYR	= mSensorY.getTriggerMax();
     		    triggerZL	= mSensorZ.getTriggerMin();
     		    triggerZR	= mSensorZ.getTriggerMax();
-    		    
     		    // ------------------------------------ game interaction
-    		    mFire = true;
+    		    
+    		    // AUTO FIRE
+    		    //mFire = true;
+    		    
     		    mTouch = true;
 				mTap = true;
-    		    
+				
     		    if(playWith.equals("Balancin")){
     				// pinza horizontal - cuatro direcciones - ejes Z Y
     		    	if (triggerZR) { // RIGHT
@@ -309,13 +312,23 @@ public class SpaceInvadersActivity extends Activity{
     	
     	Paint mScorePaint = new Paint();
     	
-    	boolean mDrawBackgrounds = true;
+    	boolean mDrawBackgrounds = false;
+    	
+    	//////////////////////////////////SENSOR REFERENCE
+    	public Bitmap sUP_ON, sDOWN_ON, sLEFT_ON, sRIGHT_ON;
+    	public Bitmap sUP_OFF, sDOWN_OFF, sLEFT_OFF, sRIGHT_OFF;
+    	public Rect srcRect_UP, srcRect_DOWN, srcRect_LEFT, srcRect_RIGHT;
+    	public Rect dstRect_UP, dstRect_DOWN, dstRect_LEFT, dstRect_RIGHT;
+    	//////////////////////////////////SENSOR REFERENCE
     	
 		public InvaderView(Context context) {
 			super(context);
 			
 			mLevel= mPrefs.getInt("starting_level", 3);
 			mLives= mPrefs.getInt("starting_lives", 3);
+			
+			initSensorGraphics();
+			
 			updatePrefs();
 			
 			loadSounds();
@@ -332,8 +345,32 @@ public class SpaceInvadersActivity extends Activity{
 		    mScorePaint.setTextSize(15);
 		}
 		
+		public void initSensorGraphics(){
+			sUP_ON = BitmapFactory.decodeResource(getResources(), R.drawable.arriba_on);
+			sUP_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.arriba_off);
+			
+			sDOWN_ON = BitmapFactory.decodeResource(getResources(), R.drawable.abajo_on);
+			sDOWN_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.abajo_off);
+			
+			sLEFT_ON = BitmapFactory.decodeResource(getResources(), R.drawable.derecha_on);
+			sLEFT_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.derecha_off);
+			
+			sRIGHT_ON = BitmapFactory.decodeResource(getResources(), R.drawable.izquierda_on);
+			sRIGHT_OFF = BitmapFactory.decodeResource(getResources(), R.drawable.izquierda_off);
+			
+			srcRect_UP = new Rect(0,0,sUP_ON.getWidth(),sUP_ON.getHeight());
+			srcRect_DOWN = new Rect(0,0,sDOWN_ON.getWidth(),sDOWN_ON.getHeight());
+			srcRect_RIGHT = new Rect(0,0,sLEFT_ON.getWidth(),sLEFT_ON.getHeight());
+			srcRect_LEFT = new Rect(0,0,sRIGHT_ON.getWidth(),sRIGHT_ON.getHeight());
+			
+			dstRect_UP = new Rect(60,20,60+sUP_ON.getWidth(),20+sUP_ON.getHeight());
+			dstRect_DOWN = new Rect(60,106,60+sDOWN_ON.getWidth(),106+sDOWN_ON.getHeight());
+			dstRect_RIGHT = new Rect(30,50,30+sLEFT_ON.getWidth(),50+sLEFT_ON.getHeight());
+			dstRect_LEFT = new Rect(118,50,118+sRIGHT_ON.getWidth(),50+sRIGHT_ON.getHeight());
+		}
+		
 		public void updatePrefs(){
-			mDrawBackgrounds = mPrefs.getBoolean("backgrounds_on", true);			
+			//mDrawBackgrounds = mPrefs.getBoolean("backgrounds_on", true);			
 			mPlaySounds = mPrefs.getBoolean("play_sounds", true);
 			mObjects.setColourScheme(mPrefs.getString("colour_scheme", "Default"));
 		}
@@ -519,6 +556,7 @@ public class SpaceInvadersActivity extends Activity{
 			drawShields(c,mW,mH,mXoff,mYoff);
 			drawShells(c,mW,mH,mXoff,mYoff);
 			drawText(c);
+			drawSensor(c);
 			
 		}
 		protected void setSizes(){
@@ -822,12 +860,103 @@ public class SpaceInvadersActivity extends Activity{
       					 null);
       	}
     	
+    	private void drawSensor(Canvas canvas){
+    		if(playWith.equals("Columpio")){
+    			// pinza vertical boton hacia abajo - oscilacion - eje Z
+    			if(triggerZR){ // LEFT
+    				canvas.drawBitmap(sLEFT_ON, srcRect_LEFT, dstRect_LEFT, null);
+    			}else{
+    				canvas.drawBitmap(sLEFT_OFF, srcRect_LEFT, dstRect_LEFT, null);
+    			}
+    			
+    			if(triggerZL){ // RIGHT
+    				canvas.drawBitmap(sRIGHT_ON, srcRect_RIGHT, dstRect_RIGHT, null);
+    			}else{
+    				canvas.drawBitmap(sRIGHT_OFF, srcRect_RIGHT, dstRect_RIGHT, null);
+    			}
+    		}else if(playWith.equals("Tobogan")){
+    			// we use here only IR sensor
+    			
+    		}else if(playWith.equals("SubeBaja")){
+    			// pinza horizontal - dos direcciones - eje Z
+    			if(triggerZR){ // UP
+    				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
+    			}else{
+    				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
+    			}
+    			
+    			if(triggerZL){ // DOWN
+    				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
+    			}else{
+    				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);
+    			}
+    		}else if(playWith.equals("Balancin")){
+    			// pinza horizontal - cuatro direcciones - ejes Z Y
+    			if(triggerYR){ // UP
+    				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
+    			}else{
+    				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
+    			}
+    			
+    			if(triggerYL){ // DOWN
+    				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
+    			}else{
+    				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);
+    			}
+    			
+    			if(triggerZR){ // LEFT
+    				canvas.drawBitmap(sLEFT_ON, srcRect_LEFT, dstRect_LEFT, null);
+    			}else{
+    				canvas.drawBitmap(sLEFT_OFF, srcRect_LEFT, dstRect_LEFT, null);
+    			}
+    			if(triggerZL){ // RIGHT
+    				canvas.drawBitmap(sRIGHT_ON, srcRect_RIGHT, dstRect_RIGHT, null);
+    			}else{
+    				canvas.drawBitmap(sRIGHT_OFF, srcRect_RIGHT, dstRect_RIGHT, null);
+    			}
+    		}else if(playWith.equals("Caballito")){
+    			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
+    			if(triggerYR){ // UP
+    				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
+    			}else{
+    				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
+    			}
+    			
+    			if(triggerYL){ // DOWN
+    				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
+    			}else{
+    				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);
+    			}
+    			
+    			if(triggerXR){ // LEFT
+    				canvas.drawBitmap(sLEFT_ON, srcRect_LEFT, dstRect_LEFT, null);
+    			}else{
+    				canvas.drawBitmap(sLEFT_OFF, srcRect_LEFT, dstRect_LEFT, null);
+    			}
+    			if(triggerXL){ // RIGHT
+    				canvas.drawBitmap(sRIGHT_ON, srcRect_RIGHT, dstRect_RIGHT, null);
+    			}else{
+    				canvas.drawBitmap(sRIGHT_OFF, srcRect_RIGHT, dstRect_RIGHT, null);
+    			}
+    		}
+    	}
+    	
     	@Override
         public boolean onTouchEvent(MotionEvent mot){
       		
       		if(mDrawSplash && mSplashCount <= 0){
       			mDrawSplash = false;
       			return true;
+      		}
+      		
+      		if(mot.getAction() == MotionEvent.ACTION_DOWN || mot.getAction() == MotionEvent.ACTION_POINTER_DOWN	){  
+      			mFire = true;
+    		    //mTouch = true;
+				//mTap = true;
+      		}else if(mot.getAction() == MotionEvent.ACTION_UP){
+      			//mTouch = false;
+      			mFire = false;
+      			//mTap = false;
       		}
       		
       		return true;

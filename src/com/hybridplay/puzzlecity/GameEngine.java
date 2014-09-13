@@ -123,59 +123,67 @@ public class GameEngine implements Runnable {
 		
 		if(getGameType().equals("Balancin")){ // ---------------- Balancin
 			// pinza horizontal - cuatro direcciones - ejes Z Y
-				if (triggerYL) {
+				if (triggerYL && !triggerZL && !triggerZR) {
 					player.setDir(DOWN);
 					player.setCurrentAnimation(0);
-					if (stage.canMove(DOWN, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+					if (stage.canMove(DOWN, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 						stage.setpY(stage.getpY()+player.getpNormalSpeed());
-						for (int i = 0; i < fichasArray.size(); i++) {
-							if (fichasArray.get(i).isAlive()){
-								fichasArray.get(i).setpY(fichasArray.get(i).getpY()-player.getpNormalSpeed());
+						if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+							for (int i = 0; i < fichasArray.size(); i++) {
+								if (fichasArray.get(i).isAlive()){
+									fichasArray.get(i).setpY(fichasArray.get(i).getpY()-player.getpNormalSpeed());
+								}
 								//fichas.setpY(fichas.getpY()-player.getpNormalSpeed());
 							}
 						}
 					}
-				} else if (triggerYR) {
+				} else if (triggerYR && !triggerZL && !triggerZR) {
 					player.setDir(UP);
 					player.setCurrentAnimation(1);
-					if (stage.canMove(UP,(int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+					if (stage.canMove(UP,pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 						stage.setpY(stage.getpY()-player.getpNormalSpeed());
-						for (int i = 0; i < fichasArray.size(); i++) {
-							if (fichasArray.get(i).isAlive()){
-								fichasArray.get(i).setpY(fichasArray.get(i).getpY()+player.getpNormalSpeed());
-								//fichas.setpY(fichas.getpY()+player.getpNormalSpeed());
+						if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+							for (int i = 0; i < fichasArray.size(); i++) {
+								if (fichasArray.get(i).isAlive()){
+									fichasArray.get(i).setpY(fichasArray.get(i).getpY()+player.getpNormalSpeed());
+									//fichas.setpY(fichas.getpY()+player.getpNormalSpeed());
+								}
 							}
 						}
 					}
 				}
 				
-				if (triggerZR) {
+				if (triggerZR && !triggerYL && !triggerYR) {
 					player.setDir(RIGHT);
 					player.setCurrentAnimation(2);
-					if (stage.canMove(RIGHT, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+					if (stage.canMove(RIGHT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 						stage.setpX(stage.getpX()+player.getpNormalSpeed());
-						for (int i = 0; i < fichasArray.size(); i++) {
-							if (fichasArray.get(i).isAlive()){
-								fichasArray.get(i).setpX(fichasArray.get(i).getpX()-player.getpNormalSpeed());
-								//fichas.setpX(fichas.getpX()-player.getpNormalSpeed());
+						if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+							for (int i = 0; i < fichasArray.size(); i++) {
+								if (fichasArray.get(i).isAlive()){
+									fichasArray.get(i).setpX(fichasArray.get(i).getpX()-player.getpNormalSpeed());
+									//fichas.setpX(fichas.getpX()-player.getpNormalSpeed());
+								}
 							}
 						}
 					}
-				} else if (triggerZL) {
+				} else if (triggerZL && !triggerYL && !triggerYR) {
 					player.setDir(LEFT);
 					player.setCurrentAnimation(3);
-					if (stage.canMove(LEFT, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+					if (stage.canMove(LEFT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 						stage.setpX(stage.getpX()-player.getpNormalSpeed());
-						for (int i = 0; i < fichasArray.size(); i++) {
-							if (fichasArray.get(i).isAlive()){
-								fichasArray.get(i).setpX(fichasArray.get(i).getpX()+player.getpNormalSpeed());
-								//fichas.setpX(fichas.getpX()+player.getpNormalSpeed());
+						if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+							for (int i = 0; i < fichasArray.size(); i++) {
+								if (fichasArray.get(i).isAlive()){
+									fichasArray.get(i).setpX(fichasArray.get(i).getpX()+player.getpNormalSpeed());
+									//fichas.setpX(fichas.getpX()+player.getpNormalSpeed());
+								}
 							}
 						}
 					}
 				}
 			
-				if (stage.checkExit()){
+				if (stage.checkExit(player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 					gameState = WON;
 				}
 				 
@@ -191,59 +199,67 @@ public class GameEngine implements Runnable {
 		}else if(getGameType().equals("Caballito")){ // ---------- Caballito
 			
 			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-			if (triggerYL) {
+			if (triggerYL && !triggerXL && !triggerXR) {
 				player.setDir(DOWN);
 				player.setCurrentAnimation(0);
-				if (stage.canMove(DOWN, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+				if (stage.canMove(DOWN, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 					stage.setpY(stage.getpY()+player.getpNormalSpeed());
-					for (int i = 0; i < fichasArray.size(); i++) {
-						if (fichasArray.get(i).isAlive()){
-							fichasArray.get(i).setpY(fichasArray.get(i).getpY()-player.getpNormalSpeed());
-							//fichas.setpY(fichas.getpY()-player.getpNormalSpeed());
+					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+						for (int i = 0; i < fichasArray.size(); i++) {
+							if (fichasArray.get(i).isAlive()){
+								fichasArray.get(i).setpY(fichasArray.get(i).getpY()-player.getpNormalSpeed());
+								//fichas.setpY(fichas.getpY()-player.getpNormalSpeed());
+							}
 						}
 					}
 				}
-			}else if (triggerYR) {
+			}else if (triggerYR && !triggerXL && !triggerXR) {
 				player.setDir(UP);
 				player.setCurrentAnimation(1);
-				if (stage.canMove(UP,(int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+				if (stage.canMove(UP,pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 					stage.setpY(stage.getpY()-player.getpNormalSpeed());
-					for (int i = 0; i < fichasArray.size(); i++) {
-						if (fichasArray.get(i).isAlive()){
-							fichasArray.get(i).setpY(fichasArray.get(i).getpY()+player.getpNormalSpeed());
-							//fichas.setpY(fichas.getpY()+player.getpNormalSpeed());
+					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+						for (int i = 0; i < fichasArray.size(); i++) {
+							if (fichasArray.get(i).isAlive()){
+								fichasArray.get(i).setpY(fichasArray.get(i).getpY()+player.getpNormalSpeed());
+								//fichas.setpY(fichas.getpY()+player.getpNormalSpeed());
+							}
 						}
 					}
 				}
 			}
 			
-			if (triggerXR) {
+			if (triggerXR && !triggerYL && !triggerYR) {
 				player.setDir(RIGHT);
 				player.setCurrentAnimation(2);
-				if (stage.canMove(RIGHT, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+				if (stage.canMove(RIGHT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 					stage.setpX(stage.getpX()+player.getpNormalSpeed());
-					for (int i = 0; i < fichasArray.size(); i++) {
-						if (fichasArray.get(i).isAlive()){
-							fichasArray.get(i).setpX(fichasArray.get(i).getpX()-player.getpNormalSpeed());
-							//fichas.setpX(fichas.getpX()-player.getpNormalSpeed());
+					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+						for (int i = 0; i < fichasArray.size(); i++) {
+							if (fichasArray.get(i).isAlive()){
+								fichasArray.get(i).setpX(fichasArray.get(i).getpX()-player.getpNormalSpeed());
+								//fichas.setpX(fichas.getpX()-player.getpNormalSpeed());
+							}
 						}
 					}
 				}
-			}else if (triggerXL) {
+			}else if (triggerXL && !triggerYL && !triggerYR) {
 				player.setDir(LEFT);
 				player.setCurrentAnimation(3);
-				if (stage.canMove(LEFT, (int)player.getpX(), (int)player.getpY(), player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
+				if (stage.canMove(LEFT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 					stage.setpX(stage.getpX()-player.getpNormalSpeed());
-					for (int i = 0; i < fichasArray.size(); i++) {
-						if (fichasArray.get(i).isAlive()){
-							fichasArray.get(i).setpX(fichasArray.get(i).getpX()+player.getpNormalSpeed());
-							//fichas.setpX(fichas.getpX()+player.getpNormalSpeed());
+					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+						for (int i = 0; i < fichasArray.size(); i++) {
+							if (fichasArray.get(i).isAlive()){
+								fichasArray.get(i).setpX(fichasArray.get(i).getpX()+player.getpNormalSpeed());
+								//fichas.setpX(fichas.getpX()+player.getpNormalSpeed());
+							}
 						}
 					}
 				}				
 			}
 		
-			if (stage.checkExit()){
+			if (stage.checkExit(player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 				gameState = WON;
 			}
 				 
@@ -260,18 +276,18 @@ public class GameEngine implements Runnable {
 	        float tempMedia = 0;
 	        boolean goingRight = false;
 	        for(int i=0;i<100;i++){
-	        	tempMedia += angleX;
+	        	tempMedia += angleY;
 	        }
 	        tempMedia /= 100;
 	        
-	        if(angleX > tempMedia){
+	        if(angleY > tempMedia){
 	        	goingRight = false;
 	        }else{
 	        	goingRight = true;
 	        }
 	        
 	        // update kid position
-	        player.setAngle((float)Math.toRadians(angleX));
+	        player.setAngle((float)Math.toRadians(angleY));
 	        player.setpX(this.width/2 - 50 - (float)Math.sin(player.getAngle())*200);
 	        player.setpY(this.height - 390 + (float)Math.cos(player.getAngle())*210);
 	        
@@ -295,13 +311,13 @@ public class GameEngine implements Runnable {
 	        }
 	        
 	        for(int i=0;i<100;i++){
-	        	tempMedia += angleX;
+	        	tempMedia += angleY;
 	        }
 	        tempMedia /= 100;
 	        
-	        if(angleX > tempMedia && goingRight){
+	        if(angleY > tempMedia && goingRight){
 	        	updateRaquetas = true;
-	        }else if(angleX < tempMedia && !goingRight){
+	        }else if(angleY < tempMedia && !goingRight){
 	        	updateRaquetas = true;
 	        }
 			
@@ -453,7 +469,8 @@ public class GameEngine implements Runnable {
 		while (isRunning){
 			if (gameState == READY)    updateReady();
 			if (gameState == RUNNING)  updateRunning();
-			if (gameState == GAMEOVER) updateGameOver();		
+			if (gameState == GAMEOVER) updateGameOver();
+			if (gameState == WON) updateGameWon();
 		}
 	}
 	
@@ -500,6 +517,10 @@ public class GameEngine implements Runnable {
 	}
 	
 	private void updateGameOver(){
+		pause();
+	}
+	
+	private void updateGameWon(){
 		pause();
 	}
 	
