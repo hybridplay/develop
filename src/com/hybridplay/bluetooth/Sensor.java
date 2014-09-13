@@ -77,12 +77,20 @@ public class Sensor {
     	}else{ // IR
     		realValue = vx;
     		normActualValue = (vx-minStable)/(maxStable-minStable)*1.0f;
-    		if(vx >= 200){ // SAFE VALUE, NOISE BELOW
+    		/*if(vx >= 200){ // SAFE VALUE, NOISE BELOW
 	    		if(vx <= maxStable && vx >= minStable){
 	    			distanceIR = getDistanceCM(Math.abs(Math.round(normActualValue*254)));
 				}else{
 					distanceIR = 0;
 				}
+    		}*/
+    		
+    		if(realValue > -200 && realValue < 0){
+    			distanceIR = 1;
+    		}else if(realValue >= 0 && realValue <= 10){
+    			distanceIR = 0;
+    		}else if(realValue > 10 && realValue < 500){
+    			distanceIR = 1;
     		}
     		
     		//logData(distanceIR);
@@ -90,7 +98,7 @@ public class Sensor {
     }
     
     public void logData(int v){
-    	Log.d("SENSOR","IR Calculated Distance: "+v);
+    	Log.d("SENSOR","IR Calculated Distance: "+v+" - "+realValue);
     }
     
     public Canvas draw(Canvas mCanvas, Paint paint, int mColor, int xDrawing, int yDrawing) {

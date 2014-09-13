@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.ImageView;
 
 import com.hybridplay.app.R;
 import com.hybridplay.app.SensorReceiver;
@@ -37,7 +38,9 @@ public class ArkaNoid extends Activity{
     int distanceIR;
     boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
     boolean semaphoreR = true, semaphoreL = true;
- // ----------------------------------------- HYBRIDPLAY SENSOR
+    
+    ImageView sUP, sDOWN, sLEFT, sRIGHT;
+    // ----------------------------------------- HYBRIDPLAY SENSOR
 
 	String playWith;
 	private final double PADDLE_SPEED = 2.0;
@@ -52,6 +55,11 @@ public class ArkaNoid extends Activity{
 
         // tell system to use the layout defined in our XML file
         this.setContentView(R.layout.arkanoid);
+        
+        sUP = (ImageView)findViewById(R.id.imageView2);
+        sDOWN = (ImageView)findViewById(R.id.imageView3);
+        sLEFT = (ImageView)findViewById(R.id.imageView1);
+        sRIGHT = (ImageView)findViewById(R.id.imageView4);
 
         // get handles to the LunarView from XML, and its LunarThread
         arkaDroidView = (ArkaNoidView) findViewById(R.id.arkanoid);
@@ -133,9 +141,92 @@ public class ArkaNoid extends Activity{
 
     		    }
     		    
+    		    updateGraphicSensor();
+    		    
     		    handler.postDelayed(this,40); // set time here to refresh (40 ms => 12 FPS)
         	}
         });
+	}
+	
+	public void updateGraphicSensor(){
+		if(playWith.equals("Columpio")){
+			// pinza vertical boton hacia abajo - oscilacion - eje Z
+			if(triggerZL){ // LEFT
+				sLEFT.setImageResource(R.drawable.izquierda_on);
+			}else{
+				sLEFT.setImageResource(R.drawable.izquierda_off);
+			}
+			
+			if(triggerZR){ // RIGHT
+				sRIGHT.setImageResource(R.drawable.derecha_on);
+			}else{
+				sRIGHT.setImageResource(R.drawable.derecha_off);
+			}
+		}else if(playWith.equals("Tobogan")){
+			// we use here only IR sensor
+			
+		}else if(playWith.equals("SubeBaja")){
+			// pinza horizontal - dos direcciones - eje Z
+			if(triggerZR){ // UP
+				sUP.setImageResource(R.drawable.arriba_on);
+			}else{
+				sUP.setImageResource(R.drawable.arriba_off);
+			}
+			
+			if(triggerZL){ // DOWN
+				sDOWN.setImageResource(R.drawable.abajo_on);
+			}else{
+				sDOWN.setImageResource(R.drawable.abajo_off);
+			}
+		}else if(playWith.equals("Balancin")){
+			// pinza horizontal - cuatro direcciones - ejes Z Y
+			if(triggerYR){ // UP
+				sUP.setImageResource(R.drawable.arriba_on);
+			}else{
+				sUP.setImageResource(R.drawable.arriba_off);
+			}
+			
+			if(triggerYL){ // DOWN
+				sDOWN.setImageResource(R.drawable.abajo_on);
+			}else{
+				sDOWN.setImageResource(R.drawable.abajo_off);
+			}
+			
+			if(triggerZL){ // LEFT
+				sLEFT.setImageResource(R.drawable.izquierda_on);
+			}else{
+				sLEFT.setImageResource(R.drawable.izquierda_off);
+			}
+			if(triggerZR){ // RIGHT
+				sRIGHT.setImageResource(R.drawable.derecha_on);
+			}else{
+				sRIGHT.setImageResource(R.drawable.derecha_off);
+			}
+		}else if(playWith.equals("Caballito")){
+			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
+			if(triggerYR){ // UP
+				sUP.setImageResource(R.drawable.arriba_on);
+			}else{
+				sUP.setImageResource(R.drawable.arriba_off);
+			}
+			
+			if(triggerYL){ // DOWN
+				sDOWN.setImageResource(R.drawable.abajo_on);
+			}else{
+				sDOWN.setImageResource(R.drawable.abajo_off);
+			}
+			
+			if(triggerXL){ // LEFT
+				sLEFT.setImageResource(R.drawable.izquierda_on);
+			}else{
+				sLEFT.setImageResource(R.drawable.izquierda_off);
+			}
+			if(triggerXR){ // RIGHT
+				sRIGHT.setImageResource(R.drawable.derecha_on);
+			}else{
+				sRIGHT.setImageResource(R.drawable.derecha_off);
+			}
+		}
 	}
 	
 	@Override

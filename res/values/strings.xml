@@ -14,6 +14,7 @@
 	<string name="start_text">Touch the screen to start</string>
 	<string name="score_text">Score: </string>
 	<string name="lives_text">Lives left: </string>
+	<string name="image_content">Image Content</string>
 	
 	 <string name="paused">P A U S E D</string>
     
@@ -35,6 +36,7 @@
 	<string name="doyouwant">Do you want to quit?</string>
 	<string name="quit">Quit</string>
 	<string name="resume">Resume</string>
+	<string name="no_more_games">There is not more games</string>
 	
 	<!-- TRON -->
 	<string name="helloTron">Hello World, glTron!</string>

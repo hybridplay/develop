@@ -3,5 +3,7 @@
     <color name="white">#ffffffff</color>
     <color name="black">#ff000000</color>
     <color name="red">#E53129</color>
-    
+    <color name="black_overlay">#66000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="green_end">#ff00ff00</color>
 </resources>

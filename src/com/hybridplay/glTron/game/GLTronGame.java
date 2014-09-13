@@ -75,7 +75,7 @@ public class GLTronGame {
 	boolean boProcessReset = false;
 	int inputDirection;
 	
-	boolean boInitialState = true;
+	public boolean boInitialState = true;
 	private boolean boLoading = true;
 	
 	// sound index

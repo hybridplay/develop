@@ -1,35 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" 
-    android:background="@color/red" 
-    android:keepScreenOn="true">
-    
-    <ImageView
-        android:id="@+id/header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="matrix"
-        android:src="@drawable/headergames" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true" >
 
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/gamesListLayout"
         android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1" >
+        android:layout_height="fill_parent"
+        android:background="@color/red"
+        android:orientation="vertical" >
 
-        <ExpandableListView 
-            android:id="@android:id/list"
+        <ImageView
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/image_content"
+            android:scaleType="matrix"
+            android:src="@drawable/headergames" />
+
+        <FrameLayout
+            android:id="@+id/gamesListFrameLayout"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:drawSelectorOnTop="false" />
-            
-		<CheckedTextView
-		    android:id="@android:id/empty"
-		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
-		    android:text="There is not more games" />
-		
-    </FrameLayout>
+            android:layout_height="0dip"
+            android:layout_weight="1" >
 
-</LinearLayout>
+            <ExpandableListView
+                android:id="@android:id/list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawSelectorOnTop="false" >
+            </ExpandableListView>
+
+            <CheckedTextView
+                android:id="@android:id/empty"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/no_more_games" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="86dp"
+        android:background="@color/transparent" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/image_content"
+            android:src="@drawable/connecting" />
+    </RelativeLayout>
+
+</RelativeLayout>

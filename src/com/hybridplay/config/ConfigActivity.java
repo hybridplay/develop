@@ -7,7 +7,10 @@ import android.app.Activity;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ConfigActivity extends Activity {
@@ -18,6 +21,11 @@ public class ConfigActivity extends Activity {
 	TextView m_deviceName;
 	TextView m_deviceStatus;
 	BarView mBarGraph;
+	
+	// Sensor visualization
+	Display display;
+	DisplayMetrics metrics;
+	ImageView sUP, sDOWN, sLEFT, sRIGHT;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +36,15 @@ public class ConfigActivity extends Activity {
 		m_deviceName = (TextView)findViewById(R.id.deviceName);
         m_deviceStatus = (TextView)findViewById(R.id.deviceStatus);
         mBarGraph = (BarView) findViewById(R.id.bargraph);
+        
+        /*sUP = (ImageView)findViewById(R.id.imageView2);
+        sDOWN = (ImageView)findViewById(R.id.imageView3);
+        sLEFT = (ImageView)findViewById(R.id.imageView1);
+        sRIGHT = (ImageView)findViewById(R.id.imageView4);*/
+        
+        metrics = new DisplayMetrics();
+		display = getWindowManager().getDefaultDisplay();
+		display.getMetrics(metrics);
         
         handler.post(new Runnable(){
         	@Override
@@ -53,5 +70,10 @@ public class ConfigActivity extends Activity {
 		registerReceiver(this.mReceiver,new IntentFilter("com.hybridplay.SENSOR"));
 		super.onResume();
 	}
+	
+	int dpToPixels(int dps){
+		 int pixels = (int) (dps * metrics.density + 0.5f);
+		 return pixels;
+	 }
 
 }
