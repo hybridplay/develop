@@ -156,7 +156,7 @@ public class GameEngine implements Runnable {
 		}else if(getGameType().equals("SubeBaja")){ // ---------- SubeBaja
 			// pinza horizontal - dos direcciones - eje Y
 			
-			if(triggerZR){
+			if(triggerZR || triggerXR){
 				if(player.vX < 4f) player.vX += 1.5f; //se mueve a la derecha
 				
 				if(player.vY < 4f) {

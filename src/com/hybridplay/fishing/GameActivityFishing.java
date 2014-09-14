@@ -8,8 +8,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.Display;
 
 public class GameActivityFishing extends Activity {
@@ -29,6 +31,9 @@ public class GameActivityFishing extends Activity {
 	float angleX, angleY, angleZ;
 	int distanceIR;
 	boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
+	
+	private SharedPreferences prefs;
+	public int calibXH, calibYH, calibZH, calibXV, calibYV, calibZV, calibIR;
 	// ----------------------------------------- HYBRIDPLAY SENSOR
 	
 	/** Called when the activity is first created. */
@@ -50,6 +55,8 @@ public class GameActivityFishing extends Activity {
         gameView = new GameSurfaceView(this, gameEngine, width, height);
         setContentView(gameView);
         
+        updateCalibration();
+        
         handler.post(new Runnable(){
         	@Override
         	public void run() {
@@ -58,6 +65,26 @@ public class GameActivityFishing extends Activity {
     			mSensorY.update(0, mReceiver.AY);
     			mSensorZ.update(0, mReceiver.AZ);
     			mSensorIR.update(0, mReceiver.IR);
+    			
+    			// CALIBRATION
+        		if(playWith.equals("Balancin")){
+    				// pinza horizontal - cuatro direcciones - ejes Z Y
+        			mSensorY.update(0, mReceiver.AY-mSensorY.calibH);
+        			mSensorZ.update(0, mReceiver.AZ-mSensorZ.calibH);
+          		}else if(playWith.equals("Caballito")){
+          			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
+          			mSensorX.update(0, mReceiver.AX-mSensorX.calibV);
+        			mSensorY.update(0, mReceiver.AY-mSensorY.calibV);
+          		}else if(playWith.equals("Columpio")){
+          			// pinza vertical boton hacia abajo - oscilacion - eje X
+
+          		}else if(playWith.equals("SubeBaja")){
+          			// pinza horizontal - dos direcciones - eje Z
+          			
+          		}else if(playWith.equals("Tobogan")){
+          			// we use here only IR sensor
+
+          		}
 
     			angleX 		= mSensorX.getDegrees();
     			angleY 		= mSensorY.getDegrees();
@@ -76,6 +103,38 @@ public class GameActivityFishing extends Activity {
     		    handler.postDelayed(this,40); // set time here to refresh (40 ms => 12 FPS)
         	}
         });
+	}
+	
+	void updateCalibration(){
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getString("calibratedAH", "") != null){
+        	calibXH = prefs.getInt("accXH",0);
+        	calibYH = prefs.getInt("accYH",0);
+        	calibZH = prefs.getInt("accZH",0);
+        }else{
+        	calibXH = 0;
+        	calibYH = 0;
+        	calibZH = 0;
+        }
+        if(prefs.getString("calibratedAV", "") != null){
+        	calibXV = prefs.getInt("accXV",0);
+        	calibYV = prefs.getInt("accYV",0);
+        	calibZV = prefs.getInt("accZV",0);
+        }else{
+        	calibXV = 0;
+        	calibYV = 0;
+        	calibZV = 0;
+        }
+        if(prefs.getString("calibratedIR", "") != null){
+        	calibIR = prefs.getInt("calIR", 0);
+        }else{
+        	calibIR = 10;
+        }
+        
+        mSensorX.getCalibration(calibXH, calibXV);
+        mSensorY.getCalibration(calibYH, calibYV);
+        mSensorZ.getCalibration(calibZH, calibZV);
+        mSensorIR.setMaxIR(calibIR);
 	}
     
     @Override

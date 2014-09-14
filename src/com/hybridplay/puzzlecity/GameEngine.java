@@ -2,8 +2,6 @@ package com.hybridplay.puzzlecity;
 
 import java.util.ArrayList;
 
-import android.util.Log;
-
 public class GameEngine implements Runnable {
 	
 	private final static int    MAX_FPS = 50;
@@ -11,7 +9,8 @@ public class GameEngine implements Runnable {
 	// the frame period
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8, CENTER = 0;
-	public final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;//, CONNECTING = 5;
+	public final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4, BOOM = 5;//, CONNECTING = 5;
+	int screenWidth;
 	
 	// SENSOR DATA
 	float angleX, angleY, angleZ;
@@ -26,6 +25,7 @@ public class GameEngine implements Runnable {
 	public int toboganState;
 	public int toboganLevel = 0;
 	public boolean toboganJump = false;
+	public int toboganBackPosX = 0;
 	public float kVX = 5.3f, kVY = 6.8f;
 	public long actualTime = System.currentTimeMillis();
 	public long myTime;
@@ -74,10 +74,6 @@ public class GameEngine implements Runnable {
 	public GameEngine(int width, int height){
 		this.width = width;
 		this.height = height;
-		
-		//player = new Player(width/2, height/2);  // new kid 256 es el tamaï¿½o del sprite que tendra
-		//stage = new Stage(contex, stageImg, 0, 0);
-		//lives = player.getpLives();
 
 		playerScore = 0;
 		timer = 120; 
@@ -110,8 +106,6 @@ public class GameEngine implements Runnable {
 		updateTimer();
 		updatePlayer();
 		updateNubes();
-//		updateAvion();
-//		updateFichas();
 	}
 	
 	public void updatePlayer(){
@@ -326,9 +320,9 @@ public class GameEngine implements Runnable {
 			
 			
 		}else if(getGameType().equals("SubeBaja")){ // ---------- SubeBaja
-			// pinza horizontal - dos direcciones - eje Z
+			// pinza horizontal/vertical - dos direcciones - eje Z || eje X
 			
-			if(triggerZR){
+			if(triggerZR || triggerXR){
 				if(avion.vX < 4) avion.vX += 1.4f; //se mueve a la derecha
 				if(avion.vY >= -2.5) {
 					avion.vY -= 2.5; //se eleva
@@ -355,14 +349,14 @@ public class GameEngine implements Runnable {
 				toboganState = tWAIT;
 				toboganSemaphore = true;
 				jumpSemaphore = true;
-				// niï¿½o sentado a la espera de poder saltar
+				// ni–o sentado a la espera de poder saltar
 				player.setpX(this.width - 400);
 		        player.setpY(0);
 			}
 			
 			if(toboganState == tWAIT && myTime > waitTime){
 				if(jumpSemaphore == true){
-					toboganState = tJUMP; // seï¿½al de poder saltar
+					toboganState = tJUMP; // se–al de poder saltar
 					//Log.d("Game Tobogan","JUMP!");
 					jumpSemaphore = false;
 				}
@@ -373,7 +367,7 @@ public class GameEngine implements Runnable {
 				jumpSemaphore = true;
 			}
 			
-			if(toboganState == tJUMP && distanceIR == 0){ // cuando el niï¿½o salta
+			if(toboganState == tJUMP && distanceIR == 0){ // cuando el ni–o salta
 				// launch jump function
 				toboganJump = true;
 			}
@@ -400,6 +394,12 @@ public class GameEngine implements Runnable {
 			
 			pX -= kVX;
 			pY += kVY;
+			
+			toboganBackPosX += kVX;
+			
+			if(toboganBackPosX > screenWidth*2.9){
+				gameState = WON; // WIN
+			}
 			
 			player.setpX(pX);
 	        player.setpY(pY);
@@ -435,6 +435,9 @@ public class GameEngine implements Runnable {
 			if(nube.hasFicha){
 				eatFicha();
 			}
+			if(nube.isBlack){
+				nubeNegra();
+			}
 		}
 	}
 	
@@ -445,6 +448,20 @@ public class GameEngine implements Runnable {
 		toboganJump = false;
 		playerScore++;   // increase score
 		toboganState = tRESTART;
+		toboganSemaphore = true;
+		jumpSemaphore = true;
+		actualTime = System.currentTimeMillis();
+
+	}
+	
+	// nube negra ==> come back + time
+	private void nubeNegra() {
+		//Log.d("PuzzleCity","WE WIN");
+		nube.reloadNube();
+		toboganJump = false;
+		toboganState = tRESTART;
+		toboganBackPosX = 0; // come back
+		timer = 120; // reset timer
 		toboganSemaphore = true;
 		jumpSemaphore = true;
 		actualTime = System.currentTimeMillis();
