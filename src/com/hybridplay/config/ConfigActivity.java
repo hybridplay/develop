@@ -5,15 +5,21 @@ import com.hybridplay.app.SensorReceiver;
 
 import android.app.Activity;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class ConfigActivity extends Activity {
+public class ConfigActivity extends Activity implements OnClickListener {
 	
 	SensorReceiver mReceiver;
 	Handler handler = new Handler();
@@ -21,11 +27,14 @@ public class ConfigActivity extends Activity {
 	TextView m_deviceName;
 	TextView m_deviceStatus;
 	BarView mBarGraph;
+	Button calibrateButH,calibrateButV,calibrateIR;
 	
 	// Sensor visualization
 	Display display;
 	DisplayMetrics metrics;
 	ImageView sUP, sDOWN, sLEFT, sRIGHT;
+	
+	private SharedPreferences prefs;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +42,18 @@ public class ConfigActivity extends Activity {
 		setContentView(R.layout.activity_device);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
 		m_deviceName = (TextView)findViewById(R.id.deviceName);
         m_deviceStatus = (TextView)findViewById(R.id.deviceStatus);
         mBarGraph = (BarView) findViewById(R.id.bargraph);
         
-        /*sUP = (ImageView)findViewById(R.id.imageView2);
-        sDOWN = (ImageView)findViewById(R.id.imageView3);
-        sLEFT = (ImageView)findViewById(R.id.imageView1);
-        sRIGHT = (ImageView)findViewById(R.id.imageView4);*/
+        calibrateButH = (Button) findViewById(R.id.button1);
+        calibrateButV = (Button) findViewById(R.id.button2);
+        calibrateIR = (Button) findViewById(R.id.button3);
+        calibrateButH.setOnClickListener(this);
+        calibrateButV.setOnClickListener(this);
+        calibrateIR.setOnClickListener(this);
         
         metrics = new DisplayMetrics();
 		display = getWindowManager().getDefaultDisplay();
@@ -69,6 +82,52 @@ public class ConfigActivity extends Activity {
 		this.mReceiver = new SensorReceiver();
 		registerReceiver(this.mReceiver,new IntentFilter("com.hybridplay.SENSOR"));
 		super.onResume();
+	}
+	
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.button1:
+			calibrateSensorH();
+			break;
+		case R.id.button2:
+			calibrateSensorV();
+			break;
+		case R.id.button3:
+			calibrateIR();
+			break;
+		}
+	}
+	
+	void calibrateIR(){
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString("calibratedIR","1");
+		editor.putInt("calIR",mReceiver.IR);
+		editor.commit();
+		
+		Toast.makeText(this, "Sensor IR calibrated, MAX LIMIT: "+mReceiver.IR,Toast.LENGTH_LONG).show();
+	}
+	
+	void calibrateSensorH(){
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString("calibratedAH","1");
+		editor.putInt("accXH",mReceiver.AX);
+		editor.putInt("accYH",mReceiver.AY);
+		editor.putInt("accZH",mReceiver.AZ);
+		editor.commit();
+		
+		Toast.makeText(this, "Sensor H calibrated with values: X "+mReceiver.AX+", Y "+mReceiver.AY+", Z "+mReceiver.AZ,Toast.LENGTH_LONG).show();
+	}
+	
+	void calibrateSensorV(){
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString("calibratedAV","1");
+		editor.putInt("accXV",(int)mBarGraph.mSensorX.getDegrees());
+		editor.putInt("accYV",(int)mBarGraph.mSensorY.getDegrees());
+		editor.putInt("accZV",(int)mBarGraph.mSensorZ.getDegrees());
+		editor.commit();
+		
+		Toast.makeText(this, "Sensor V calibrated with values: X "+mReceiver.AX+", Y "+mReceiver.AY+", Z "+mReceiver.AZ,Toast.LENGTH_LONG).show();
 	}
 	
 	int dpToPixels(int dps){

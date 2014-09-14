@@ -118,8 +118,7 @@ public class GameEngine implements Runnable {
 			// pinza vertical boton hacia abajo - oscilaci�n - eje X
 			
 			
-		}else if(getGameType().equals("SubeBaja") || getGameType().equals("Balancin") || getGameType().equals("Caballito")){ // ---------- SubeBaja
-			// pinza horizontal - dos direcciones - eje Z
+		}else if(getGameType().equals("Balancin")){
 			
 			if (triggerZR) { //a la derecha
 				//robot.setDir(RIGHT);
@@ -133,6 +132,67 @@ public class GameEngine implements Runnable {
 				
 				
 			}else if (triggerZL) { //a la izquierda
+				//robot.setDir(LEFT);
+				if (pX > 0) {
+					pX = pX - robot.getpNormalSpeed();
+				
+				}
+			}
+			
+			// update kid position
+			robot.setpX(pX);
+			robot.setpY(pY);
+			
+			robot.updateRobot(System.currentTimeMillis()); //para animar la imagen
+			//avion.updateAvion();
+			
+			fichas.updateFicha();
+			
+		}else if(getGameType().equals("Caballito")){
+			
+			if (triggerZR) { //a la derecha
+				//robot.setDir(RIGHT);
+				//Log.i("log robot.getPwidth()", Integer.toString(robot.robotW));
+				
+				if (pX + robot.spriteWidth < width ) {
+					
+					pX = pX + robot.getpNormalSpeed();
+					//moveAll = false;
+				}
+				
+				
+			}else if (triggerZL) { //a la izquierda
+				//robot.setDir(LEFT);
+				if (pX > 0) {
+					pX = pX - robot.getpNormalSpeed();
+				
+				}
+			}
+			
+			// update kid position
+			robot.setpX(pX);
+			robot.setpY(pY);
+			
+			robot.updateRobot(System.currentTimeMillis()); //para animar la imagen
+			//avion.updateAvion();
+			
+			fichas.updateFicha();
+			
+		}else if(getGameType().equals("SubeBaja")){ // ---------- SubeBaja
+			// pinza horizontal - dos direcciones - eje Z
+			
+			if (triggerZR || triggerXR) { //a la derecha
+				//robot.setDir(RIGHT);
+				//Log.i("log robot.getPwidth()", Integer.toString(robot.robotW));
+				
+				if (pX + robot.spriteWidth < width ) {
+					
+					pX = pX + robot.getpNormalSpeed();
+					//moveAll = false;
+				}
+				
+				
+			}else if (triggerZL || triggerXL) { //a la izquierda
 				//robot.setDir(LEFT);
 				if (pX > 0) {
 					pX = pX - robot.getpNormalSpeed();

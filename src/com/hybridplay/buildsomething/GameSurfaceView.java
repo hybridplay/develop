@@ -737,13 +737,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			
 		}else if(gameEngine.getGameType().equals("SubeBaja")){
 			// pinza horizontal - dos direcciones - eje Z
-			if(gameEngine.triggerZR){ // UP
+			if(gameEngine.triggerZR || gameEngine.triggerXR){ // UP
 				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
 			}else{
 				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
 			}
 			
-			if(gameEngine.triggerZL){ // DOWN
+			if(gameEngine.triggerZL || gameEngine.triggerXL){ // DOWN
 				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
 			}else{
 				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);

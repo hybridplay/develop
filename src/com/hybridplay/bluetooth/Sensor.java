@@ -26,6 +26,7 @@ public class Sensor {
 	};
 	int avgIR = 100;
 	int distanceIR = 0;
+	int maxIR = 500;
 	
 	int minValue, maxValue, centerValue;
 	int realValue;
@@ -37,6 +38,8 @@ public class Sensor {
     int type;
     float minStable, maxStable;
     boolean triggerMin, triggerMax;
+    
+    public int calibH, calibV;
     
     public Sensor(String sName, int minS, int maxS, int _type){
     	minValue = 1024;
@@ -87,14 +90,19 @@ public class Sensor {
     		
     		if(realValue > -200 && realValue < 0){
     			distanceIR = 1;
-    		}else if(realValue >= 0 && realValue <= 10){
+    		}else if(realValue >= 0 && realValue <= maxIR){
     			distanceIR = 0;
-    		}else if(realValue > 10 && realValue < 500){
+    		}else if(realValue > maxIR && realValue < 500){
     			distanceIR = 1;
     		}
     		
     		//logData(distanceIR);
     	}
+    }
+    
+    public void getCalibration(int cH, int cV){
+    	calibH = cH;
+    	calibV = cV;
     }
     
     public void logData(int v){
@@ -105,6 +113,7 @@ public class Sensor {
     	  paint.setColor(mColor);
           paint.setStyle(Paint.Style.STROKE); 
           paint.setStrokeWidth(2.5f);
+          paint.setTextSize(26);
           
           if(type == 1){ // IR sensor
         	  if(distanceIR != 0){
@@ -112,16 +121,16 @@ public class Sensor {
         	  }else{
         		  paint.setStyle(Paint.Style.STROKE);
         	  }
-        	  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + 30, yDrawing + 30, paint);
+        	  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + 60, yDrawing + 60, paint);
           }else{
-        	  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + 30, yDrawing + normActualValue*barScale, paint);
+        	  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + 60, yDrawing + normActualValue*barScale, paint);
         	  paint.setStyle(Paint.Style.FILL);
         	  if(triggerMax){
-        		  mCanvas.drawRect(xDrawing, yDrawing - 20 + normActualValue*barScale, xDrawing + 30, yDrawing + normActualValue*barScale, paint);
+        		  mCanvas.drawRect(xDrawing, yDrawing - 30 + normActualValue*barScale, xDrawing + 60, yDrawing + normActualValue*barScale, paint);
         	  }else if(triggerMin){
-        		  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + 30, yDrawing + 20, paint);
+        		  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + 60, yDrawing + 30, paint);
         	  }
-        	  mCanvas.drawText(getSensorName()+": "+String.format("%.1f", getDegrees()), xDrawing, yDrawing + 30 + barScale, paint);
+        	  mCanvas.drawText(getSensorName()+": "+String.format("%.1f", getDegrees()), xDrawing, yDrawing + 60 + barScale, paint);
           }
 
 		return mCanvas;
@@ -149,6 +158,10 @@ public class Sensor {
 	
 	public float getDegrees(){
 		return (normActualValue*180) - 90.0f;
+	}
+	
+	public void setMaxIR(int mIR){
+		maxIR = mIR;
 	}
 	
 	public int getDistanceIR(){

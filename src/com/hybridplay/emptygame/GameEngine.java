@@ -230,7 +230,7 @@ public class GameEngine implements Runnable {
 		}else if(getGameType().equals("SubeBaja")){ // ---------- SubeBaja
 			// pinza horizontal - dos direcciones - eje Z
 			
-			if (triggerZR) {
+			if (triggerZR || triggerXR) {
 				player.setDir(RIGHT);
 				if (pX + player.getPwidth() < screenWidth - limitW) {
 					pX = pX + player.getpNormalSpeed();
@@ -245,7 +245,7 @@ public class GameEngine implements Runnable {
 					//movemos el resto
 					moveAll = true;
 				}
-			}else if (triggerZL) {
+			}else if (triggerZL || triggerXL) {
 				player.setDir(LEFT);
 				if (pX > limitW) {
 					pX = pX - player.getpNormalSpeed();

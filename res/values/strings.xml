@@ -15,6 +15,9 @@
 	<string name="score_text">Score: </string>
 	<string name="lives_text">Lives left: </string>
 	<string name="image_content">Image Content</string>
+	<string name="calibrate_IR">Calibrate IR</string>
+	<string name="calibrate_sensorH">Calibrate Sensor Horizontal</string>
+	<string name="calibrate_sensorV">Calibrate Sensor Vertical</string>
 	
 	 <string name="paused">P A U S E D</string>
     

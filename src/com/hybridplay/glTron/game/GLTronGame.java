@@ -76,7 +76,7 @@ public class GLTronGame {
 	int inputDirection;
 	
 	public boolean boInitialState = true;
-	private boolean boLoading = true;
+	public boolean boLoading = true;
 	
 	// sound index
 	public static int CRASH_SOUND = 1;
