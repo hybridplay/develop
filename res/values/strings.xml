@@ -18,6 +18,8 @@
 	<string name="calibrate_IR">Calibrate IR</string>
 	<string name="calibrate_sensorH">Calibrate Sensor Horizontal</string>
 	<string name="calibrate_sensorV">Calibrate Sensor Vertical</string>
+	<string name="visualize_sensorHCal">H Calibration</string>
+	<string name="visualize_sensorVCal">V Calibration</string>
 	
 	 <string name="paused">P A U S E D</string>
     

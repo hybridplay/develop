@@ -38,8 +38,9 @@ public class Sensor {
     int type;
     float minStable, maxStable;
     boolean triggerMin, triggerMax;
+    boolean applyHCalib = false, applyVCalib = false;
     
-    public int calibH, calibV;
+    public float calibH = 0.0f, calibV = 0.0f;
     
     public Sensor(String sName, int minS, int maxS, int _type){
     	minValue = 1024;
@@ -59,8 +60,15 @@ public class Sensor {
     	if(type == 0){
     		if(vx <= maxStable && vx >= minStable){
     			realValue = vx;
-    			normActualValue = (vx-minStable)/(maxStable-minStable)*1.0f;
 
+    			if(applyHCalib){
+    				normActualValue = -calibH + (vx-minStable)/(maxStable-minStable)*(1.0f+calibH);
+    			}else if(applyVCalib){
+    				normActualValue = -calibV + (vx-minStable)/(maxStable-minStable)*(1.0f+calibV);
+    			}else{
+    				normActualValue = (vx-minStable)/(maxStable-minStable)*1.0f;
+    			}
+    			
     			actualValue = x;
     			maxValue = Math.max(actualValue, maxValue);
     			minValue = Math.min(actualValue, minValue);
@@ -100,16 +108,30 @@ public class Sensor {
     	}
     }
     
+    public void applyHCalibration(){
+    	applyHCalib = true;
+    	applyVCalib = false;
+    }
+    
+    public void applyVCalibration(){
+    	applyHCalib = false;
+    	applyVCalib = true;
+    }
+    
     public void getCalibration(int cH, int cV){
-    	calibH = cH;
-    	calibV = cV;
+    	float tempNormH = (cH-minStable)/(maxStable-minStable)*1.0f;
+    	float tempNormV = (cV-minStable)/(maxStable-minStable)*1.0f;
+    	
+    	calibH = tempNormH;
+    	calibV = tempNormV;
+    	
     }
     
     public void logData(int v){
-    	Log.d("SENSOR","IR Calculated Distance: "+v+" - "+realValue);
+    	Log.d("SENSOR","TESTING CALIBRATION H: "+v);
     }
     
-    public Canvas draw(Canvas mCanvas, Paint paint, int mColor, int xDrawing, int yDrawing) {
+    public Canvas draw(Canvas mCanvas, Paint paint, int mColor, int xDrawing, int yDrawing, int size) {
     	  paint.setColor(mColor);
           paint.setStyle(Paint.Style.STROKE); 
           paint.setStrokeWidth(2.5f);
@@ -121,16 +143,16 @@ public class Sensor {
         	  }else{
         		  paint.setStyle(Paint.Style.STROKE);
         	  }
-        	  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + 60, yDrawing + 60, paint);
+        	  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + size, yDrawing + size, paint);
           }else{
-        	  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + 60, yDrawing + normActualValue*barScale, paint);
+        	  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + size, yDrawing + normActualValue*barScale, paint);
         	  paint.setStyle(Paint.Style.FILL);
         	  if(triggerMax){
-        		  mCanvas.drawRect(xDrawing, yDrawing - 30 + normActualValue*barScale, xDrawing + 60, yDrawing + normActualValue*barScale, paint);
+        		  mCanvas.drawRect(xDrawing, yDrawing - 30 + normActualValue*barScale, xDrawing + size, yDrawing + normActualValue*barScale, paint);
         	  }else if(triggerMin){
-        		  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + 60, yDrawing + 30, paint);
+        		  mCanvas.drawRect(xDrawing, yDrawing, xDrawing + size, yDrawing + 30, paint);
         	  }
-        	  mCanvas.drawText(getSensorName()+": "+String.format("%.1f", getDegrees()), xDrawing, yDrawing + 60 + barScale, paint);
+        	  mCanvas.drawText(getSensorName()+": "+String.format("%.1f", getDegrees()), xDrawing, yDrawing + size + barScale, paint);
           }
 
 		return mCanvas;

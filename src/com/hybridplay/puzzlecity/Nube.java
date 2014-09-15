@@ -14,7 +14,7 @@ public class Nube extends SurfaceView {
 	public Bitmap nube;
 	public Bitmap ficha;
 	public boolean hasFicha;
-	public boolean isBlack;
+	public boolean isBlack = false;
 	
 	public Rect srcRect;
 	public Rect dstRect;

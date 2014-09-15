@@ -96,14 +96,14 @@ public class ArkaNoid extends Activity{
     			mSensorIR.update(0, mReceiver.IR);
     			
     			// CALIBRATION
-    			if(playWith.equals("Balancin")){
+        		if(playWith.equals("Balancin")){
     				// pinza horizontal - cuatro direcciones - ejes Z Y
-        			mSensorY.update(0, mReceiver.AY-mSensorY.calibH);
-        			mSensorZ.update(0, mReceiver.AZ-mSensorZ.calibH);
+        			mSensorY.applyHCalibration();
+        			mSensorZ.applyHCalibration();
           		}else if(playWith.equals("Caballito")){
           			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-          			mSensorX.update(0, mReceiver.AX-mSensorX.calibV);
-        			mSensorY.update(0, mReceiver.AY-mSensorY.calibV);
+          			mSensorX.applyVCalibration();
+        			mSensorY.applyVCalibration();
           		}else if(playWith.equals("Columpio")){
           			// pinza vertical boton hacia abajo - oscilacion - eje X
 
