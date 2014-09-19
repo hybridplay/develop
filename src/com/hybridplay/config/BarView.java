@@ -19,9 +19,11 @@ public class BarView extends View {
     private float   mScale;
     private int   	mYOffset;
     private int     mColorX, mColorY, mColorZ, mColorIR;
+    private int     mColorXCalib;
     private int   	maxValue = 1024;
     
     public  Sensor mSensorX, mSensorY, mSensorZ, mSensorIR;
+    public  Sensor mSensorXCalib, mSensorYCalib, mSensorZCalib;
     
     public BarView(Context context) {
         super(context);
@@ -35,14 +37,22 @@ public class BarView extends View {
     
     private void init(){
     	mColorX = Color.RED;
-    	mColorY = Color.BLUE;
-    	mColorZ = Color.GREEN;
+    	mColorY = Color.GREEN;
+    	mColorZ = Color.BLUE;
     	mColorIR = Color.BLACK;
+    	
+    	mColorXCalib = Color.argb(100, 0, 0, 0);
+    	
         mPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         mSensorX = new Sensor("x",280,380,0);
         mSensorY = new Sensor("y",280,380,0);
         mSensorZ = new Sensor("z",280,380,0);
         mSensorIR = new Sensor("IR",250,500,1);
+        
+        mSensorXCalib = new Sensor("x",280,380,0);
+        mSensorYCalib = new Sensor("y",280,380,0);
+        mSensorZCalib = new Sensor("z",280,380,0);
+        
     }
     
     public void drawBar(int valueX, int valueY, int valueZ, int valueIR){
@@ -53,21 +63,28 @@ public class BarView extends View {
         setMaxValue(380);
         final int x = mYOffset + (int)(valueX * mScale);
         mSensorX.update(x,valueX);
+        mSensorXCalib.update(x,valueX);
         
         final int y = mYOffset + (int)(valueY * mScale);
         mSensorY.update(y,valueY);
+        mSensorYCalib.update(y,valueY);
         
         final int z = mYOffset + (int)(valueZ * mScale);
         mSensorZ.update(z,valueZ);
+        mSensorZCalib.update(z,valueZ);
         
         setMaxValue(1024);
         final int ir = mYOffset + (int)(valueIR * mScale);
         mSensorIR.update(ir,valueIR);
         
-        mCanvas = mSensorX.draw(mCanvas, paint, mColorX, 20, 0);
-        mCanvas = mSensorY.draw(mCanvas, paint, mColorY, 120, 0);
-        mCanvas = mSensorZ.draw(mCanvas, paint, mColorZ, 220, 0);
-        mCanvas = mSensorIR.draw(mCanvas, paint, mColorIR, 420, 0);
+        mCanvas = mSensorX.draw(mCanvas, paint, mColorX, 20, 0, 60);
+        mCanvas = mSensorY.draw(mCanvas, paint, mColorY, 120, 0, 60);
+        mCanvas = mSensorZ.draw(mCanvas, paint, mColorZ, 220, 0, 60);
+        mCanvas = mSensorIR.draw(mCanvas, paint, mColorIR, 420, 0, 60);
+        
+        mCanvas = mSensorXCalib.draw(mCanvas, paint, mColorXCalib, 35, 0, 30);
+        mCanvas = mSensorYCalib.draw(mCanvas, paint, mColorXCalib, 135, 0, 30);
+        mCanvas = mSensorZCalib.draw(mCanvas, paint, mColorXCalib, 235, 0, 30);
         
 		invalidate();
     }

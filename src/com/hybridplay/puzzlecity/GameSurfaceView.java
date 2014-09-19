@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -39,15 +40,16 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private Stage stage;
 	private float playerSize;
 	
+	Handler handlerBoom = new Handler();
+	Handler handlerVuelve = new Handler();
+	
 	public Bitmap kid_img, plataforma, columpio_fondo, nubes_fondo1, nubes_fondo2, nubes_fondo3;
 	public Bitmap bola_img, bomba_img, boom_img, cactus_img;
 	public Bitmap ficha1, ficha2, ficha3, ficha4, ficha5, ficha6, ficha7, ficha8, ficha9, ficha10;
 	public Bitmap cazamariposas_L, cazamariposas_R;
 	public Bitmap nube1, nube2, nube3, nube4, vuelve;
-	//public Bitmap connecting;
 	public Bitmap laberinto_fondo, laberinto_mascara, laberinto_fondo1, laberinto_mascara1;
 
-	//public Bitmap avionBitmap;
 	public Bitmap avion_fondo1, avion_fondo2, avion_fondo3;
 	public Paint paint, paint2, paint3, paint4, paintBT;
 	private Context mContext;
@@ -65,8 +67,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	public Rect dstRect;
 	public Rect[] srcKid = new Rect[8];
 	public Rect plataformaRect, nubeRect, pDst;
+	public Rect boomSrcRect, vuelveSrcRect;
 	
-	private Rect src, dst, dst1, dstT1, dstT2, dstT3;
+	private Rect src, dst, dst1, dstT1, dstT2, dstT3, dstT4;
 	
 	// draw timing data
 	private long beginTime; // the time when the cycle begun
@@ -83,8 +86,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	public int counterForSprite=0;
 	
 	public int nFondoAvioneta =0;
-	
-	boolean checkBoom = false;
 	
 	//////////////////////////////////SENSOR REFERENCE
 	public Bitmap sUP_ON, sDOWN_ON, sLEFT_ON, sRIGHT_ON;
@@ -191,14 +192,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		// KID
 		kid_img = BitmapFactory.decodeResource(getResources(), R.drawable.kidorange);
 		
-		// OBJECTS
-		bola_img = BitmapFactory.decodeResource(getResources(), R.drawable.bola);
-		bomba_img = BitmapFactory.decodeResource(getResources(), R.drawable.bomba);
-		boom_img = BitmapFactory.decodeResource(getResources(), R.drawable.boom);
-		cactus_img = BitmapFactory.decodeResource(getResources(), R.drawable.cactus);
-		
-		vuelve = BitmapFactory.decodeResource(getResources(), R.drawable.vuelveinicio);
-				
 		// FICHAS
 		ficha1 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza1);
 		ficha2 = BitmapFactory.decodeResource(getResources(), R.drawable.pieza2);
@@ -217,6 +210,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			// RAQUETAS
 			cazamariposas_L = BitmapFactory.decodeResource(getResources(), R.drawable.cazamariposas_izq);
 			cazamariposas_R = BitmapFactory.decodeResource(getResources(), R.drawable.cazamariposas_der);
+			// OBJECTS
+			bola_img = BitmapFactory.decodeResource(getResources(), R.drawable.bola);
+			bomba_img = BitmapFactory.decodeResource(getResources(), R.drawable.bomba);
+			boom_img = BitmapFactory.decodeResource(getResources(), R.drawable.boom);
+			cactus_img = BitmapFactory.decodeResource(getResources(), R.drawable.cactus);
+			
+			boomSrcRect = new Rect(0,0,boom_img.getWidth(),boom_img.getHeight());
 		}
 		
 		if(gameEngine.getGameType().equals("Tobogan")){
@@ -228,6 +228,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			nube2 = BitmapFactory.decodeResource(getResources(), R.drawable.nube2);
 			nube3 = BitmapFactory.decodeResource(getResources(), R.drawable.nube3);
 			nube4 = BitmapFactory.decodeResource(getResources(), R.drawable.nube4);
+			// VUELVE
+			vuelve = BitmapFactory.decodeResource(getResources(), R.drawable.vuelveinicio);
+			vuelveSrcRect = new Rect(0,0,vuelve.getWidth(),vuelve.getHeight());
 		}
 		
 		if(gameEngine.getGameType().equals("SubeBaja")){
@@ -242,8 +245,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			laberinto_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodos);
 			laberinto_mascara1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodosmascara);
 		}
-		
-		//connecting = BitmapFactory.decodeResource(getResources(), R.drawable.connecting);
 		
 		paint = new Paint();
 		paint.setAntiAlias(true);
@@ -304,7 +305,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		dstT1 = new Rect(0, 0, (int)screenWidth, (int)screenHeight);
 		dstT2 = new Rect(0, 0, (int)screenWidth, (int)screenHeight);
 		dstT3 = new Rect(0, 0, (int)screenWidth, (int)screenHeight);
-		
+		dstT4 = new Rect(0, 0, (int)screenWidth, (int)screenHeight);
 	}
 
 	//thread to update and draw. Game loop
@@ -386,11 +387,23 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawScore(canvas); // draw score and lives
 					drawSensor(canvas);
 					
-					if(checkBoom){
-						//measure the text then draw it at center
-						sentenceWidth = paint2.measureText(textBoom);
-					    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-						canvas.drawText(textBoom, drawTextStartingX , screenHeight/2, paint2);
+					if(gameEngine.checkBoom){
+						canvas.drawBitmap(boom_img,boomSrcRect,dst,null);
+						 
+					    handlerBoom.postDelayed(new Runnable() { 
+					         public void run() { 
+					        	 gameEngine.checkBoom = false;
+					         } 
+					    }, 2000);
+					}
+					
+					if(gameEngine.comeBack){
+						canvas.drawBitmap(vuelve,vuelveSrcRect,dst,null);
+						handlerVuelve.postDelayed(new Runnable() { 
+					         public void run() { 
+					        	 gameEngine.comeBack = false;
+					         } 
+					    }, 2000);
 					}
 					
 					// calculate how long did the cycle take
@@ -417,7 +430,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			}
 		}
 	}
-
 
 	private void updateGameOver(Canvas canvas){
 		try {
@@ -635,9 +647,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			dstT1.set(gameEngine.toboganBackPosX, 0, gameEngine.toboganBackPosX + (int) screenWidth, (int) screenHeight);
 			dstT2.set(gameEngine.toboganBackPosX-nubes_fondo2.getWidth(), 0, gameEngine.toboganBackPosX-nubes_fondo2.getWidth() + (int) screenWidth, (int) screenHeight);
 			dstT3.set(gameEngine.toboganBackPosX-nubes_fondo2.getWidth()-nubes_fondo3.getWidth(), 0, gameEngine.toboganBackPosX-nubes_fondo2.getWidth()-nubes_fondo3.getWidth() + (int) screenWidth, (int) screenHeight);
+			dstT4.set(gameEngine.toboganBackPosX-nubes_fondo2.getWidth()-nubes_fondo3.getWidth()-nubes_fondo2.getWidth(), 0, gameEngine.toboganBackPosX-nubes_fondo2.getWidth()-nubes_fondo3.getWidth()-nubes_fondo2.getWidth() + (int) screenWidth, (int) screenHeight);
 			canvas.drawBitmap(nubes_fondo1, src, dstT1, null);
 			canvas.drawBitmap(nubes_fondo2, src, dstT2, null);
 			canvas.drawBitmap(nubes_fondo3, src, dstT3, null);
+			canvas.drawBitmap(nubes_fondo2, src, dstT4, null);
 		}else if(gameEngine.getGameType().equals("SubeBaja")){
 			if (avion.moveXall = true){
 				if (xFondo >= -screenWidth){
@@ -694,13 +708,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			
 		}else if(gameEngine.getGameType().equals("SubeBaja")){
 			// pinza horizontal - dos direcciones - eje Z
-			if(gameEngine.triggerZR || gameEngine.triggerXR){ // UP
+			if(gameEngine.triggerZR || gameEngine.triggerYR){ // UP
 				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
 			}else{
 				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
 			}
 			
-			if(gameEngine.triggerZL || gameEngine.triggerXL){ // DOWN
+			if(gameEngine.triggerZL || gameEngine.triggerYL){ // DOWN
 				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
 			}else{
 				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);

@@ -13,6 +13,7 @@ public class Objetos extends SurfaceView {
 	
 	public Bitmap obj;
 	public boolean isFicha;
+	public boolean isBomba = false;
 	public boolean dir;
 	
 	public Rect srcRect;
@@ -78,11 +79,14 @@ public class Objetos extends SurfaceView {
 			}else if(randomObj == 2){
 				obj = BitmapFactory.decodeResource(getResources(), R.drawable.bomba);
 				srcRect = new Rect(0,0,60,58);
+				isBomba = true;
 			}else if(randomObj == 3){
 				obj = BitmapFactory.decodeResource(getResources(), R.drawable.cactus);
 				srcRect = new Rect(0,0,60,76);
+				isBomba = true;
 			}
 		}else{
+			isBomba = false;
 			int randomFicha = (int)Math.ceil(Math.random()*10);
 			
 			switch (randomFicha) {

@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class ConfigActivity extends Activity implements OnClickListener {
 	
@@ -28,6 +29,7 @@ public class ConfigActivity extends Activity implements OnClickListener {
 	TextView m_deviceStatus;
 	BarView mBarGraph;
 	Button calibrateButH,calibrateButV,calibrateIR;
+	ToggleButton tButton;
 	
 	// Sensor visualization
 	Display display;
@@ -35,6 +37,7 @@ public class ConfigActivity extends Activity implements OnClickListener {
 	ImageView sUP, sDOWN, sLEFT, sRIGHT;
 	
 	private SharedPreferences prefs;
+	public int calibXH, calibYH, calibZH, calibXV, calibYV, calibZV, calibIR;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +58,18 @@ public class ConfigActivity extends Activity implements OnClickListener {
         calibrateButV.setOnClickListener(this);
         calibrateIR.setOnClickListener(this);
         
+        tButton = (ToggleButton)findViewById(R.id.toggleButton1);
+        tButton.setOnClickListener(this);
+        
         metrics = new DisplayMetrics();
 		display = getWindowManager().getDefaultDisplay();
 		display.getMetrics(metrics);
+		
+		updateCalibration();
+		
+		mBarGraph.mSensorXCalib.applyVCalibration();
+        mBarGraph.mSensorYCalib.applyVCalibration();
+        mBarGraph.mSensorZCalib.applyVCalibration();
         
         handler.post(new Runnable(){
         	@Override
@@ -96,7 +108,44 @@ public class ConfigActivity extends Activity implements OnClickListener {
 		case R.id.button3:
 			calibrateIR();
 			break;
+		case R.id.toggleButton1:
+			if(tButton.isChecked()){ // H
+				mBarGraph.mSensorXCalib.applyHCalibration();
+		        mBarGraph.mSensorYCalib.applyHCalibration();
+		        mBarGraph.mSensorZCalib.applyHCalibration();
+			}else{ // V
+				mBarGraph.mSensorXCalib.applyVCalibration();
+		        mBarGraph.mSensorYCalib.applyVCalibration();
+		        mBarGraph.mSensorZCalib.applyVCalibration();
+			}
+			break;
 		}
+	}
+	
+	void updateCalibration(){
+		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        if(prefs.getString("calibratedAH", "") != null){
+        	calibXH = prefs.getInt("accXH",0);
+        	calibYH = prefs.getInt("accYH",0);
+        	calibZH = prefs.getInt("accZH",0);
+        }else{
+        	calibXH = 0;
+        	calibYH = 0;
+        	calibZH = 0;
+        }
+        if(prefs.getString("calibratedAV", "") != null){
+        	calibXV = prefs.getInt("accXV",0);
+        	calibYV = prefs.getInt("accYV",0);
+        	calibZV = prefs.getInt("accZV",0);
+        }else{
+        	calibXV = 0;
+        	calibYV = 0;
+        	calibZV = 0;
+        }
+        
+        mBarGraph.mSensorXCalib.getCalibration(calibXH, calibXV);
+        mBarGraph.mSensorYCalib.getCalibration(calibYH, calibYV);
+        mBarGraph.mSensorZCalib.getCalibration(calibZH, calibZV);
 	}
 	
 	void calibrateIR(){
@@ -116,18 +165,22 @@ public class ConfigActivity extends Activity implements OnClickListener {
 		editor.putInt("accZH",mReceiver.AZ);
 		editor.commit();
 		
-		Toast.makeText(this, "Sensor H calibrated with values: X "+mReceiver.AX+", Y "+mReceiver.AY+", Z "+mReceiver.AZ,Toast.LENGTH_LONG).show();
+		updateCalibration();
+		
+		Toast.makeText(this, "Sensor H calibrated with values: X "+mBarGraph.mSensorXCalib.calibH+", Y "+mBarGraph.mSensorYCalib.calibH+", Z "+mBarGraph.mSensorZCalib.calibH,Toast.LENGTH_LONG).show();
 	}
 	
 	void calibrateSensorV(){
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString("calibratedAV","1");
-		editor.putInt("accXV",(int)mBarGraph.mSensorX.getDegrees());
-		editor.putInt("accYV",(int)mBarGraph.mSensorY.getDegrees());
-		editor.putInt("accZV",(int)mBarGraph.mSensorZ.getDegrees());
+		editor.putInt("accXV",mReceiver.AX);
+		editor.putInt("accYV",mReceiver.AY);
+		editor.putInt("accZV",mReceiver.AZ);
 		editor.commit();
 		
-		Toast.makeText(this, "Sensor V calibrated with values: X "+mReceiver.AX+", Y "+mReceiver.AY+", Z "+mReceiver.AZ,Toast.LENGTH_LONG).show();
+		updateCalibration();
+		
+		Toast.makeText(this, "Sensor V calibrated with values: X "+mBarGraph.mSensorXCalib.calibV+", Y "+mBarGraph.mSensorYCalib.calibV+", Z "+mBarGraph.mSensorZCalib.calibV,Toast.LENGTH_LONG).show();
 	}
 	
 	int dpToPixels(int dps){

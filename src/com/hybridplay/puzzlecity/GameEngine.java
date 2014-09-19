@@ -51,6 +51,9 @@ public class GameEngine implements Runnable {
 	int pX, pY;
 	int newDirection;
 	
+	boolean checkBoom = false;
+	boolean comeBack = false;
+	
 	public boolean isRunning;
 	public boolean moveAll = false;
 	
@@ -322,7 +325,7 @@ public class GameEngine implements Runnable {
 		}else if(getGameType().equals("SubeBaja")){ // ---------- SubeBaja
 			// pinza horizontal/vertical - dos direcciones - eje Z || eje X
 			
-			if(triggerZR || triggerXR){
+			if(triggerZR || triggerYR){
 				if(avion.vX < 4) avion.vX += 1.4f; //se mueve a la derecha
 				if(avion.vY >= -2.5) {
 					avion.vY -= 2.5; //se eleva
@@ -397,7 +400,7 @@ public class GameEngine implements Runnable {
 			
 			toboganBackPosX += kVX;
 			
-			if(toboganBackPosX > screenWidth*2.9){
+			if(toboganBackPosX > screenWidth*2.4){
 				gameState = WON; // WIN
 			}
 			
@@ -415,12 +418,16 @@ public class GameEngine implements Runnable {
 		}
 	}
 	
-	//check if kid jump on nube with ficha
+	//check if kid take objects on columpio
 	private void checkObjetosOnFicha(float gX, float gY){
 		int radius = (int) width / 6 ; // 190 con pantalla de 800 
 
 		if (Math.abs(minPX - gX) + Math.abs(minPYL - gY) < radius || Math.abs(maxPX - gX) + Math.abs(minPYR - gY) < radius) { // kid touch ficha
-			playerScore++;   // increase score
+			if(obj.isBomba){
+				checkBoom = true;
+			}else{
+				playerScore++;   // increase score
+			}
 			obj.reloadObjeto();
 		}
 	}
@@ -431,11 +438,10 @@ public class GameEngine implements Runnable {
 		int pY = (int)player.getpY();
 		int radius = (int) width / 4 ; // 190 con pantalla de 800 
 		
-		if (Math.abs(pX - gX) + Math.abs(pY - gY) < radius) { // kid touch ficha
+		if (Math.abs(pX - gX) + Math.abs(pY - gY) < radius) { // kid touch ficha or nube negra
 			if(nube.hasFicha){
 				eatFicha();
-			}
-			if(nube.isBlack){
+			}else if(nube.isBlack){
 				nubeNegra();
 			}
 		}
@@ -457,6 +463,7 @@ public class GameEngine implements Runnable {
 	// nube negra ==> come back + time
 	private void nubeNegra() {
 		//Log.d("PuzzleCity","WE WIN");
+		comeBack = true;
 		nube.reloadNube();
 		toboganJump = false;
 		toboganState = tRESTART;
