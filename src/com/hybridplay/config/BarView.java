@@ -24,6 +24,7 @@ public class BarView extends View {
     
     public  Sensor mSensorX, mSensorY, mSensorZ, mSensorIR;
     public  Sensor mSensorXCalib, mSensorYCalib, mSensorZCalib;
+    public  Sensor mSensorColumpio;
     
     public BarView(Context context) {
         super(context);
@@ -53,6 +54,8 @@ public class BarView extends View {
         mSensorYCalib = new Sensor("y",280,380,0);
         mSensorZCalib = new Sensor("z",280,380,0);
         
+        mSensorColumpio = new Sensor("y",280,380,0);
+        
     }
     
     public void drawBar(int valueX, int valueY, int valueZ, int valueIR){
@@ -68,6 +71,7 @@ public class BarView extends View {
         final int y = mYOffset + (int)(valueY * mScale);
         mSensorY.update(y,valueY);
         mSensorYCalib.update(y,valueY);
+        mSensorColumpio.update(y,valueY);
         
         final int z = mYOffset + (int)(valueZ * mScale);
         mSensorZ.update(z,valueZ);
@@ -79,8 +83,9 @@ public class BarView extends View {
         
         mCanvas = mSensorX.draw(mCanvas, paint, mColorX, 20, 0, 60);
         mCanvas = mSensorY.draw(mCanvas, paint, mColorY, 120, 0, 60);
+        mCanvas = mSensorColumpio.drawColumpio(mCanvas, paint, Color.CYAN, 120, 0, 45);
         mCanvas = mSensorZ.draw(mCanvas, paint, mColorZ, 220, 0, 60);
-        mCanvas = mSensorIR.draw(mCanvas, paint, mColorIR, 420, 0, 60);
+        mCanvas = mSensorIR.draw(mCanvas, paint, mColorIR, 320, 0, 60);
         
         mCanvas = mSensorXCalib.draw(mCanvas, paint, mColorXCalib, 35, 0, 30);
         mCanvas = mSensorYCalib.draw(mCanvas, paint, mColorXCalib, 135, 0, 30);

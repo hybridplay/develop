@@ -43,6 +43,9 @@
 	<string name="resume">Resume</string>
 	<string name="no_more_games">There is not more games</string>
 	
+	<string name="columpio_header">Columpio</string>
+	<string name="columpio_settings">MIN _ MAX</string>
+	
 	<!-- TRON -->
 	<string name="helloTron">Hello World, glTron!</string>
     <string name="app_name_TRON">GL TRON</string>

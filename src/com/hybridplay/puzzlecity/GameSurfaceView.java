@@ -566,12 +566,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 
 			// draw raquetas
-			Rect raquetaSrc = new Rect(0,0,114,97);
-			Rect raquetaLdst = new Rect((int)gameEngine.minPX,(int)gameEngine.minPYL,(int)gameEngine.minPX+114,(int)gameEngine.minPYL+97);
-			Rect raquetaRdst = new Rect((int)gameEngine.maxPX,(int)gameEngine.minPYR,(int)gameEngine.maxPX+114,(int)gameEngine.minPYR+97);
+			//Rect raquetaSrc = new Rect(0,0,114,97);
+			//Rect raquetaLdst = new Rect((int)gameEngine.minPX,(int)gameEngine.minPYL,(int)gameEngine.minPX+114,(int)gameEngine.minPYL+97);
+			//Rect raquetaRdst = new Rect((int)gameEngine.maxPX,(int)gameEngine.minPYR,(int)gameEngine.maxPX+114,(int)gameEngine.minPYR+97);
 
-			canvas.drawBitmap(cazamariposas_L,raquetaSrc,raquetaLdst,null);
-			canvas.drawBitmap(cazamariposas_R,raquetaSrc,raquetaRdst,null);
+			//canvas.drawBitmap(cazamariposas_L,raquetaSrc,raquetaLdst,null);
+			//canvas.drawBitmap(cazamariposas_R,raquetaSrc,raquetaRdst,null);
 			
 			dst = new Rect((int)player.getpX(), (int)player.getpY(), (int)player.getpX()+ (int) playerSize, (int)player.getpY() + (int) playerSize);
 			canvas.drawBitmap(kid_img, srcRect, dst, null);
