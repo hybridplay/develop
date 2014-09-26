@@ -32,6 +32,7 @@ public class Sensor {
 	int realValue;
 	int actualValue;
 	float normActualValue;
+	float normActualValueColumpio;
 	float normCenterDelta = 0.20f;
 	int barScale = 280;
     String sensorName;
@@ -39,6 +40,7 @@ public class Sensor {
     float minStable, maxStable;
     boolean triggerMin, triggerMax;
     boolean applyHCalib = false, applyVCalib = false;
+    float columpioMin = 0.0f, columpioMax = 1.0f;
     
     public float calibH = 0.0f, calibV = 0.0f;
     
@@ -47,6 +49,7 @@ public class Sensor {
     	maxValue = 0;
     	actualValue = 0;
     	normActualValue = 0.0f;
+    	normActualValueColumpio = 0.0f;
     	minStable = minS;
     	maxStable = maxS;
     	triggerMin = false;
@@ -60,15 +63,23 @@ public class Sensor {
     	if(type == 0){
     		if(vx <= maxStable && vx >= minStable){
     			realValue = vx;
+    			
+    			float colMinShift = columpioMin*(maxStable-minStable);
+    			float colMaxShift = (maxStable-minStable)*(1-columpioMax);
+    			float newMinStable = minStable+colMinShift;
+    			float newMaxStable = maxStable-colMaxShift;
 
     			if(applyHCalib){
     				normActualValue = -calibH + (vx-minStable)/(maxStable-minStable)*(1.0f+calibH);
+    				normActualValueColumpio = -calibH + (vx-newMinStable)/(newMaxStable-newMinStable)*(1.0f+calibH);
     			}else if(applyVCalib){
     				normActualValue = -calibV + (vx-minStable)/(maxStable-minStable)*(1.0f+calibV);
+    				normActualValueColumpio = -calibV + (vx-newMinStable)/(newMaxStable-newMinStable)*(1.0f+calibV);
     			}else{
     				normActualValue = (vx-minStable)/(maxStable-minStable)*1.0f;
+    				normActualValueColumpio = (vx-newMinStable)/(newMaxStable-newMinStable)*1.0f;
     			}
-    			
+
     			actualValue = x;
     			maxValue = Math.max(actualValue, maxValue);
     			minValue = Math.min(actualValue, minValue);
@@ -127,6 +138,11 @@ public class Sensor {
     	
     }
     
+    public void getColumpioCalibration(float min, float max){
+    	columpioMin = min;
+    	columpioMax = max;
+    }
+    
     public void logData(int v){
     	Log.d("SENSOR","TESTING CALIBRATION H: "+v);
     }
@@ -158,6 +174,19 @@ public class Sensor {
 		return mCanvas;
     }
     
+    public Canvas drawColumpio(Canvas mCanvas, Paint paint, int mColor, int xDrawing, int yDrawing, int size) {
+  	  paint.setColor(mColor);
+        paint.setStyle(Paint.Style.STROKE); 
+        paint.setStrokeWidth(2.5f);
+        paint.setTextSize(26);
+        
+        mCanvas.drawRect(xDrawing, yDrawing, xDrawing + size, yDrawing + normActualValueColumpio*barScale, paint);
+        paint.setStyle(Paint.Style.FILL);
+        mCanvas.drawText(getSensorName()+": "+String.format("%.1f", getDegrees()), xDrawing, yDrawing + size + barScale, paint);
+
+		return mCanvas;
+  }
+    
     public float getNormalizedValue(){
     	return normActualValue;
     }
@@ -180,6 +209,10 @@ public class Sensor {
 	
 	public float getDegrees(){
 		return (normActualValue*180) - 90.0f;
+	}
+	
+	public float getDegreesColumpio(){
+		return (normActualValueColumpio*180) - 90.0f;
 	}
 	
 	public void setMaxIR(int mIR){

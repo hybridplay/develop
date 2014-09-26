@@ -13,7 +13,7 @@ public class GameEngine implements Runnable {
 	int screenWidth;
 	
 	// SENSOR DATA
-	float angleX, angleY, angleZ;
+	float angleX, angleY, angleYColumpio, angleZ;
 	int distanceIR;
 	boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
 	
@@ -102,6 +102,10 @@ public class GameEngine implements Runnable {
 		triggerYR = tYR;
 		triggerZL = tZL;
 		triggerZR = tZR;
+	}
+	
+	public void updateSensorColumpio(float yC){
+		angleYColumpio = yC;
 	}
 	
 	//update
@@ -273,18 +277,18 @@ public class GameEngine implements Runnable {
 	        float tempMedia = 0;
 	        boolean goingRight = false;
 	        for(int i=0;i<100;i++){
-	        	tempMedia += angleY;
+	        	tempMedia += angleYColumpio;
 	        }
 	        tempMedia /= 100;
 	        
-	        if(angleY > tempMedia){
+	        if(angleYColumpio > tempMedia){
 	        	goingRight = false;
 	        }else{
 	        	goingRight = true;
 	        }
 	        
 	        // update kid position
-	        player.setAngle((float)Math.toRadians(angleY));
+	        player.setAngle((float)Math.toRadians(angleYColumpio));
 	        player.setpX(this.width/2 - 50 - (float)Math.sin(player.getAngle())*200);
 	        player.setpY(this.height - 390 + (float)Math.cos(player.getAngle())*210);
 	        
@@ -308,11 +312,11 @@ public class GameEngine implements Runnable {
 	        }
 	        
 	        for(int i=0;i<100;i++){
-	        	tempMedia += angleY;
+	        	tempMedia += angleYColumpio;
 	        }
 	        tempMedia /= 100;
 	        
-	        if(angleY > tempMedia && goingRight){
+	        if(angleYColumpio > tempMedia && goingRight){
 	        	updateRaquetas = true;
 	        }else if(angleY < tempMedia && !goingRight){
 	        	updateRaquetas = true;

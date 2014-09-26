@@ -16,6 +16,8 @@ import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -30,6 +32,7 @@ public class ConfigActivity extends Activity implements OnClickListener {
 	BarView mBarGraph;
 	Button calibrateButH,calibrateButV,calibrateIR;
 	ToggleButton tButton;
+	VerticalSeekBar columpioMin, columpioMax;
 	
 	// Sensor visualization
 	Display display;
@@ -38,6 +41,7 @@ public class ConfigActivity extends Activity implements OnClickListener {
 	
 	private SharedPreferences prefs;
 	public int calibXH, calibYH, calibZH, calibXV, calibYV, calibZV, calibIR;
+	public float columpioMinLimit, columpioMaxLimit;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +54,7 @@ public class ConfigActivity extends Activity implements OnClickListener {
 		m_deviceName = (TextView)findViewById(R.id.deviceName);
         m_deviceStatus = (TextView)findViewById(R.id.deviceStatus);
         mBarGraph = (BarView) findViewById(R.id.bargraph);
-        
+
         calibrateButH = (Button) findViewById(R.id.button1);
         calibrateButV = (Button) findViewById(R.id.button2);
         calibrateIR = (Button) findViewById(R.id.button3);
@@ -70,6 +74,51 @@ public class ConfigActivity extends Activity implements OnClickListener {
 		mBarGraph.mSensorXCalib.applyVCalibration();
         mBarGraph.mSensorYCalib.applyVCalibration();
         mBarGraph.mSensorZCalib.applyVCalibration();
+        
+        columpioMin = (VerticalSeekBar) findViewById(R.id.seekBar2);
+        columpioMax = (VerticalSeekBar) findViewById(R.id.seekBar1);
+        
+        columpioMin.setProgress((int)(prefs.getFloat("columpioMin", 0)*100));
+        columpioMax.setProgress((int)(prefs.getFloat("columpioMax", 1)*100));
+        
+        columpioMin.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {       
+
+            @Override       
+            public void onStopTrackingTouch(SeekBar seekBar) {      
+            	prefs.edit().putFloat("columpioMin",columpioMinLimit).commit();
+            	toastMessage("Columpio MIN LIMIT: ",columpioMinLimit);
+            }       
+
+            @Override       
+            public void onStartTrackingTouch(SeekBar seekBar) {     
+                     
+            }       
+
+            @Override       
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {           
+            	columpioMinLimit = progress/100.0f;
+
+            }       
+        });
+        
+        columpioMax.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {       
+
+            @Override       
+            public void onStopTrackingTouch(SeekBar seekBar) {      
+            	prefs.edit().putFloat("columpioMax",columpioMaxLimit).commit();
+            	toastMessage("Columpio MAX LIMIT: ",columpioMaxLimit);
+            }       
+
+            @Override       
+            public void onStartTrackingTouch(SeekBar seekBar) {     
+                     
+            }       
+
+            @Override       
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {           
+            	columpioMaxLimit = progress/100.0f;
+            }       
+        });
         
         handler.post(new Runnable(){
         	@Override
@@ -143,6 +192,8 @@ public class ConfigActivity extends Activity implements OnClickListener {
         	calibZV = 0;
         }
         
+        mBarGraph.mSensorColumpio.getColumpioCalibration(prefs.getFloat("columpioMin", 0), prefs.getFloat("columpioMax", 1));
+        
         mBarGraph.mSensorXCalib.getCalibration(calibXH, calibXV);
         mBarGraph.mSensorYCalib.getCalibration(calibYH, calibYV);
         mBarGraph.mSensorZCalib.getCalibration(calibZH, calibZV);
@@ -181,6 +232,10 @@ public class ConfigActivity extends Activity implements OnClickListener {
 		updateCalibration();
 		
 		Toast.makeText(this, "Sensor V calibrated with values: X "+mBarGraph.mSensorXCalib.calibV+", Y "+mBarGraph.mSensorYCalib.calibV+", Z "+mBarGraph.mSensorZCalib.calibV,Toast.LENGTH_LONG).show();
+	}
+	
+	void toastMessage(String m, float f){
+		Toast.makeText(this, m+f,Toast.LENGTH_LONG).show();
 	}
 	
 	int dpToPixels(int dps){

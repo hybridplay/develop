@@ -46,6 +46,46 @@
          android:textOff="@string/visualize_sensorVCal"
          android:textOn="@string/visualize_sensorHCal" />
 
+     <TextView
+         android:id="@+id/textView2"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentRight="true"
+         android:layout_marginRight="26dp"
+         android:layout_marginTop="60dp"
+         android:text="@string/columpio_header"
+         android:textColor="@color/black" />
+
+     <TextView
+         android:id="@+id/textView1"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentRight="true"
+         android:layout_marginRight="20dp"
+         android:layout_marginTop="76dp"
+         android:text="@string/columpio_settings"
+         android:textColor="@color/black" />
+
+     <com.hybridplay.config.VerticalSeekBar
+         android:id="@+id/seekBar1"
+         android:layout_width="30dp"
+         android:layout_height="200dp"
+         android:layout_alignParentRight="true"
+         android:layout_marginRight="20dp"
+         android:layout_marginTop="100dp"
+         android:max="100"
+         android:progress="100" />
+     
+     <com.hybridplay.config.VerticalSeekBar
+         android:id="@+id/seekBar2"
+         android:layout_width="30dp"
+         android:layout_height="200dp"
+         android:layout_alignParentRight="true"
+         android:layout_marginRight="60dp"
+         android:layout_marginTop="100dp"
+         android:max="100"
+         android:progress="0" />
+
      <LinearLayout
          android:layout_width="fill_parent"
          android:layout_height="200dp"

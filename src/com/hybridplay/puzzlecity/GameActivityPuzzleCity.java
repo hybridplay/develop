@@ -28,7 +28,7 @@ public class GameActivityPuzzleCity extends Activity {
 	Sensor mSensorY = new Sensor("y",280,380,0);
 	Sensor mSensorZ = new Sensor("z",280,380,0);
 	Sensor mSensorIR = new Sensor("IR",250,512,1);
-	float angleX, angleY, angleZ;
+	float angleX, angleY, angleYColumpio, angleZ;
 	int distanceIR;
 	boolean triggerXL, triggerXR, triggerYL, triggerYR, triggerZL, triggerZR;
 	
@@ -87,8 +87,9 @@ public class GameActivityPuzzleCity extends Activity {
 
           		}
         		
-    			angleX 		= mSensorX.getDegrees();
-    			angleY 		= mSensorY.getDegrees();
+    			angleX 				= mSensorX.getDegrees();
+    			angleY 				= mSensorY.getDegrees();
+    			angleYColumpio 		= mSensorY.getDegreesColumpio();
     			angleZ 		= mSensorZ.getDegrees();
     		    distanceIR 	= mSensorIR.getDistanceIR();
     		    triggerXL 	= mSensorX.getTriggerMin();
@@ -99,6 +100,7 @@ public class GameActivityPuzzleCity extends Activity {
     		    triggerZR	= mSensorZ.getTriggerMax();
     		    // ------------------------------------ game interaction
     		    gameEngine.updateSensorData(angleX,angleY,angleZ,distanceIR,triggerXL,triggerXR,triggerYL,triggerYR,triggerZL,triggerZR);
+    		    gameEngine.updateSensorColumpio(angleYColumpio);
     		    
     		    handler.postDelayed(this,40); // set time here to refresh (40 ms => 12 FPS)
         	}
@@ -135,6 +137,10 @@ public class GameActivityPuzzleCity extends Activity {
         mSensorY.getCalibration(calibYH, calibYV);
         mSensorZ.getCalibration(calibZH, calibZV);
         mSensorIR.setMaxIR(calibIR);
+        
+        mSensorX.getColumpioCalibration(prefs.getFloat("columpioMin", 0), prefs.getFloat("columpioMax", 1));
+        mSensorY.getColumpioCalibration(prefs.getFloat("columpioMin", 0), prefs.getFloat("columpioMax", 1));
+        mSensorZ.getColumpioCalibration(prefs.getFloat("columpioMin", 0), prefs.getFloat("columpioMax", 1));
 	}
     
     @Override
