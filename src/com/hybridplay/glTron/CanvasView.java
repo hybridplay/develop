@@ -196,13 +196,16 @@ public class CanvasView extends SurfaceView  implements Runnable{
 			}
 		}else if(playWith.equals("Caballito")){
 			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-			if(triggerYR){ // UP
+			
+			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
+			
+			if(triggerZR){ // UP
 				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
 			}else{
 				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
 			}
 			
-			if(triggerYL){ // DOWN
+			if(triggerZL){ // DOWN
 				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
 			}else{
 				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);

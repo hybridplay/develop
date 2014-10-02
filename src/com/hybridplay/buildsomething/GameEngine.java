@@ -150,7 +150,7 @@ public class GameEngine implements Runnable {
 			
 		}else if(getGameType().equals("Caballito")){
 			
-			if (triggerZR) { //a la derecha
+			if (triggerXR) { //a la derecha
 				//robot.setDir(RIGHT);
 				//Log.i("log robot.getPwidth()", Integer.toString(robot.robotW));
 				
@@ -161,7 +161,7 @@ public class GameEngine implements Runnable {
 				}
 				
 				
-			}else if (triggerZL) { //a la izquierda
+			}else if (triggerXL) { //a la izquierda
 				//robot.setDir(LEFT);
 				if (pX > 0) {
 					pX = pX - robot.getpNormalSpeed();
@@ -226,7 +226,7 @@ public class GameEngine implements Runnable {
 				toboganState = tWAIT;
 				toboganSemaphore = true;
 				jumpSemaphore = true;
-				// ni–o sentado a la espera de poder saltar
+				// niï¿½o sentado a la espera de poder saltar
 				kid.setpX(this.width - 400);
 		        kid.setpY(0);
 			}

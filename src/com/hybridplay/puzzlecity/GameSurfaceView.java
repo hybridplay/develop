@@ -645,13 +645,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			canvas.drawBitmap(columpio_fondo, src, dst, null);
 		}else if(gameEngine.getGameType().equals("Tobogan")){ // nubes
 			dstT1.set(gameEngine.toboganBackPosX, 0, gameEngine.toboganBackPosX + (int) screenWidth, (int) screenHeight);
-			dstT2.set(gameEngine.toboganBackPosX-nubes_fondo2.getWidth(), 0, gameEngine.toboganBackPosX-nubes_fondo2.getWidth() + (int) screenWidth, (int) screenHeight);
-			dstT3.set(gameEngine.toboganBackPosX-nubes_fondo2.getWidth()-nubes_fondo3.getWidth(), 0, gameEngine.toboganBackPosX-nubes_fondo2.getWidth()-nubes_fondo3.getWidth() + (int) screenWidth, (int) screenHeight);
-			dstT4.set(gameEngine.toboganBackPosX-nubes_fondo2.getWidth()-nubes_fondo3.getWidth()-nubes_fondo2.getWidth(), 0, gameEngine.toboganBackPosX-nubes_fondo2.getWidth()-nubes_fondo3.getWidth()-nubes_fondo2.getWidth() + (int) screenWidth, (int) screenHeight);
+			dstT2.set(gameEngine.toboganBackPosX-screenWidth, 0, gameEngine.toboganBackPosX-screenWidth + (int) screenWidth, (int) screenHeight);
+			dstT3.set(gameEngine.toboganBackPosX-(screenWidth*2), 0, gameEngine.toboganBackPosX-(screenWidth*2) + (int) screenWidth, (int) screenHeight);
+			dstT4.set(gameEngine.toboganBackPosX-(screenWidth*3), 0, gameEngine.toboganBackPosX-(screenWidth*3) + (int) screenWidth, (int) screenHeight);
 			canvas.drawBitmap(nubes_fondo1, src, dstT1, null);
 			canvas.drawBitmap(nubes_fondo2, src, dstT2, null);
-			canvas.drawBitmap(nubes_fondo3, src, dstT3, null);
-			canvas.drawBitmap(nubes_fondo2, src, dstT4, null);
+			canvas.drawBitmap(nubes_fondo2, src, dstT3, null);
+			canvas.drawBitmap(nubes_fondo3, src, dstT4, null);
 		}else if(gameEngine.getGameType().equals("SubeBaja")){
 			if (avion.moveXall = true){
 				if (xFondo >= -screenWidth){
@@ -745,13 +745,17 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			}
 		}else if(gameEngine.getGameType().equals("Caballito")){
 			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-			if(gameEngine.triggerYR){ // UP
+			
+			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
+			
+			
+			if(gameEngine.triggerZR){ // UP
 				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
 			}else{
 				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
 			}
 			
-			if(gameEngine.triggerYL){ // DOWN
+			if(gameEngine.triggerZL){ // DOWN
 				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
 			}else{
 				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);

@@ -200,7 +200,10 @@ public class GameEngine implements Runnable {
 		}else if(getGameType().equals("Caballito")){ // ---------- Caballito
 			
 			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-			if (triggerYL && !triggerXL && !triggerXR) {
+			
+			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
+			
+			if (triggerZL && !triggerXL && !triggerXR) {
 				player.setDir(DOWN);
 				player.setCurrentAnimation(0);
 				if (stage.canMove(DOWN, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
@@ -214,7 +217,7 @@ public class GameEngine implements Runnable {
 						}
 					}
 				}
-			}else if (triggerYR && !triggerXL && !triggerXR) {
+			}else if (triggerZR && !triggerXL && !triggerXR) {
 				player.setDir(UP);
 				player.setCurrentAnimation(1);
 				if (stage.canMove(UP,pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
@@ -230,7 +233,7 @@ public class GameEngine implements Runnable {
 				}
 			}
 			
-			if (triggerXR && !triggerYL && !triggerYR) {
+			if (triggerXR && !triggerZL && !triggerZR) {
 				player.setDir(RIGHT);
 				player.setCurrentAnimation(2);
 				if (stage.canMove(RIGHT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
@@ -244,7 +247,7 @@ public class GameEngine implements Runnable {
 						}
 					}
 				}
-			}else if (triggerXL && !triggerYL && !triggerYR) {
+			}else if (triggerXL && !triggerZL && !triggerZR) {
 				player.setDir(LEFT);
 				player.setCurrentAnimation(3);
 				if (stage.canMove(LEFT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
@@ -424,9 +427,11 @@ public class GameEngine implements Runnable {
 	
 	//check if kid take objects on columpio
 	private void checkObjetosOnFicha(float gX, float gY){
+		int pX = (int)player.getpX();
+		int pY = (int)player.getpY();
 		int radius = (int) width / 6 ; // 190 con pantalla de 800 
 
-		if (Math.abs(minPX - gX) + Math.abs(minPYL - gY) < radius || Math.abs(maxPX - gX) + Math.abs(minPYR - gY) < radius) { // kid touch ficha
+		if (Math.abs(pX - gX) + Math.abs(pY - gY) < radius) { // kid touch ficha
 			if(obj.isBomba){
 				checkBoom = true;
 			}else{

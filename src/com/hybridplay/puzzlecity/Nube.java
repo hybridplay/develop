@@ -51,7 +51,7 @@ public class Nube extends SurfaceView {
 		pX = screenW + (float)(Math.random()*60);
 		pY = screenH/2 + screenH/4;
 		
-		vX = 2 + (float)Math.random()*4;
+		vX = 3 + (float)Math.random()*4;
 		
 		if(Math.random() < 0.8){
 			hasFicha = true;

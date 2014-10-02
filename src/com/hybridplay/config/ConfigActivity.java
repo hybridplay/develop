@@ -192,11 +192,20 @@ public class ConfigActivity extends Activity implements OnClickListener {
         	calibZV = 0;
         }
         
+        if(prefs.getString("calibratedIR", "") != null){
+        	calibIR = prefs.getInt("calIR", 0);
+        }else{
+        	calibIR = 10;
+        }
+        
         mBarGraph.mSensorColumpio.getColumpioCalibration(prefs.getFloat("columpioMin", 0), prefs.getFloat("columpioMax", 1));
         
         mBarGraph.mSensorXCalib.getCalibration(calibXH, calibXV);
         mBarGraph.mSensorYCalib.getCalibration(calibYH, calibYV);
         mBarGraph.mSensorZCalib.getCalibration(calibZH, calibZV);
+        mBarGraph.mSensorIR.setMaxIR(calibIR);
+        
+        
 	}
 	
 	void calibrateIR(){

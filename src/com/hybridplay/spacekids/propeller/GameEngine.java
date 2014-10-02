@@ -171,7 +171,10 @@ public class GameEngine implements Runnable {
 			kid.setpY(pY);
 		}else if(getGameType().equals("Caballito")){ // ---------- Caballito
 			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-			if (triggerYL) {
+			
+			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
+			
+			if (triggerZL) {
 				kid.setDir(DOWN);
 				if (pY + kid.getPheight() < height - limitH){
 					pY = pY + kid.getpNormalSpeed();
@@ -179,7 +182,7 @@ public class GameEngine implements Runnable {
 				}else{
 					moveAll = true;
 				}
-			}else if (triggerYR) {
+			}else if (triggerZR) {
 				kid.setDir(UP);
 				if (pY > limitH) {
 					pY = pY - kid.getpNormalSpeed();

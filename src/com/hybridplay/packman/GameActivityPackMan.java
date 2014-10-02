@@ -84,8 +84,11 @@ public class GameActivityPackMan extends Activity{
         			mSensorZ.applyHCalibration();
           		}else if(playWith.equals("Caballito")){
           			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
+          			
+          			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
+          			
           			mSensorX.applyVCalibration();
-        			mSensorY.applyVCalibration();
+        			mSensorZ.applyVCalibration(); // mSensorY.applyVCalibration();
           		}else if(playWith.equals("Columpio")){
           			// pinza vertical boton hacia abajo - oscilacion - eje X
 
@@ -125,9 +128,12 @@ public class GameActivityPackMan extends Activity{
     				}
           		}else if(playWith.equals("Caballito")){
           			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
-          			if(gameEngine.isCHYR){
+          			
+          			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
+          			
+          			if(gameEngine.isCHZR){
     					gameEngine.setInputDir(UP);
-    				}else if(gameEngine.isCHYL){
+    				}else if(gameEngine.isCHZL){
     					gameEngine.setInputDir(DOWN);
     				}
         			if (gameEngine.isCHXL){
