@@ -110,8 +110,11 @@ public class glTron extends Activity {
         			mSensorZ.applyHCalibration();
           		}else if(playWith.equals("Caballito")){
           			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
+          			
+          			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
+          			
           			mSensorX.applyVCalibration();
-        			mSensorY.applyVCalibration();
+        			mSensorZ.applyVCalibration();
           		}else if(playWith.equals("Columpio")){
           			// pinza vertical boton hacia abajo - oscilacion - eje X
 

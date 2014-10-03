@@ -111,11 +111,11 @@ public class Sensor {
     			distanceIR = 1;
     		}else if(realValue >= 0 && realValue <= maxIR){
     			distanceIR = 0;
-    		}else if(realValue > maxIR && realValue < 500){
+    		}else if(realValue > maxIR && realValue < 600){
     			distanceIR = 1;
     		}
     		
-    		//logData(distanceIR);
+    		//logData(realValue);
     	}
     }
     
@@ -144,7 +144,7 @@ public class Sensor {
     }
     
     public void logData(int v){
-    	Log.d("SENSOR","TESTING CALIBRATION H: "+v);
+    	Log.d("SENSOR",maxIR+" - IR RAW: "+v);
     }
     
     public Canvas draw(Canvas mCanvas, Paint paint, int mColor, int xDrawing, int yDrawing, int size) {
