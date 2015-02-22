@@ -173,7 +173,7 @@ public class GamesExpandable extends ExpandableListActivity {
 		ArrayList<String> child = new ArrayList<String>();
 		child.add("Balancin");
 		child.add("Caballito");
-		child.add("SubeBaja");
+		//child.add("SubeBaja");
 
 		childItem.add(child);
 
@@ -191,7 +191,7 @@ public class GamesExpandable extends ExpandableListActivity {
 		child = new ArrayList<String>();
 		child.add("Balancin");
 		child.add("Caballito");
-		child.add("SubeBaja");
+		//child.add("SubeBaja");
 
 		childItem.add(child);
 		/**
@@ -212,7 +212,7 @@ public class GamesExpandable extends ExpandableListActivity {
 		child = new ArrayList<String>();
 		child.add("Balancin");
 		child.add("Caballito");
-		child.add("SubeBaja");
+		//child.add("SubeBaja");
 
 		childItem.add(child);
 
@@ -222,7 +222,7 @@ public class GamesExpandable extends ExpandableListActivity {
 		child = new ArrayList<String>();
 		child.add("Balancin");
 		child.add("Caballito");
-		child.add("SubeBaja");
+		//child.add("SubeBaja");
 
 		childItem.add(child);
 

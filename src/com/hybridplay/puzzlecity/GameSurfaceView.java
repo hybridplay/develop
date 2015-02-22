@@ -137,14 +137,14 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			gameEngine.stage = stage;
 		}
 
-		   //creamos el array de basura y a�adimos 3 objetos
-		if (gameEngine.getGameType().equals("Caballito") || gameEngine.getGameType().equals("Balancin")){
-			fichasArray = new ArrayList<Fichas>();
-			for (int i = 0; i < 10; i++) {
-				fichasArray.add(new Fichas(context, gameEngine, (int)screenWidth,(int)screenHeight,gameEngine.getGameType()));
-			}
-			gameEngine.fichasArray = fichasArray;
-		}
+//		   //creamos el array de basura y a�adimos 3 objetos
+//		if (gameEngine.getGameType().equals("Caballito") || gameEngine.getGameType().equals("Balancin")){
+//			fichasArray = new ArrayList<Fichas>();
+//			for (int i = 0; i < 10; i++) {
+//				fichasArray.add(new Fichas(context, gameEngine, (int)screenWidth,(int)screenHeight,gameEngine.getGameType()));
+//			}
+//			gameEngine.fichasArray = fichasArray;
+//		}
 		
 		if(gameEngine.getGameType().equals("SubeBaja")){
 			fichas = new Fichas(context, gameEngine, (int)screenWidth,(int)screenHeight,gameEngine.getGameType());
@@ -239,11 +239,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			avion_fondo3 = BitmapFactory.decodeResource(getResources(), R.drawable.fondoavioneta3);
 		}
 		
-		if(gameEngine.getGameType().equals("Balancin") || gameEngine.getGameType().equals("Caballito")){
-			laberinto_fondo = BitmapFactory.decodeResource(getResources(), R.drawable.laberintofondo);
-			laberinto_mascara = BitmapFactory.decodeResource(getResources(), R.drawable.laberintomascara);
-			laberinto_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodos);
-			laberinto_mascara1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberintodosmascara);
+		if(gameEngine.getGameType().equals("Balancin")){
+			laberinto_fondo = BitmapFactory.decodeResource(getResources(), R.drawable.laberinto1);
+			laberinto_mascara = BitmapFactory.decodeResource(getResources(), R.drawable.laberinto1mask);
+		}else if(gameEngine.getGameType().equals("Caballito")){
+			laberinto_fondo1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberinto2);
+			laberinto_mascara1 = BitmapFactory.decodeResource(getResources(), R.drawable.laberinto2mask);
 		}
 		
 		paint = new Paint();
@@ -505,7 +506,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawSensor(canvas);
 					
 					//measure the text then draw it at center
-					sentenceWidth = paint2.measureText(textReady);
+					sentenceWidth = paint2.measureText(textCongrats);
 				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
 					canvas.drawText(textCongrats, drawTextStartingX , screenHeight/2, paint2);
 					
@@ -545,14 +546,14 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			gameEngine.nube.drawNube(canvas);
 		}else if(gameEngine.getGameType().equals("SubeBaja")){
 			gameEngine.fichas.drawFichas(canvas);
-		}else if(gameEngine.getGameType().equals("Balancin")||gameEngine.getGameType().equals("Caballito")){
-			
-			for (int i = 0; i < gameEngine.fichasArray.size(); i++) {
-				if (gameEngine.fichasArray.get(i).isAlive()){
-					gameEngine.fichasArray.get(i).drawFichas(canvas);
-				}
-			}
-		}
+		}//else if(gameEngine.getGameType().equals("Balancin")||gameEngine.getGameType().equals("Caballito")){
+//			
+//			for (int i = 0; i < gameEngine.fichasArray.size(); i++) {
+//				if (gameEngine.fichasArray.get(i).isAlive()){
+//					gameEngine.fichasArray.get(i).drawFichas(canvas);
+//				}
+//			}
+//		}
 	}
 	
 	// draw kid 
