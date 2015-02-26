@@ -77,7 +77,7 @@ public class Stage extends SurfaceView{
 	public Boolean canMove(int direccion, int playerX, int playerY, int playerW, int playerH, int playerSpeed){
 		//direccion RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8, CENTER = 0t
 		dir = direccion;
-		if(pX >= -384 && pX <= 1850 && pY >= -180 && pY <= 580){
+//		if(pX >= -384 && pX <= 1850 && pY >= -180 && pY <= 580){
 			if (direccion == 1){ //right
 				if (stageMask.getPixel(
 						(int) (pX + screenWidth/2 + playerW/2 + playerSpeed), (int) (pY+ screenHeight/2 - playerH/2 - playerSpeed)) != Color.WHITE && //right&top point
@@ -102,26 +102,28 @@ public class Stage extends SurfaceView{
 						stageMask.getPixel((int) (pX + screenWidth/2 + playerW/2 + playerSpeed), (int) (pY+ screenHeight/2 + playerH/2 + playerSpeed)) != Color.WHITE){ 					//buttom&right
 					return true;
 				}
-			}else{
-				Log.i("log","color Blanco");
-				return false;
 			}
-		}else{
-			if(pX < -384){
-				pX = -380;
-			}
-			if(pX > 1850){
-				pX = 1848;
-			}
-			
-			if(pY < -180){
-				pY = -178;
-			}
-			if(pY > 580){
-				pY = 578;
-			}
-			return false;
-		}
+//			else{
+//				//Log.i("log","color Blanco");
+//				return false;
+//			}
+//		}
+//		else{
+//			if(pX < -384){
+//				pX = -380;
+//			}
+//			if(pX > 1850){
+//				pX = 1848;
+//			}
+//			
+//			if(pY < -180){
+//				pY = -178;
+//			}
+//			if(pY > 580){
+//				pY = 578;
+//			}
+//			return false;
+//		}
 		
 		return false;
 	}

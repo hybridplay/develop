@@ -25,7 +25,8 @@ public class GameEngine implements Runnable {
 	public int toboganState;
 	public int toboganLevel = 0;
 	public boolean toboganJump = false;
-	public int toboganBackPosX = 0;
+	public int toboganBackPosX = 0, toboganBackPosXReset = 0;
+	boolean firstJump = true;
 	public float kVX = 5.3f, kVY = 6.8f;
 	public long actualTime = System.currentTimeMillis();
 	public long myTime;
@@ -124,63 +125,63 @@ public class GameEngine implements Runnable {
 		
 		if(getGameType().equals("Balancin")){ // ---------------- Balancin
 			// pinza horizontal - cuatro direcciones - ejes Z Y
-				if (triggerYL && !triggerZL && !triggerZR) {
+				if (triggerYL ){//{&& !triggerZL && !triggerZR) {
 					player.setDir(DOWN);
 					player.setCurrentAnimation(0);
 					if (stage.canMove(DOWN, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 						stage.setpY(stage.getpY()+player.getpNormalSpeed());
-						if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+						/*if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
 							for (int i = 0; i < fichasArray.size(); i++) {
 								if (fichasArray.get(i).isAlive()){
 									fichasArray.get(i).setpY(fichasArray.get(i).getpY()-player.getpNormalSpeed());
 								}
 								//fichas.setpY(fichas.getpY()-player.getpNormalSpeed());
 							}
-						}
+						}*/
 					}
-				} else if (triggerYR && !triggerZL && !triggerZR) {
+				} else if (triggerYR ){// && !triggerZL && !triggerZR) {
 					player.setDir(UP);
 					player.setCurrentAnimation(1);
 					if (stage.canMove(UP,pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 						stage.setpY(stage.getpY()-player.getpNormalSpeed());
-						if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+						/*if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
 							for (int i = 0; i < fichasArray.size(); i++) {
 								if (fichasArray.get(i).isAlive()){
 									fichasArray.get(i).setpY(fichasArray.get(i).getpY()+player.getpNormalSpeed());
 									//fichas.setpY(fichas.getpY()+player.getpNormalSpeed());
 								}
 							}
-						}
+						}*/
 					}
 				}
 				
-				if (triggerZR && !triggerYL && !triggerYR) {
+				if (triggerZR ){// && !triggerYL && !triggerYR) {
 					player.setDir(RIGHT);
 					player.setCurrentAnimation(2);
 					if (stage.canMove(RIGHT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 						stage.setpX(stage.getpX()+player.getpNormalSpeed());
-						if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+						/*if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
 							for (int i = 0; i < fichasArray.size(); i++) {
 								if (fichasArray.get(i).isAlive()){
 									fichasArray.get(i).setpX(fichasArray.get(i).getpX()-player.getpNormalSpeed());
 									//fichas.setpX(fichas.getpX()-player.getpNormalSpeed());
 								}
 							}
-						}
+						}*/
 					}
-				} else if (triggerZL && !triggerYL && !triggerYR) {
+				} else if (triggerZL){// && !triggerYL && !triggerYR) {
 					player.setDir(LEFT);
 					player.setCurrentAnimation(3);
 					if (stage.canMove(LEFT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 						stage.setpX(stage.getpX()-player.getpNormalSpeed());
-						if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+						/*if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
 							for (int i = 0; i < fichasArray.size(); i++) {
 								if (fichasArray.get(i).isAlive()){
 									fichasArray.get(i).setpX(fichasArray.get(i).getpX()+player.getpNormalSpeed());
 									//fichas.setpX(fichas.getpX()+player.getpNormalSpeed());
 								}
 							}
-						}
+						}*/
 					}
 				}
 			
@@ -190,11 +191,11 @@ public class GameEngine implements Runnable {
 				 
 			player.updatePlayer(System.currentTimeMillis());
 			
-			for (int i = 0; i < fichasArray.size(); i++) {
-				if (fichasArray.get(i).isAlive()){
-					fichasArray.get(i).updateFicha();
-				}
-			}
+//			for (int i = 0; i < fichasArray.size(); i++) {
+//				if (fichasArray.get(i).isAlive()){
+//					fichasArray.get(i).updateFicha();
+//				}
+//			}
 			
 			
 		}else if(getGameType().equals("Caballito")){ // ---------- Caballito
@@ -203,63 +204,63 @@ public class GameEngine implements Runnable {
 			
 			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
 			
-			if (triggerZL && !triggerXL && !triggerXR) {
+			if (triggerZL){// && !triggerXL && !triggerXR) {
 				player.setDir(DOWN);
 				player.setCurrentAnimation(0);
 				if (stage.canMove(DOWN, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 					stage.setpY(stage.getpY()+player.getpNormalSpeed());
-					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
-						for (int i = 0; i < fichasArray.size(); i++) {
-							if (fichasArray.get(i).isAlive()){
-								fichasArray.get(i).setpY(fichasArray.get(i).getpY()-player.getpNormalSpeed());
-								//fichas.setpY(fichas.getpY()-player.getpNormalSpeed());
-							}
-						}
-					}
+//					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+//						for (int i = 0; i < fichasArray.size(); i++) {
+//							if (fichasArray.get(i).isAlive()){
+//								fichasArray.get(i).setpY(fichasArray.get(i).getpY()-player.getpNormalSpeed());
+//								//fichas.setpY(fichas.getpY()-player.getpNormalSpeed());
+//							}
+//						}
+//					}
 				}
-			}else if (triggerZR && !triggerXL && !triggerXR) {
+			}else if (triggerZR){// && !triggerXL && !triggerXR) {
 				player.setDir(UP);
 				player.setCurrentAnimation(1);
 				if (stage.canMove(UP,pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 					stage.setpY(stage.getpY()-player.getpNormalSpeed());
-					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
-						for (int i = 0; i < fichasArray.size(); i++) {
-							if (fichasArray.get(i).isAlive()){
-								fichasArray.get(i).setpY(fichasArray.get(i).getpY()+player.getpNormalSpeed());
-								//fichas.setpY(fichas.getpY()+player.getpNormalSpeed());
-							}
-						}
-					}
+//					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+//						for (int i = 0; i < fichasArray.size(); i++) {
+//							if (fichasArray.get(i).isAlive()){
+//								fichasArray.get(i).setpY(fichasArray.get(i).getpY()+player.getpNormalSpeed());
+//								//fichas.setpY(fichas.getpY()+player.getpNormalSpeed());
+//							}
+//						}
+//					}
 				}
 			}
 			
-			if (triggerXR && !triggerZL && !triggerZR) {
+			if (triggerXR){// && !triggerZL && !triggerZR) {
 				player.setDir(RIGHT);
 				player.setCurrentAnimation(2);
 				if (stage.canMove(RIGHT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 					stage.setpX(stage.getpX()+player.getpNormalSpeed());
-					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
-						for (int i = 0; i < fichasArray.size(); i++) {
-							if (fichasArray.get(i).isAlive()){
-								fichasArray.get(i).setpX(fichasArray.get(i).getpX()-player.getpNormalSpeed());
-								//fichas.setpX(fichas.getpX()-player.getpNormalSpeed());
-							}
-						}
-					}
+//					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+//						for (int i = 0; i < fichasArray.size(); i++) {
+//							if (fichasArray.get(i).isAlive()){
+//								fichasArray.get(i).setpX(fichasArray.get(i).getpX()-player.getpNormalSpeed());
+//								//fichas.setpX(fichas.getpX()-player.getpNormalSpeed());
+//							}
+//						}
+//					}
 				}
-			}else if (triggerXL && !triggerZL && !triggerZR) {
+			}else if (triggerXL){// && !triggerZL && !triggerZR) {
 				player.setDir(LEFT);
 				player.setCurrentAnimation(3);
 				if (stage.canMove(LEFT, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
 					stage.setpX(stage.getpX()-player.getpNormalSpeed());
-					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
-						for (int i = 0; i < fichasArray.size(); i++) {
-							if (fichasArray.get(i).isAlive()){
-								fichasArray.get(i).setpX(fichasArray.get(i).getpX()+player.getpNormalSpeed());
-								//fichas.setpX(fichas.getpX()+player.getpNormalSpeed());
-							}
-						}
-					}
+//					if(stage.getpX() >= -379 && stage.getpX() <= 1847 && stage.getpY() >= -177 && stage.getpY() <= 577){
+//						for (int i = 0; i < fichasArray.size(); i++) {
+//							if (fichasArray.get(i).isAlive()){
+//								fichasArray.get(i).setpX(fichasArray.get(i).getpX()+player.getpNormalSpeed());
+//								//fichas.setpX(fichas.getpX()+player.getpNormalSpeed());
+//							}
+//						}
+//					}
 				}				
 			}
 		
@@ -269,11 +270,11 @@ public class GameEngine implements Runnable {
 				 
 			player.updatePlayer(System.currentTimeMillis());
 			
-			for (int i = 0; i < fichasArray.size(); i++) {
-				if (fichasArray.get(i).isAlive()){
-					fichasArray.get(i).updateFicha();
-				}
-			}
+//			for (int i = 0; i < fichasArray.size(); i++) {
+//				if (fichasArray.get(i).isAlive()){
+//					fichasArray.get(i).updateFicha();
+//				}
+//			}
 			
 		}else if(getGameType().equals("Columpio")){ // ---------- Columpio
 			// pinza vertical boton hacia abajo - oscilacion - eje X
@@ -359,14 +360,14 @@ public class GameEngine implements Runnable {
 				toboganState = tWAIT;
 				toboganSemaphore = true;
 				jumpSemaphore = true;
-				// ni–o sentado a la espera de poder saltar
+				// niï¿½o sentado a la espera de poder saltar
 				player.setpX(this.width - 400);
 		        player.setpY(0);
 			}
 			
 			if(toboganState == tWAIT && myTime > waitTime){
 				if(jumpSemaphore == true){
-					toboganState = tJUMP; // se–al de poder saltar
+					toboganState = tJUMP; // seï¿½al de poder saltar
 					//Log.d("Game Tobogan","JUMP!");
 					jumpSemaphore = false;
 				}
@@ -377,7 +378,7 @@ public class GameEngine implements Runnable {
 				jumpSemaphore = true;
 			}
 			
-			if(toboganState == tJUMP && distanceIR == 0){ // cuando el ni–o salta
+			if(toboganState == tJUMP && distanceIR == 0){ // cuando el niï¿½o salta
 				// launch jump function
 				toboganJump = true;
 			}
@@ -399,6 +400,8 @@ public class GameEngine implements Runnable {
 	
 	private void jump(){
 		if(toboganJump == true){
+			if (firstJump) toboganBackPosXReset = toboganBackPosX; 
+			firstJump = false;
 			int pX = (int)player.getpX();
 			int pY = (int)player.getpY();
 			
@@ -421,6 +424,9 @@ public class GameEngine implements Runnable {
 	    		toboganSemaphore = true;
 	    		jumpSemaphore = true;
 	    		actualTime = System.currentTimeMillis();
+	    		toboganBackPosX = toboganBackPosXReset; 
+	    		firstJump = true;
+	    		comeBack = true;
 	        }
 		}
 	}
@@ -450,9 +456,9 @@ public class GameEngine implements Runnable {
 		if (Math.abs(pX - gX) + Math.abs(pY - gY) < radius) { // kid touch ficha or nube negra
 			if(nube.hasFicha){
 				eatFicha();
-			}else if(nube.isBlack){
+			}/*else if(nube.isBlack){
 				nubeNegra();
-			}
+			}*/
 		}
 	}
 	
@@ -469,20 +475,20 @@ public class GameEngine implements Runnable {
 
 	}
 	
-	// nube negra ==> come back + time
-	private void nubeNegra() {
-		//Log.d("PuzzleCity","WE WIN");
-		comeBack = true;
-		nube.reloadNube();
-		toboganJump = false;
-		toboganState = tRESTART;
-		toboganBackPosX = 0; // come back
-		timer = 120; // reset timer
-		toboganSemaphore = true;
-		jumpSemaphore = true;
-		actualTime = System.currentTimeMillis();
-
-	}
+//	// nube negra ==> come back + time
+//	private void nubeNegra() {
+//		//Log.d("PuzzleCity","WE WIN");
+//		comeBack = true;
+//		nube.reloadNube();
+//		toboganJump = false;
+//		toboganState = tRESTART;
+//		toboganBackPosX = 0; // come back
+//		timer = 120; // reset timer
+//		toboganSemaphore = true;
+//		jumpSemaphore = true;
+//		actualTime = System.currentTimeMillis();
+//
+//	}
 
 	// count down timer once per MAX_FPS
 	private void updateTimer(){

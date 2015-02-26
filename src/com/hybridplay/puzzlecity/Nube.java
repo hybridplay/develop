@@ -14,7 +14,7 @@ public class Nube extends SurfaceView {
 	public Bitmap nube;
 	public Bitmap ficha;
 	public boolean hasFicha;
-	public boolean isBlack = false;
+	//public boolean isBlack = false;
 	
 	public Rect srcRect;
 	public Rect dstRect;
@@ -53,15 +53,16 @@ public class Nube extends SurfaceView {
 		
 		vX = 3 + (float)Math.random()*4;
 		
-		if(Math.random() < 0.8){
-			hasFicha = true;
-		}else{
-			hasFicha = false;
-		}
+//		if(Math.random() < 0.8){
+//			hasFicha = true;
+//		}else{
+//			hasFicha = false;
+//		}
+		hasFicha = true;
 		
-		isBlack = false;
+		//isBlack = false;
 		
-		randomNube = (int)Math.ceil(Math.random()*3);
+		randomNube = (int)Math.ceil(Math.random()*2);
 		randomFicha = (int)Math.ceil(Math.random()*10);
 		
 		if(randomNube == 1){
@@ -70,12 +71,12 @@ public class Nube extends SurfaceView {
 		}else if(randomNube == 2){
 			nube = BitmapFactory.decodeResource(getResources(), R.drawable.nube3);
 			srcRect = new Rect(0,0,326,115);
-		}else if(randomNube == 3){
+		}/*else if(randomNube == 3){
 			nube = BitmapFactory.decodeResource(getResources(), R.drawable.nube4);
 			srcRect = new Rect(0,0,200,104);
 			hasFicha = false;
 			isBlack = true;
-		}
+		}*/
 		
 		switch (randomFicha) {
 			case 1:
