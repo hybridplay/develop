@@ -204,7 +204,7 @@ public class GameEngine implements Runnable {
 			
 			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
 			
-			if (triggerZL){// && !triggerXL && !triggerXR) {
+			if (triggerYL){// && !triggerXL && !triggerXR) {
 				player.setDir(DOWN);
 				player.setCurrentAnimation(0);
 				if (stage.canMove(DOWN, pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){
@@ -218,7 +218,7 @@ public class GameEngine implements Runnable {
 //						}
 //					}
 				}
-			}else if (triggerZR){// && !triggerXL && !triggerXR) {
+			}else if (triggerYR){// && !triggerXL && !triggerXR) {
 				player.setDir(UP);
 				player.setCurrentAnimation(1);
 				if (stage.canMove(UP,pX, pY, player.getSpriteWidth(), player.getSpriteHeight(),player.getpNormalSpeed())){

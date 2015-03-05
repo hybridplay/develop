@@ -199,13 +199,13 @@ public class CanvasView extends SurfaceView  implements Runnable{
 			
 			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
 			
-			if(triggerZR){ // UP
+			if(triggerYR){ // UP
 				canvas.drawBitmap(sUP_ON, srcRect_UP, dstRect_UP, null);
 			}else{
 				canvas.drawBitmap(sUP_OFF, srcRect_UP, dstRect_UP, null);
 			}
 			
-			if(triggerZL){ // DOWN
+			if(triggerYL){ // DOWN
 				canvas.drawBitmap(sDOWN_ON, srcRect_DOWN, dstRect_DOWN, null);
 			}else{
 				canvas.drawBitmap(sDOWN_OFF, srcRect_DOWN, dstRect_DOWN, null);

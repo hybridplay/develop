@@ -20,7 +20,7 @@ public class BarView extends View {
     private int   	mYOffset;
     private int     mColorX, mColorY, mColorZ, mColorIR;
     private int     mColorXCalib;
-    private int   	maxValue = 1024;
+    private int   	maxValue = 360;
     
     public  Sensor mSensorX, mSensorY, mSensorZ, mSensorIR;
     public  Sensor mSensorXCalib, mSensorYCalib, mSensorZCalib;
@@ -45,16 +45,16 @@ public class BarView extends View {
     	mColorXCalib = Color.argb(100, 0, 0, 0);
     	
         mPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        mSensorX = new Sensor("x",280,380,0);
-        mSensorY = new Sensor("y",280,380,0);
-        mSensorZ = new Sensor("z",280,380,0);
+        mSensorX = new Sensor("x",0,360,0);
+        mSensorY = new Sensor("y",0,360,0);
+        mSensorZ = new Sensor("z",0,360,0);
         mSensorIR = new Sensor("IR",250,500,1);
         
-        mSensorXCalib = new Sensor("x",280,380,0);
-        mSensorYCalib = new Sensor("y",280,380,0);
-        mSensorZCalib = new Sensor("z",280,380,0);
+        mSensorXCalib = new Sensor("x",0,360,0);
+        mSensorYCalib = new Sensor("y",0,360,0);
+        mSensorZCalib = new Sensor("z",0,360,0);
         
-        mSensorColumpio = new Sensor("y",280,380,0);
+        mSensorColumpio = new Sensor("y",0,360,0);
         
     }
     
@@ -63,7 +63,9 @@ public class BarView extends View {
         
         mCanvas.drawColor(Color.WHITE); //borramos todo
         
-        setMaxValue(380);
+        //Log.d("SENSORV03","X: "+valueX+" Y: "+valueY+" Z: "+valueZ);
+        
+        setMaxValue(360);
         final int x = mYOffset + (int)(valueX * mScale);
         mSensorX.update(x,valueX);
         mSensorXCalib.update(x,valueX);
