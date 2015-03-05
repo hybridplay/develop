@@ -174,7 +174,7 @@ public class GameEngine implements Runnable {
 			
 			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
 			
-			if (triggerZL) {
+			if (triggerYL) {
 				kid.setDir(DOWN);
 				if (pY + kid.getPheight() < height - limitH){
 					pY = pY + kid.getpNormalSpeed();
@@ -182,7 +182,7 @@ public class GameEngine implements Runnable {
 				}else{
 					moveAll = true;
 				}
-			}else if (triggerZR) {
+			}else if (triggerYR) {
 				kid.setDir(UP);
 				if (pY > limitH) {
 					pY = pY - kid.getpNormalSpeed();

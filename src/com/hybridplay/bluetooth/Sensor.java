@@ -45,7 +45,7 @@ public class Sensor {
     public float calibH = 0.0f, calibV = 0.0f;
     
     public Sensor(String sName, int minS, int maxS, int _type){
-    	minValue = 1024;
+    	minValue = 360;
     	maxValue = 0;
     	actualValue = 0;
     	normActualValue = 0.0f;
@@ -61,7 +61,7 @@ public class Sensor {
     public void update(int x,int vx){
     	// MANUAL SENSOR VALUES CORRECTION
     	if(type == 0){
-    		if(vx <= maxStable && vx >= minStable){
+    		/*if(vx <= maxStable && vx >= minStable){
     			realValue = vx;
     			
     			float colMinShift = columpioMin*(maxStable-minStable);
@@ -95,7 +95,44 @@ public class Sensor {
     				triggerMin = false;
     				triggerMax = false;
     			}
+    		}*/
+    		
+    		if(vx <= maxStable && vx >= minStable){
+    			realValue = vx;
+
+    			float colMinShift = columpioMin*(maxStable-minStable);
+    			float colMaxShift = (maxStable-minStable)*(1-columpioMax);
+    			float newMinStable = minStable+colMinShift;
+    			float newMaxStable = maxStable-colMaxShift;
+
+    			if(applyHCalib){
+    				normActualValue = -calibH + (vx-minStable)/(maxStable-minStable)*(1.0f+calibH);
+    				normActualValueColumpio = -calibH + (vx-newMinStable)/(newMaxStable-newMinStable)*(1.0f+calibH);
+    			}else if(applyVCalib){
+    				normActualValue = -calibV + (vx-minStable)/(maxStable-minStable)*(1.0f+calibV);
+    				normActualValueColumpio = -calibV + (vx-newMinStable)/(newMaxStable-newMinStable)*(1.0f+calibV);
+    			}else{
+    				normActualValue = (vx-minStable)/(maxStable-minStable)*1.0f;
+    				normActualValueColumpio = (vx-newMinStable)/(newMaxStable-newMinStable)*1.0f;
+    			}
+
+    			actualValue = x;
+    			maxValue = Math.max(actualValue, maxValue);
+    			minValue = Math.min(actualValue, minValue);
+    			centerValue = (maxValue+minValue)/2;
+
+    			if(normActualValue > (normCenterDelta+0.5)){
+    				triggerMin = false;
+    				triggerMax = true;
+    			}else if(normActualValue < (0.5-normCenterDelta)){
+    				triggerMin = true;
+    				triggerMax = false;
+    			}else{
+    				triggerMin = false;
+    				triggerMax = false;
+    			}
     		}
+    		
     	}else{ // IR
     		realValue = vx;
     		normActualValue = (vx-minStable)/(maxStable-minStable)*1.0f;
@@ -208,11 +245,11 @@ public class Sensor {
 	}
 	
 	public float getDegrees(){
-		return (normActualValue*180) - 90.0f;
+		return realValue;
 	}
 	
 	public float getDegreesColumpio(){
-		return (normActualValueColumpio*180) - 90.0f;
+		return realValue;
 	}
 	
 	public void setMaxIR(int mIR){

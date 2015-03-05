@@ -32,9 +32,9 @@ public class ArkaNoid extends Activity{
 	SensorReceiver mReceiver;
 	Handler handler = new Handler();
 	
-	Sensor mSensorX = new Sensor("x",280,380,0);
-	Sensor mSensorY = new Sensor("y",280,380,0);
-    Sensor mSensorZ = new Sensor("z",280,380,0);
+	Sensor mSensorX = new Sensor("x",0,360,0);
+	Sensor mSensorY = new Sensor("y",0,360,0);
+	Sensor mSensorZ = new Sensor("z",0,360,0);
     Sensor mSensorIR = new Sensor("IR",250,512,1);
     float angleX, angleY, angleZ;
     int distanceIR;
@@ -104,7 +104,7 @@ public class ArkaNoid extends Activity{
           			// pinza vertical boton hacia abajo - cuatro direcciones - ejes X Y
           			mSensorX.applyVCalibration();
           			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
-        			mSensorZ.applyVCalibration();
+        			mSensorY.applyVCalibration();
           		}else if(playWith.equals("Columpio")){
           			// pinza vertical boton hacia abajo - oscilacion - eje X
 
@@ -267,13 +267,13 @@ public class ArkaNoid extends Activity{
 			
 			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
 			
-			if(triggerZR){ // UP
+			if(triggerYR){ // UP
 				sUP.setImageResource(R.drawable.arriba_on);
 			}else{
 				sUP.setImageResource(R.drawable.arriba_off);
 			}
 			
-			if(triggerZL){ // DOWN
+			if(triggerYL){ // DOWN
 				sDOWN.setImageResource(R.drawable.abajo_on);
 			}else{
 				sDOWN.setImageResource(R.drawable.abajo_off);

@@ -24,9 +24,9 @@ public class BuildSomethingActivity extends Activity {
 	SensorReceiver mReceiver;
 	Handler handler = new Handler();
 
-	Sensor mSensorX = new Sensor("x",280,380,0);
-	Sensor mSensorY = new Sensor("y",280,380,0);
-	Sensor mSensorZ = new Sensor("z",280,380,0);
+	Sensor mSensorX = new Sensor("x",0,360,0);
+	Sensor mSensorY = new Sensor("y",0,360,0);
+	Sensor mSensorZ = new Sensor("z",0,360,0);
 	Sensor mSensorIR = new Sensor("IR",250,512,1);
 	float angleX, angleY, angleZ;
 	int distanceIR;

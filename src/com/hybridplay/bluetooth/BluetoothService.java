@@ -38,7 +38,10 @@ public class BluetoothService extends Service {
 	
 	String m_deviceName;
 	String m_deviceStatus;
+	
 	int accX, accY, accZ, bat, IR;
+	
+	int zDisplace = -90;
 	
 	// Binder given to clients
     private final IBinder mBinder = new LocalBinder();
@@ -165,15 +168,15 @@ public class BluetoothService extends Service {
 	
 	
 	private void onBluetoothRead(byte[] buffer, int len) {
-		if(len >= 12){ // 12 bytes from Arduino (1 HEADER, 2 ACCX, 2 ACCY, 2 ACCZ, 2 IR, 2 BATTERY,1 FOOTER)
-			if(buffer[0] == HEADER && buffer[11] == FOOTER){
+		if(len >= 10){ // 10 bytes from Arduino (1 HEADER, 2 ACCX, 2 ACCY, 2 ACCZ, 2 IR,1 FOOTER)
+			if(buffer[0] == HEADER && buffer[9] == FOOTER){
 				//String inputStr = new String(buffer, 0, len);
 				//String [] data = inputStr.split(",");
 				accX = readArduinoBinary(buffer[1],buffer[2]);
 				accY = readArduinoBinary(buffer[3],buffer[4]);
 				accZ = readArduinoBinary(buffer[5],buffer[6]);
 				IR	= readArduinoBinary(buffer[7],buffer[8]);
-				bat = readArduinoBinary(buffer[9],buffer[10]);
+				
 				/*try{
 					IR = Integer.parseInt(data[1]);
 				}catch(Exception e){
@@ -204,15 +207,51 @@ public class BluetoothService extends Service {
 	}
 	
 	public int getAccX(){
-		return accX;
+		if(accX >= -128 && accX <= -77){ // de 128 a 178
+			return accX+255;
+		}else if(accX >= -179 && accX <= -129){ // de 178 a 227
+			return accX+179+178;
+		}else if(accX >= -385 && accX <= -257){ // de 228 a 360
+			return accX+385+227;
+		}else{ // de 0 a 127
+			return accX;
+		}	
 	}
 	
 	public int getAccY(){
-		return accY;
+		if(accY >= -340 && accY <= -257){
+			int tempDist = 340-Math.abs(accY);
+			return 360 - (int)(tempDist*2.25);
+		}else if(accY >= 0 && accY <= 80){
+			return 180 - (int)(accY*2.25);
+		}else{
+			return accY;
+		}
+		
 	}
 
 	public int getAccZ(){
-		return accZ;
+		
+		/*if(accZ >= -128 && accZ <= -77){ // de 128 a 178
+			return accZ+255;
+		}else if(accZ >= -179 && accZ <= -129){ // de 178 a 227
+			return accZ+179+178;
+		}else if(accZ >= -385 && accZ <= -257){ // de 228 a 360
+			return accZ+385+227;
+		}else{ // de 0 a 127
+			return accZ;
+		}*/
+		
+		if(accX >= -128 && accX <= -77){ // de 128 a 178
+			return accX+255+zDisplace;
+		}else if(accX >= -179 && accX <= -129){ // de 178 a 227
+			return accX+179+178+zDisplace;
+		}else if(accX >= -385 && accX <= -257){ // de 228 a 360
+			return accX+385+227+zDisplace;
+		}else{ // de 0 a 127
+			return accX+265;
+		}
+		
 	}
 	
 	public int getBattery(){

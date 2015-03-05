@@ -30,9 +30,9 @@ public class GameActivityPackMan extends Activity{
 	SensorReceiver mReceiver;
 	Handler handler = new Handler();
 
-	Sensor mSensorX = new Sensor("x",280,380,0);
-	Sensor mSensorY = new Sensor("y",280,380,0);
-	Sensor mSensorZ = new Sensor("z",280,380,0);
+	Sensor mSensorX = new Sensor("x",0,360,0);
+	Sensor mSensorY = new Sensor("y",0,360,0);
+	Sensor mSensorZ = new Sensor("z",0,360,0);
 	Sensor mSensorIR = new Sensor("IR",250,512,1);
 	float angleX, angleY, angleZ;
 	int distanceIR;
@@ -88,7 +88,7 @@ public class GameActivityPackMan extends Activity{
           			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
           			
           			mSensorX.applyVCalibration();
-        			mSensorZ.applyVCalibration(); // mSensorY.applyVCalibration();
+        			mSensorY.applyVCalibration(); // mSensorY.applyVCalibration();
           		}else if(playWith.equals("Columpio")){
           			// pinza vertical boton hacia abajo - oscilacion - eje X
 
@@ -131,9 +131,9 @@ public class GameActivityPackMan extends Activity{
           			
           			// --------> CAMBIAR LA Y POR LA Z SI LA PINZA VA EN LA CABEZA DEL CABALLITO
           			
-          			if(gameEngine.isCHZR){
+          			if(gameEngine.isCHYR){
     					gameEngine.setInputDir(UP);
-    				}else if(gameEngine.isCHZL){
+    				}else if(gameEngine.isCHYL){
     					gameEngine.setInputDir(DOWN);
     				}
         			if (gameEngine.isCHXL){
